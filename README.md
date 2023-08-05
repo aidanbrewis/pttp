@@ -1,7 +1,7 @@
 # pttp
-Power To The People (PTTP) is a direct democracy system, it's a Python backend that allows users to propose, amend, and vote on laws with equal power of initiative and without elected representatives.
+Power To The People (PTTP) is a direct democracy system. It's a Python backend that allows users to propose, amend, and vote on laws with equal power of initiative and without elected representatives.
 
-The objective is to build a website that is nice to use on both desktop and mobile to connect to this backend and deploy it on AWS before September 1st, 2023!
+The objective is to build a website that is nice to use on both desktop and mobile to connect to the backend and deploy it on AWS before September 1st, 2023!
 
 This project is an exciting experiment for me and could be used for the internal democracy of a university in Paris, France from September 2023 if we can build the front end and deploy on AWS by then.
 
