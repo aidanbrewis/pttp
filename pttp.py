@@ -1,9 +1,13 @@
 import json
 import time
+import os
 
 MINIMUM_LAW_DURATION = 2419200 #28 days in seconds
 
 def createUser(username: str):
+    if not os.path.exists('data'):
+        os.makedirs('data')
+
     users = {}
     try:
         with open('data/users.json') as usersFile:
