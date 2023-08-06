@@ -9,7 +9,7 @@ function App() {
         <div className="container">
         <Routes>
             <Route path="/" element={<Home />}  />
-            <Route path="/nextLevel" element={<Deeper />} />
+            <Route path="/screen2" element={<Deeper />} />
         </Routes>
         </div>
       </Router>
