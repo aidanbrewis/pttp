@@ -3,9 +3,7 @@ import json
 
 username = input('please type a new username : ')
 
-arguments = {'username':username}
-
-payload = json.dumps(arguments)
+payload = {'username':username}
 
 pttp.createUser(payload)
 
