@@ -4,115 +4,221 @@ import os
 
 MINIMUM_LAW_DURATION = 2419200 #28 days in seconds
 
-def createUser(username: str):
-    if not os.path.exists('data'):
-        os.makedirs('data')
-
-    users = {}
+def createUser(payload):
+    username = payload['username']
+    
     try:
-        with open('data/users.json') as usersFile:
-            users = json.load(usersFile)
+        with open('settings.json', 'r') as settingsFile:
+            settings = json.load(settingsFile)
+            useS3Bucket = settings['useS3Bucket']
     except:
-        pass
+        useS3Bucket = False
+
+    if not useS3Bucket:
+        if not os.path.exists('data'):
+            os.makedirs('data')
+    
+    if useS3Bucket:
+        inputFileNames = ['users.json']
+        try:
+            users = readFromS3(inputFileNames)['users.json']
+        except:
+            users = {}
+    else:
+        users = {}
+        try:
+            with open('data/users.json') as usersFile:
+                users = json.load(usersFile)
+        except:
+            pass
     if users.get(username) is not None:
         raise Exception('username '+username+' is already taken')
     users[username] = {
             'proposedLaws' : [],
             'votedLaws' : {}
         }
-    with open('data/users.json', 'w') as usersFile:
-        json.dump(users, usersFile)
+    if useS3Bucket:
+        jsonDataByFileName = {'users.json': json.dumps(users)}
+        writeToS3(jsonDataByFileName)
+    else:
+        with open('data/users.json', 'w') as usersFile:
+            json.dump(users, usersFile)
+    
+    return({})
 
-def proposeLaw(username: str, proposedLaw: str):
+def proposeLaw(payload):
+    username = payload['username']
+    proposedLaw = payload['proposedLaw']
+    proposedLawTitle = payload['proposedLawTitle']
+    proposedLawCategory = payload['proposedLawCategory']
+    
     newLawId = generateNewId()
     
+    try:
+        with open('settings.json', 'r') as settingsFile:
+            settings = json.load(settingsFile)
+            useS3Bucket = settings['useS3Bucket']
+    except:
+        useS3Bucket = False
+
+    if not useS3Bucket:
+        if not os.path.exists('data'):
+            os.makedirs('data')
+    
     users = {}
-    try:
-        with open('data/users.json') as usersFile:
-            users = json.load(usersFile)
-    except:
-        raise Exception('no users found, use createUser.py')
     
-    if users.get(username) == None:
-        raise Exception('no user with username : '+username+'\nplease use createUser.py')
-    
-    proposedLaws = {}
-    try:
-        with open('data/proposedLaws.json') as proposedLawsFile:
-            proposedLaws = json.load(proposedLawsFile)
-    except:
-        pass
-    
-    acceptedLaws = {}
-    try:
-        with open('data/acceptedLaws.json') as acceptedLawsFile:
-            acceptedLaws = json.load(acceptedLawsFile)
-    except:
-        pass
-    
-    rejectedLaws = {}
-    try:
-        with open('data/rejectedLaws.json') as rejectedLawsFile:
-            rejectedLaws = json.load(rejectedLawsFile)
-    except:
-        pass
+    if useS3Bucket:
+        inputFileNames = ['users.json', 'proposedLaws.json', 'acceptedLaws.json', 'rejectedLaws.json']
+        dataByFileName = readFromS3(inputFileNames)
+        try:
+            users = dataByFileName['users.json']
+        except:
+            users = {}
+        try:
+            proposedLaws = dataByFileName['proposedLaws.json']
+        except:
+            proposedLaws = {}
+        try:
+            acceptedLaws = dataByFileName['acceptedLaws.json']
+        except:
+            acceptedLaws = {}
+        try:
+            rejectedLaws = dataByFileName['rejectedLaws.json']
+        except:
+            rejectedLaws = {}
+    else:
+        users = {}
+        try:
+            with open('data/users.json') as usersFile:
+                users = json.load(usersFile)
+        except:
+            raise Exception('no users found, use createUser.py')
+        
+        if users.get(username) == None:
+            raise Exception('no user with username : '+username+'\nplease use createUser.py')
+        
+        proposedLaws = {}
+        try:
+            with open('data/proposedLaws.json') as proposedLawsFile:
+                proposedLaws = json.load(proposedLawsFile)
+        except:
+            pass
+        
+        acceptedLaws = {}
+        try:
+            with open('data/acceptedLaws.json') as acceptedLawsFile:
+                acceptedLaws = json.load(acceptedLawsFile)
+        except:
+            pass
+        
+        rejectedLaws = {}
+        try:
+            with open('data/rejectedLaws.json') as rejectedLawsFile:
+                rejectedLaws = json.load(rejectedLawsFile)
+        except:
+            pass
     
     for existingLawId in acceptedLaws.keys():
-        for versionId in acceptedLaws[existingLawId].keys():
-            if acceptedLaws[existingLawId][versionId]['content'] == proposedLaw:
+        for versionId in acceptedLaws[existingLawId]['versions'].keys():
+            if acceptedLaws[existingLawId]['versions'][versionId]['content'] == proposedLaw:
                 raise Exception('the proposed law already exists as an accepted law')
     
     for existingLawId in proposedLaws.keys():
-        for versionId in proposedLaws[existingLawId].keys():
-            if proposedLaws[existingLawId][versionId]['content'] == proposedLaw:
+        for versionId in proposedLaws[existingLawId]['versions'].keys():
+            if proposedLaws[existingLawId]['versions'][versionId]['content'] == proposedLaw:
                 raise Exception('the proposed law already exists as a proposed law')
             
     for existingLawId in rejectedLaws.keys():
-        for versionId in rejectedLaws[existingLawId].keys():
-            if rejectedLaws[existingLawId][versionId]['content'] == proposedLaw:
-                if rejectedLaws[existingLawId][versionId]['rejectedTime']+MINIMUM_LAW_DURATION>int(time.time()):
+        for versionId in rejectedLaws[existingLawId]['versions'].keys():
+            if rejectedLaws[existingLawId]['versions'][versionId]['content'] == proposedLaw:
+                if rejectedLaws[existingLawId]['versions'][versionId]['rejectedTime']+MINIMUM_LAW_DURATION>int(time.time()):
                     raise Exception('the proposed law was rejected less than 28 days ago')
     
     users[username]['proposedLaws'].append(newLawId+':1')
     
-    proposedLaws[newLawId] = {1:{'content':proposedLaw, 'yes':1, 'no':0}}
-    with open('data/users.json', 'w') as usersFile:
-        json.dump(users, usersFile)
+    proposedLaws[newLawId] = {'title':proposedLawTitle, 'category':proposedLawCategory, 'versions':{1:{'content':proposedLaw, 'yes':1, 'no':0}}}
+    if useS3Bucket:
+        jsonDataByFileName = {'users.json': json.dumps(users),'proposedLaws.json': json.dumps(proposedLaws)}
+        writeToS3(jsonDataByFileName)
+    else:
+        with open('data/users.json', 'w') as usersFile:
+            json.dump(users, usersFile)
+            
+        with open('data/proposedLaws.json', 'w') as proposedLawsFile:
+            json.dump(proposedLaws, proposedLawsFile)
+    
+    return({})
+    
+def proposeAbrogationLaw(payload):
+    username = payload['username']
+    lawId = payload['lawId']
+    try:
+        replace = payload['replace']
+        replacementLaw = payload['replacementLaw']
+    except:
+        replace = False
+        replacementLaw = None
+    
+    try:
+        with open('settings.json', 'r') as settingsFile:
+            settings = json.load(settingsFile)
+            useS3Bucket = settings['useS3Bucket']
+    except:
+        useS3Bucket = False
+
+    if not useS3Bucket:
+        if not os.path.exists('data'):
+            os.makedirs('data')
+    if useS3Bucket:
+        inputFileNames = ['users.json', 'proposedLaws.json', 'acceptedLaws.json', 'rejectedLaws.json']
+        dataByFileName = readFromS3(inputFileNames)
+        try:
+            users = dataByFileName['users.json']
+        except:
+            users = {}
+        try:
+            proposedLaws = dataByFileName['proposedLaws.json']
+        except:
+            proposedLaws = {}
+        try:
+            acceptedLaws = dataByFileName['acceptedLaws.json']
+        except:
+            acceptedLaws = {}
+        try:
+            rejectedLaws = dataByFileName['rejectedLaws.json']
+        except:
+            rejectedLaws = {}
+    else:
+        users = {}
+        try:
+            with open('data/users.json') as usersFile:
+                users = json.load(usersFile)
+        except:
+            raise Exception('no users found, use createUser.py')
         
-    with open('data/proposedLaws.json', 'w') as proposedLawsFile:
-        json.dump(proposedLaws, proposedLawsFile)
-    
-def proposeAbrogationLaw(username: str, lawId: str, replace: bool=False, replacementLaw: str=None):
-    users = {}
-    try:
-        with open('data/users.json') as usersFile:
-            users = json.load(usersFile)
-    except:
-        raise Exception('no users found, use createUser.py')
-    
-    if users.get(username) == None:
-        raise Exception('no user with username : '+username+'\nplease use createUser.py')
-    
-    proposedLaws = {}
-    try:
-        with open('data/proposedLaws.json') as proposedLawsFile:
-            proposedLaws = json.load(proposedLawsFile)
-    except:
-        pass
-    
-    acceptedLaws = {}
-    try:
-        with open('data/acceptedLaws.json') as acceptedLawsFile:
-            acceptedLaws = json.load(acceptedLawsFile)
-    except:
-        pass
-    
-    rejectedLaws = {}
-    try:
-        with open('data/rejectedLaws.json') as rejectedLawsFile:
-            rejectedLaws = json.load(rejectedLawsFile)
-    except:
-        pass
+        if users.get(username) == None:
+            raise Exception('no user with username : '+username+'\nplease use createUser.py')
+        
+        proposedLaws = {}
+        try:
+            with open('data/proposedLaws.json') as proposedLawsFile:
+                proposedLaws = json.load(proposedLawsFile)
+        except:
+            pass
+        
+        acceptedLaws = {}
+        try:
+            with open('data/acceptedLaws.json') as acceptedLawsFile:
+                acceptedLaws = json.load(acceptedLawsFile)
+        except:
+            pass
+        
+        rejectedLaws = {}
+        try:
+            with open('data/rejectedLaws.json') as rejectedLawsFile:
+                rejectedLaws = json.load(rejectedLawsFile)
+        except:
+            pass
     
     if acceptedLaws.get(lawId) == None:
         raise Exception('no accepted law with id : '+lawId)
@@ -120,10 +226,10 @@ def proposeAbrogationLaw(username: str, lawId: str, replace: bool=False, replace
     if proposedLaws.get(lawId) != None:
         raise Exception('law with id '+lawId+' is already being voted on')
     
-    for versionNumber in acceptedLaws[lawId].keys():
-        if acceptedLaws[lawId][versionNumber]['acceptedTime']+MINIMUM_LAW_DURATION>int(time.time()):
+    for versionNumber in acceptedLaws[lawId]['versions'].keys():
+        if acceptedLaws[lawId]['versions'][versionNumber]['acceptedTime']+MINIMUM_LAW_DURATION>int(time.time()):
             raise Exception('cannot abrogate a law that was accepted less than 28 days ago.')
-        proposedLaws[lawId] = {versionNumber:{'content':acceptedLaws[lawId][versionNumber]['content'], 'yes':0, 'no':1}}
+        proposedLaws[lawId] = {'title':acceptedLaws[lawId]['title'],'category':acceptedLaws[lawId]['category'],'versions':{versionNumber:{'content':acceptedLaws[lawId]['versions'][versionNumber]['content'], 'yes':0, 'no':1}}}
         
         for userkey in users.keys():
             if users[userkey]['votedLaws'].get(lawId+':'+versionNumber) != None:
@@ -135,143 +241,226 @@ def proposeAbrogationLaw(username: str, lawId: str, replace: bool=False, replace
     
     if replace:
         for existingLawId in acceptedLaws.keys():
-            for versionId in acceptedLaws[existingLawId].keys():
-                if acceptedLaws[existingLawId][versionId]['content'] == replacementLaw:
+            for versionId in acceptedLaws[existingLawId]['versions'].keys():
+                if acceptedLaws[existingLawId]['versions'][versionId]['content'] == replacementLaw:
                     raise Exception('the proposed law already exists as an accepted law')
         
         for existingLawId in proposedLaws.keys():
-            for versionId in proposedLaws[existingLawId].keys():
-                if proposedLaws[existingLawId][versionId]['content'] == replacementLaw:
+            for versionId in proposedLaws[existingLawId]['versions'].keys():
+                if proposedLaws[existingLawId]['versions'][versionId]['content'] == replacementLaw:
                     raise Exception('the proposed law already exists as a proposed law')
                 
         for existingLawId in rejectedLaws.keys():
-            for versionId in rejectedLaws[existingLawId].keys():
-                if rejectedLaws[existingLawId][versionId]['content'] == replacementLaw:
-                    if rejectedLaws[existingLawId][versionId]['rejectedTime']+MINIMUM_LAW_DURATION>int(time.time()):
+            for versionId in rejectedLaws[existingLawId]['versions'].keys():
+                if rejectedLaws[existingLawId]['versions'][versionId]['content'] == replacementLaw:
+                    if rejectedLaws[existingLawId]['versions'][versionId]['rejectedTime']+MINIMUM_LAW_DURATION>int(time.time()):
                         raise Exception('the proposed law was rejected less than 28 days ago')
                     
-        versionNumbers = list(proposedLaws[lawId].keys())
+        versionNumbers = list(proposedLaws[lawId]['versions'].keys())
         if rejectedLaws.get(lawId) != None:
-            versionNumbers += list(rejectedLaws[lawId].keys())
+            versionNumbers += list(rejectedLaws[lawId]['versions'].keys())
         if acceptedLaws.get(lawId) != None:
-            versionNumbers += list(acceptedLaws[lawId].keys())
+            versionNumbers += list(acceptedLaws[lawId]['versions'].keys())
         versionNumber = max(int(l) for l in versionNumbers) + 1
-        proposedLaws[lawId][versionNumber] = {
+        proposedLaws[lawId]['versions'][versionNumber] = {
             'content':replacementLaw,
             'yes':1,
             'no' :0
             }
         users[username]['proposedLaws'].append(lawId+':'+str(versionNumber))
     
+    if useS3Bucket:
+        jsonDataByFileName = {'users.json': json.dumps(users),'proposedLaws.json': json.dumps(proposedLaws)}
+        writeToS3(jsonDataByFileName)
+    else:
+        with open('data/users.json', 'w') as usersFile:
+            json.dump(users, usersFile)
+        
+        with open('data/proposedLaws.json', 'w') as proposedLawsFile:
+            json.dump(proposedLaws, proposedLawsFile)
     
-    with open('data/users.json', 'w') as usersFile:
-        json.dump(users, usersFile)
-    
-    with open('data/proposedLaws.json', 'w') as proposedLawsFile:
-        json.dump(proposedLaws, proposedLawsFile)
+    return({})
     
     
         
-def getLawsToVote(username: str):
-    users = {}
-    try:
-        with open('data/users.json') as usersFile:
-            users = json.load(usersFile)
-    except:
-        raise Exception('no users found, use createUser.py')
+def getLawsToVote(payload):
+    username = payload['username']
     
-    if users.get(username) == None:
-        raise Exception('no user with username : '+username+'\nplease use createUser.py')
-    
-    proposedLaws = {}
     try:
-        with open('data/proposedLaws.json') as proposedLawsFile:
-            proposedLaws = json.load(proposedLawsFile)
+        with open('settings.json', 'r') as settingsFile:
+            settings = json.load(settingsFile)
+            useS3Bucket = settings['useS3Bucket']
     except:
-        pass
+        useS3Bucket = False
+
+    if not useS3Bucket:
+        if not os.path.exists('data'):
+            os.makedirs('data')
+    if useS3Bucket:
+        inputFileNames = ['users.json', 'proposedLaws.json']
+        dataByFileName = readFromS3(inputFileNames)
+        try:
+            users = dataByFileName['users.json']
+        except:
+            users = {}
+        try:
+            proposedLaws = dataByFileName['proposedLaws.json']
+        except:
+            proposedLaws = {}
+    else:
+        users = {}
+        try:
+            with open('data/users.json') as usersFile:
+                users = json.load(usersFile)
+        except:
+            raise Exception('no users found, use createUser.py')
+        
+        if users.get(username) == None:
+            raise Exception('no user with username : '+username+'\nplease use createUser.py')
+        
+        proposedLaws = {}
+        try:
+            with open('data/proposedLaws.json') as proposedLawsFile:
+                proposedLaws = json.load(proposedLawsFile)
+        except:
+            pass
     
     lawsToVote = {}
     
     for lawId in proposedLaws.keys():
-        for versionNumber in proposedLaws[lawId].keys():
+        for versionNumber in proposedLaws[lawId]['versions'].keys():
             if (lawId+':'+versionNumber not in users[username]['proposedLaws']) and (lawId+':'+versionNumber not in users[username]['votedLaws']):
                 if lawsToVote.get(lawId) == None:
-                    lawsToVote[lawId] = {}
-                lawsToVote[lawId][versionNumber] = proposedLaws[lawId][versionNumber]
+                    lawsToVote[lawId] = {'title':proposedLaws[lawId]['title'],'category':proposedLaws[lawId]['category'],'versions':{}}
+                lawsToVote[lawId]['versions'][versionNumber] = proposedLaws[lawId]['versions'][versionNumber]
     
-    if lawsToVote:
-        return lawsToVote
-    else:
-        return None
+    return lawsToVote
     
-def getAcceptedLaws():
-    acceptedLaws = {}
+def getAcceptedLaws(payload):
     try:
-        with open('data/acceptedLaws.json') as acceptedLawsFile:
-            acceptedLaws = json.load(acceptedLawsFile)
+        with open('settings.json', 'r') as settingsFile:
+            settings = json.load(settingsFile)
+            useS3Bucket = settings['useS3Bucket']
     except:
-        pass
+        useS3Bucket = False
+
+    if not useS3Bucket:
+        if not os.path.exists('data'):
+            os.makedirs('data')
+    if useS3Bucket:
+        inputFileNames = ['acceptedLaws.json']
+        dataByFileName = readFromS3(inputFileNames)
+        try:
+            acceptedLaws = dataByFileName['acceptedLaws.json']
+        except:
+            acceptedLaws = {}
+    else:
+        acceptedLaws = {}
+        try:
+            with open('data/acceptedLaws.json') as acceptedLawsFile:
+                acceptedLaws = json.load(acceptedLawsFile)
+        except:
+            pass
     
     return acceptedLaws
     
-def vote(username: str, lawId: str, votes: dict, amend: bool=False, amendedLaw: str=None):
-    users = {}
+def vote(payload):
+    username = payload['username']
+    lawId = payload['lawId']
+    votes = payload['votes']
     try:
-        with open('data/users.json') as usersFile:
-            users = json.load(usersFile)
+        amend = payload['amend']
+        amendedLaw = payload['amendedLaw']
     except:
-        raise Exception('no users found, use createUser.py')
-    
-    if users.get(username) == None:
-        raise Exception('no user with username : '+username+'\nplease use createUser.py')
-    
-    proposedLaws = {}
+        amend = False
+        amendedLaw = None
     try:
-        with open('data/proposedLaws.json') as proposedLawsFile:
-            proposedLaws = json.load(proposedLawsFile)
+        with open('settings.json', 'r') as settingsFile:
+            settings = json.load(settingsFile)
+            useS3Bucket = settings['useS3Bucket']
     except:
-        pass
-    
-    acceptedLaws = {}
-    try:
-        with open('data/acceptedLaws.json') as acceptedLawsFile:
-            acceptedLaws = json.load(acceptedLawsFile)
-    except:
-        pass
-    
-    rejectedLaws = {}
-    try:
-        with open('data/rejectedLaws.json') as rejectedLawsFile:
-            rejectedLaws = json.load(rejectedLawsFile)
-    except:
-        pass
+        useS3Bucket = False
+
+    if not useS3Bucket:
+        if not os.path.exists('data'):
+            os.makedirs('data')
+    if useS3Bucket:
+        inputFileNames = ['users.json', 'proposedLaws.json', 'acceptedLaws.json', 'rejectedLaws.json']
+        dataByFileName = readFromS3(inputFileNames)
+        try:
+            users = dataByFileName['users.json']
+        except:
+            users = {}
+        try:
+            proposedLaws = dataByFileName['proposedLaws.json']
+        except:
+            proposedLaws = {}
+        try:
+            acceptedLaws = dataByFileName['acceptedLaws.json']
+        except:
+            acceptedLaws = {}
+        try:
+            rejectedLaws = dataByFileName['rejectedLaws.json']
+        except:
+            rejectedLaws = {}
+    else:
+        users = {}
+        try:
+            with open('data/users.json') as usersFile:
+                users = json.load(usersFile)
+        except:
+            raise Exception('no users found, use createUser.py')
+        
+        if users.get(username) == None:
+            raise Exception('no user with username : '+username+'\nplease use createUser.py')
+        
+        proposedLaws = {}
+        try:
+            with open('data/proposedLaws.json') as proposedLawsFile:
+                proposedLaws = json.load(proposedLawsFile)
+        except:
+            pass
+        
+        acceptedLaws = {}
+        try:
+            with open('data/acceptedLaws.json') as acceptedLawsFile:
+                acceptedLaws = json.load(acceptedLawsFile)
+        except:
+            pass
+        
+        rejectedLaws = {}
+        try:
+            with open('data/rejectedLaws.json') as rejectedLawsFile:
+                rejectedLaws = json.load(rejectedLawsFile)
+        except:
+            pass
     
     if proposedLaws.get(lawId) == None:
         raise Exception('no law with id : '+lawId)
     if amend:
         for existingLawId in acceptedLaws.keys():
-            for versionId in acceptedLaws[existingLawId].keys():
-                if acceptedLaws[existingLawId][versionId]['content'] == amendedLaw:
+            for versionId in acceptedLaws[existingLawId]['versions'].keys():
+                if acceptedLaws[existingLawId]['versions'][versionId]['content'] == amendedLaw:
                     raise Exception('the proposed law already exists as an accepted law')
         
         for existingLawId in proposedLaws.keys():
-            for versionId in proposedLaws[existingLawId].keys():
-                if proposedLaws[existingLawId][versionId]['content'] == amendedLaw:
+            for versionId in proposedLaws[existingLawId]['versions'].keys():
+                if proposedLaws[existingLawId]['versions'][versionId]['content'] == amendedLaw:
                     raise Exception('the proposed law already exists as a proposed law')
                 
         for existingLawId in rejectedLaws.keys():
-            for versionId in rejectedLaws[existingLawId].keys():
-                if rejectedLaws[existingLawId][versionId]['content'] == amendedLaw:
-                    if rejectedLaws[existingLawId][versionId]['rejectedTime']+MINIMUM_LAW_DURATION>int(time.time()):
+            for versionId in rejectedLaws[existingLawId]['versions'].keys():
+                if rejectedLaws[existingLawId]['versions'][versionId]['content'] == amendedLaw:
+                    if rejectedLaws[existingLawId]['versions'][versionId]['rejectedTime']+MINIMUM_LAW_DURATION>int(time.time()):
                         raise Exception('the proposed law was rejected less than 28 days ago')
-        versionNumbers = list(proposedLaws[lawId].keys())
+        versionNumbers = list(proposedLaws[lawId]['versions'].keys())
         if rejectedLaws.get(lawId) != None:
-            versionNumbers += list(rejectedLaws[lawId].keys())
+            versionNumbers += list(rejectedLaws[lawId]['versions'].keys())
         if acceptedLaws.get(lawId) != None:
-            versionNumbers += list(acceptedLaws[lawId].keys())
+            versionNumbers += list(acceptedLaws[lawId]['versions'].keys())
         versionNumber = max(int(l) for l in versionNumbers) + 1
     
-        proposedLaws[lawId][versionNumber] = {
+        proposedLaws[lawId]['versions'][versionNumber] = {
             'content':amendedLaw,
             'yes':1,
             'no' :0
@@ -280,59 +469,70 @@ def vote(username: str, lawId: str, votes: dict, amend: bool=False, amendedLaw: 
         
     for versionNumber in votes.keys():
         if votes[versionNumber] == 'yes':
-            proposedLaws[lawId][versionNumber]['yes'] += 1
+            proposedLaws[lawId]['versions'][versionNumber]['yes'] += 1
             users[username]['votedLaws'][lawId+':'+str(versionNumber)] = True
         elif votes[versionNumber] == 'no':
-            proposedLaws[lawId][versionNumber]['no'] += 1
+            proposedLaws[lawId]['versions'][versionNumber]['no'] += 1
             users[username]['votedLaws'][lawId+':'+str(versionNumber)] = False
     
     majority = int(len(users.keys())/2 + 1)
+    half = len(users.keys())/2
     versionsToRemove = []
     removeLaw = False
-    for versionNumber in proposedLaws[lawId].keys():
-        if proposedLaws[lawId][versionNumber]['yes'] >= majority:
+    for versionNumber in proposedLaws[lawId]['versions'].keys():
+        if proposedLaws[lawId]['versions'][versionNumber]['yes'] >= majority:
             if acceptedLaws.get(lawId) != None:
                 acceptedLaws.pop(lawId)
-            proposedLaws[lawId][versionNumber]['acceptedTime'] = int(time.time())
-            acceptedLaws[lawId] = {versionNumber:proposedLaws[lawId][versionNumber]}
+            proposedLaws[lawId]['versions'][versionNumber]['acceptedTime'] = int(time.time())
+            acceptedLaws[lawId] = {'title':proposedLaws[lawId]['title'],'category':proposedLaws[lawId]['category'],'versions':{versionNumber:proposedLaws[lawId]['versions'][versionNumber]}}
             if rejectedLaws.get(lawId) == None:
                 rejectedLaws[lawId] = proposedLaws[lawId]
-                rejectedLaws[lawId].pop(versionNumber)
+                rejectedLaws[lawId]['versions'].pop(versionNumber)
             else:
                 rejectedLaws[lawId].update(proposedLaws[lawId])
-                rejectedLaws[lawId].pop(versionNumber)
+                rejectedLaws[lawId]['versions'].pop(versionNumber)
             removeLaw = True
             break
-        elif proposedLaws[lawId][versionNumber]['no'] >= majority:
-            proposedLaws[lawId][versionNumber]['rejectedTime'] = int(time.time())
+        elif proposedLaws[lawId]['versions'][versionNumber]['no'] >= half:
+            proposedLaws[lawId]['versions'][versionNumber]['rejectedTime'] = int(time.time())
             if rejectedLaws.get(lawId) == None:
-                rejectedLaws[lawId] = {versionNumber:proposedLaws[lawId][versionNumber]}
+                rejectedLaws[lawId] = {'title':proposedLaws[lawId]['title'],'category':proposedLaws[lawId]['category'],'versions':{versionNumber:proposedLaws[lawId]['versions'][versionNumber]}}
             else:
-                rejectedLaws[lawId].update({versionNumber:proposedLaws[lawId][versionNumber]})
+                rejectedLaws[lawId]['versions'].update({versionNumber:proposedLaws[lawId]['versions'][versionNumber]})
             versionsToRemove.append(versionNumber)
             if acceptedLaws.get(lawId) != None:
-                if acceptedLaws[lawId].get(versionNumber) != None:
+                if acceptedLaws[lawId]['versions'].get(versionNumber) != None:
                     acceptedLaws.pop(lawId)
     if proposedLaws.get(lawId) != None:
         for versionNumber in versionsToRemove:
-            proposedLaws[lawId].pop(versionNumber)
+            proposedLaws[lawId]['versions'].pop(versionNumber)
         if (not proposedLaws[lawId]) or removeLaw:
             proposedLaws.pop(lawId)
         if (rejectedLaws.get(lawId) != None and not rejectedLaws[lawId]):
             rejectedLaws.pop(lawId)
         
-    
-    with open('data/users.json', 'w') as usersFile:
-        json.dump(users, usersFile)
-    
-    with open('data/proposedLaws.json', 'w') as proposedLawsFile:
-        json.dump(proposedLaws, proposedLawsFile)
+    if useS3Bucket:
+        jsonDataByFileName = {
+            'users.json': json.dumps(users),
+            'proposedLaws.json': json.dumps(proposedLaws),
+            'acceptedLaws.json': json.dumps(acceptedLaws),
+            'rejectedLaws.json': json.dumps(rejectedLaws)
+            }
+        writeToS3(jsonDataByFileName)
+    else:
+        with open('data/users.json', 'w') as usersFile:
+            json.dump(users, usersFile)
         
-    with open('data/acceptedLaws.json', 'w') as acceptedLawsFile:
-        json.dump(acceptedLaws, acceptedLawsFile)
+        with open('data/proposedLaws.json', 'w') as proposedLawsFile:
+            json.dump(proposedLaws, proposedLawsFile)
+            
+        with open('data/acceptedLaws.json', 'w') as acceptedLawsFile:
+            json.dump(acceptedLaws, acceptedLawsFile)
+            
+        with open('data/rejectedLaws.json', 'w') as rejectedLawsFile:
+            json.dump(rejectedLaws, rejectedLawsFile)
         
-    with open('data/rejectedLaws.json', 'w') as rejectedLawsFile:
-        json.dump(rejectedLaws, rejectedLawsFile)
+    return({})
 
 def generateNewId():
     import uuid
@@ -361,5 +561,44 @@ def generateNewId():
         newId = str(uuid.uuid4())
     
     return newId
+
+def readFromS3(filenames):
+    import boto3
     
+    with open('credentials.pem', 'r') as credentialsFile:
+        creds = credentialsFile.read().split('\n')
+    
+    s3 = boto3.client('s3',
+        aws_access_key_id=creds[0],
+        aws_secret_access_key=creds[1]
+    )
+    
+    dataByFileName = {}
+    
+    for filename in filenames:
+        try:
+            dataByFileName[filename] = json.loads(s3.get_object(Bucket=creds[2], Key=filename)['Body'].read().decode('utf-8'))
+        except:
+            dataByFileName[filename] = {}
+    
+    return dataByFileName
+    
+def writeToS3(jsonDataByFileName):
+    import boto3
+    
+    with open('credentials.pem', 'r') as credentialsFile:
+        creds = credentialsFile.read().split('\n')
+    
+    s3 = boto3.client('s3',
+        aws_access_key_id=creds[0],
+        aws_secret_access_key=creds[1]
+    )
+    
+    
+    for filename in jsonDataByFileName.keys():
+        s3.put_object(
+            Body=jsonDataByFileName[filename],
+            Bucket=creds[2],
+            Key=filename
+        )
 

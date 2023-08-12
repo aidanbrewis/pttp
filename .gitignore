@@ -1,2 +1,5 @@
 *.json
+*.csv
 *.pem
+*.pyc
+*.zip
