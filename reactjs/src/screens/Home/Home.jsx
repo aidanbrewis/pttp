@@ -3,7 +3,7 @@ import ExpandableCard from "../../components/Molecules/ExpandableCard/Expandable
 const Home = () => {
 
     return (
-        <div style={{height: 100, width: 100}}>
+        <div style={{margin: 30}}>
             <ExpandableCard/>
         </div>
     )

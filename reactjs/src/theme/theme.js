@@ -1,10 +1,10 @@
 import { createTheme } from "@material-ui/core";
 
 
-const Theme = createTheme({
+const theme = createTheme({
     palette: {
         primary: {
-            main: '#2a961',
+            main: 'rgba(186, 186, 186, 1)',
         },
         secondary: {
             main: '#494c7d',
@@ -12,8 +12,6 @@ const Theme = createTheme({
     },
     fontFamily: [
         'Roboto',
-        'Raleway',
-        'Open Sans'
     ].join(','),
     h1: {
         fontsize: '5rem',
@@ -21,11 +19,11 @@ const Theme = createTheme({
     },
     h2: {
         fontsize: '3.5rem',
-        fontFamily: 'Open Sans',
+        fontFamily: 'Roboto',
     },
     spacing: {
         ten: 10
     }
 });
 
-export default Theme
+export default theme
