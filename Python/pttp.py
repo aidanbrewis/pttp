@@ -296,6 +296,7 @@ def proposeAbrogationLaw(payload):
     
         
 def getLawsToVote(payload):
+    checkExpedites({})
     username = payload['username']
     
     try:
@@ -349,6 +350,7 @@ def getLawsToVote(payload):
     return lawsToVote
     
 def getAcceptedLaws(payload):
+    checkExpedites({})
     try:
         with open('settings.json', 'r') as settingsFile:
             settings = json.load(settingsFile)
@@ -377,6 +379,7 @@ def getAcceptedLaws(payload):
     return acceptedLaws
 
 def getNonExpediteAcceptedLaws(payload):
+    checkExpedites({})
     try:
         with open('settings.json', 'r') as settingsFile:
             settings = json.load(settingsFile)
