@@ -54,6 +54,8 @@ def proposeLaw(payload):
     expedite = payload['expedite']
     if expedite:
         expediteDate = int(payload['expediteDate'])
+    else:
+        expediteDate = None
     
     hours24inSeconds = 86400
 
