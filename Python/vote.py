@@ -5,7 +5,7 @@ username = input('please type your username : ')
 
 
 
-lawsToVote = json.loads(pttp.getLawsToVote(json.dumps({'username':username})))
+lawsToVote = pttp.getLawsToVote({'username':username})
 if lawsToVote:
     lawId = list(lawsToVote.keys())[0]
     print('the law to vote on has the following versions :')
@@ -22,9 +22,7 @@ if lawsToVote:
         amendedLaw = input('please type the full amended law you wish to propose below :\n')
         for versionNumber in lawsToVote[lawId]['versions'].keys():
             votes[versionNumber] = 'no'
-        arguments = {'username':username, 'lawId':lawId, 'votes':votes, 'amend':True, 'amendedLaw':amendedLaw}
-        
-        payload = json.dumps(arguments)
+        payload = {'username':username, 'lawId':lawId, 'votes':votes, 'amend':True, 'amendedLaw':amendedLaw}
         
         pttp.vote(payload)
         print('your amendmend has been submitted for voting.')
@@ -37,8 +35,7 @@ if lawsToVote:
                 print('invalid vote.')
                 vote = input('please vote by typing yes or no : ')
             votes[versionNumber] = vote
-        arguments = {'username':username, 'lawId':lawId, 'votes':votes}
-        payload = json.dumps(arguments)
+        payload = {'username':username, 'lawId':lawId, 'votes':votes}
         
         pttp.vote(payload)
 

@@ -50,6 +50,7 @@ def proposeLaw(payload):
     username = payload['username']
     proposedLaw = payload['proposedLaw']
     proposedLawTitle = payload['proposedLawTitle']
+    proposedLawCategory = payload['proposedLawCategory']
     
     newLawId = generateNewId()
     
@@ -135,7 +136,7 @@ def proposeLaw(payload):
     
     users[username]['proposedLaws'].append(newLawId+':1')
     
-    proposedLaws[newLawId] = {'title':proposedLawTitle, 'versions':{1:{'content':proposedLaw, 'yes':1, 'no':0}}}
+    proposedLaws[newLawId] = {'title':proposedLawTitle, 'category':proposedLawCategory, 'versions':{1:{'content':proposedLaw, 'yes':1, 'no':0}}}
     if useS3Bucket:
         jsonDataByFileName = {'users.json': json.dumps(users),'proposedLaws.json': json.dumps(proposedLaws)}
         writeToS3(jsonDataByFileName)
@@ -228,7 +229,7 @@ def proposeAbrogationLaw(payload):
     for versionNumber in acceptedLaws[lawId]['versions'].keys():
         if acceptedLaws[lawId]['versions'][versionNumber]['acceptedTime']+MINIMUM_LAW_DURATION>int(time.time()):
             raise Exception('cannot abrogate a law that was accepted less than 28 days ago.')
-        proposedLaws[lawId] = {'title':acceptedLaws[lawId]['title'],'versions':{versionNumber:{'content':acceptedLaws[lawId]['versions'][versionNumber]['content'], 'yes':0, 'no':1}}}
+        proposedLaws[lawId] = {'title':acceptedLaws[lawId]['title'],'category':acceptedLaws[lawId]['category'],'versions':{versionNumber:{'content':acceptedLaws[lawId]['versions'][versionNumber]['content'], 'yes':0, 'no':1}}}
         
         for userkey in users.keys():
             if users[userkey]['votedLaws'].get(lawId+':'+versionNumber) != None:
@@ -330,7 +331,7 @@ def getLawsToVote(payload):
         for versionNumber in proposedLaws[lawId]['versions'].keys():
             if (lawId+':'+versionNumber not in users[username]['proposedLaws']) and (lawId+':'+versionNumber not in users[username]['votedLaws']):
                 if lawsToVote.get(lawId) == None:
-                    lawsToVote[lawId] = {'title':proposedLaws[lawId]['title'],'versions':{}}
+                    lawsToVote[lawId] = {'title':proposedLaws[lawId]['title'],'category':proposedLaws[lawId]['category'],'versions':{}}
                 lawsToVote[lawId]['versions'][versionNumber] = proposedLaws[lawId]['versions'][versionNumber]
     
     return lawsToVote
@@ -483,7 +484,7 @@ def vote(payload):
             if acceptedLaws.get(lawId) != None:
                 acceptedLaws.pop(lawId)
             proposedLaws[lawId]['versions'][versionNumber]['acceptedTime'] = int(time.time())
-            acceptedLaws[lawId] = {'title':proposedLaws[lawId]['title'],'versions':{versionNumber:proposedLaws[lawId]['versions'][versionNumber]}}
+            acceptedLaws[lawId] = {'title':proposedLaws[lawId]['title'],'category':proposedLaws[lawId]['category'],'versions':{versionNumber:proposedLaws[lawId]['versions'][versionNumber]}}
             if rejectedLaws.get(lawId) == None:
                 rejectedLaws[lawId] = proposedLaws[lawId]
                 rejectedLaws[lawId]['versions'].pop(versionNumber)
@@ -495,7 +496,7 @@ def vote(payload):
         elif proposedLaws[lawId]['versions'][versionNumber]['no'] >= half:
             proposedLaws[lawId]['versions'][versionNumber]['rejectedTime'] = int(time.time())
             if rejectedLaws.get(lawId) == None:
-                rejectedLaws[lawId] = {'title':proposedLaws[lawId]['title'],'versions':{versionNumber:proposedLaws[lawId]['versions'][versionNumber]}}
+                rejectedLaws[lawId] = {'title':proposedLaws[lawId]['title'],'category':proposedLaws[lawId]['category'],'versions':{versionNumber:proposedLaws[lawId]['versions'][versionNumber]}}
             else:
                 rejectedLaws[lawId]['versions'].update({versionNumber:proposedLaws[lawId]['versions'][versionNumber]})
             versionsToRemove.append(versionNumber)
