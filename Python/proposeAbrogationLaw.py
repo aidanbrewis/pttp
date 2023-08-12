@@ -3,7 +3,7 @@ import json
 
 username = input('please type your username : ')
 
-acceptedLaws = json.loads(pttp.getAcceptedLaws(json.dumps({})))
+acceptedLaws = pttp.getAcceptedLaws({})
 lawIds = list(acceptedLaws.keys())
 print('the list of accepted laws is the following :')
 for i in range(len(lawIds)):
@@ -20,11 +20,9 @@ replace = replaceString == 'replace'
 
 if replace:
     replacementLaw = input('Please type in the full replacement law below :\n')
-    arguments = {'username':username, 'lawId':lawToAbrogateId, 'replace':replace, 'replacementLaw':replacementLaw}
+    payload = {'username':username, 'lawId':lawToAbrogateId, 'replace':replace, 'replacementLaw':replacementLaw}
 else:
-    arguments = {'username':username, 'lawId':lawToAbrogateId}
-
-payload = json.dumps(arguments)
+    payload = {'username':username, 'lawId':lawToAbrogateId}
     
 pttp.proposeAbrogationLaw(payload)
 
