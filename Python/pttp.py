@@ -3,6 +3,7 @@ import time
 import os
 
 MINIMUM_LAW_DURATION = 2419200 #28 days in seconds
+ACTIVE_USER_TIMEOUT = 604800   #7  days in seconds
 
 def createUser(payload):
     username = payload['username']
@@ -35,7 +36,8 @@ def createUser(payload):
         raise Exception('username '+username+' is already taken')
     users[username] = {
             'proposedLaws' : [],
-            'votedLaws' : {}
+            'votedLaws' : {},
+            'latestActivity' : int(time.time())
         }
     if useS3Bucket:
         jsonDataByFileName = {'users.json': json.dumps(users)}
@@ -340,6 +342,8 @@ def getLawsToVote(payload):
         except:
             pass
     
+    users[username]['latestActivity'] = int(time.time())
+    
     lawsToVote = {}
     
     for lawId in proposedLaws.keys():
@@ -348,6 +352,13 @@ def getLawsToVote(payload):
                 if lawsToVote.get(lawId) == None:
                     lawsToVote[lawId] = {'title':proposedLaws[lawId]['title'],'category':proposedLaws[lawId]['category'],'expedite':proposedLaws[lawId]['expedite'],'expediteDate':proposedLaws[lawId]['expediteDate'],'versions':{}}
                 lawsToVote[lawId]['versions'][versionNumber] = proposedLaws[lawId]['versions'][versionNumber]
+    
+    if useS3Bucket:
+        jsonDataByFileName = {'users.json': json.dumps(users)}
+        writeToS3(jsonDataByFileName)
+    else:
+        with open('data/users.json', 'w') as usersFile:
+            json.dump(users, usersFile)
     
     return lawsToVote
     
@@ -621,6 +632,7 @@ def vote(payload):
     
     if proposedLaws.get(lawId) == None:
         raise Exception('no law with id : '+lawId)
+    
     if proposedLaws[lawId]['expedite'] and (int(time.time()) > proposedLaws[lawId]['expediteDate']):
         karmaByVersion = {}
         yesByVersion = {}
@@ -701,9 +713,9 @@ def vote(payload):
             elif votes[versionNumber] == 'no':
                 proposedLaws[lawId]['versions'][versionNumber]['no'] += 1
                 users[username]['votedLaws'][lawId+':'+str(versionNumber)] = False
-        
-        majority = int(len(users.keys())/2 + 1)
-        half = len(users.keys())/2
+        numberOfActiveUsers = countActiveUsers(users)
+        majority = int(numberOfActiveUsers/2 + 1)
+        half = numberOfActiveUsers/2
         versionsToRemove = []
         removeLaw = False
         for versionNumber in proposedLaws[lawId]['versions'].keys():
@@ -733,9 +745,9 @@ def vote(payload):
     if proposedLaws.get(lawId) != None:
         for versionNumber in versionsToRemove:
             proposedLaws[lawId]['versions'].pop(versionNumber)
-        if (not proposedLaws[lawId]) or removeLaw:
+        if (not proposedLaws[lawId]['versions']) or removeLaw:
             proposedLaws.pop(lawId)
-        if (rejectedLaws.get(lawId) != None and not rejectedLaws[lawId]):
+        if (rejectedLaws.get(lawId) != None and not rejectedLaws[lawId]['versions']):
             rejectedLaws.pop(lawId)
         
     if useS3Bucket:
@@ -760,6 +772,14 @@ def vote(payload):
             json.dump(rejectedLaws, rejectedLawsFile)
         
     return({})
+
+def countActiveUsers(users):
+    minimumLatestActivity = int(time.time()) - ACTIVE_USER_TIMEOUT
+    numberOfActiveUsers = 0
+    for username in users.keys():
+        if (users[username]['latestActivity'] >= minimumLatestActivity):
+            numberOfActiveUsers += 1
+    return numberOfActiveUsers
 
 def generateNewId():
     import uuid
