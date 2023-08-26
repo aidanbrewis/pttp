@@ -1,6 +1,6 @@
 *.json
-!reactjs/package.json
-!reactjs/package-lock.json
+!/reactjs/package.json
+!/reactjs/package-lock.json
 *.csv
 *.pem
 *.pyc
