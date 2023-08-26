@@ -2,8 +2,9 @@ import json
 import time
 import os
 
-MINIMUM_LAW_DURATION = 2419200 #28 days in seconds
-ACTIVE_USER_TIMEOUT = 604800   #7  days in seconds
+MINIMUM_LAW_DURATION = 2419200    #28 days  in seconds
+ACTIVE_USER_TIMEOUT = 604800      #7  days  in seconds
+MINIMUM_EXPEDITE_DURATION = 86400 #24 hours in seconds
 
 def createUser(payload):
     username = payload['username']
@@ -58,11 +59,9 @@ def proposeLaw(payload):
         expediteDate = int(payload['expediteDate'])
     else:
         expediteDate = None
-    
-    hours24inSeconds = 86400
 
     if expedite:
-        if expediteDate < int(time.time()) + hours24inSeconds:
+        if expediteDate < int(time.time()) + MINIMUM_EXPEDITE_DURATION:
             raise Exception('The expedite date must be at least 24 hours later than now.')
     
     newLawId = generateNewId()
