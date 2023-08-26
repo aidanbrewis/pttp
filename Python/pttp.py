@@ -2,6 +2,9 @@ import json
 import time
 import os
 
+DAY_IN_SECONDS  = 86400 #1 day  in seconds
+HOUR_IN_SECONDS = 3600  #1 hour in seconds
+USE_S3_BUCKET = False
 MINIMUM_LAW_DURATION = 2419200    #28 days  in seconds
 ACTIVE_USER_TIMEOUT = 604800      #7  days  in seconds
 MINIMUM_EXPEDITE_DURATION = 86400 #24 hours in seconds
@@ -12,15 +15,21 @@ def createUser(payload):
     try:
         with open('settings.json', 'r') as settingsFile:
             settings = json.load(settingsFile)
-            useS3Bucket = settings['useS3Bucket']
+            USE_S3_BUCKET = settings['USE_S3_BUCKET']
+            MINIMUM_LAW_DURATION = int(settings['MINIMUM_LAW_DURATION_DAYS']*DAY_IN_SECONDS)
+            ACTIVE_USER_TIMEOUT = int(settings['ACTIVE_USER_TIMEOUT_DAYS']*DAY_IN_SECONDS)
+            MINIMUM_EXPEDITE_DURATION = int(settings['MINIMUM_EXPEDITE_DURATION_HOURS']*HOUR_IN_SECONDS)
     except:
-        useS3Bucket = False
+        USE_S3_BUCKET = False
+        MINIMUM_LAW_DURATION = 2419200    #28 days  in seconds
+        ACTIVE_USER_TIMEOUT = 604800      #7  days  in seconds
+        MINIMUM_EXPEDITE_DURATION = 86400 #24 hours in seconds
 
-    if not useS3Bucket:
+    if not USE_S3_BUCKET:
         if not os.path.exists('data'):
             os.makedirs('data')
     
-    if useS3Bucket:
+    if USE_S3_BUCKET:
         inputFileNames = ['users.json']
         try:
             users = readFromS3(inputFileNames)['users.json']
@@ -40,7 +49,7 @@ def createUser(payload):
             'votedLaws' : {},
             'latestActivity' : int(time.time())
         }
-    if useS3Bucket:
+    if USE_S3_BUCKET:
         jsonDataByFileName = {'users.json': json.dumps(users)}
         writeToS3(jsonDataByFileName)
     else:
@@ -60,26 +69,32 @@ def proposeLaw(payload):
     else:
         expediteDate = None
 
-    if expedite:
-        if expediteDate < int(time.time()) + MINIMUM_EXPEDITE_DURATION:
-            raise Exception('The expedite date must be at least 24 hours later than now.')
-    
-    newLawId = generateNewId()
-    
     try:
         with open('settings.json', 'r') as settingsFile:
             settings = json.load(settingsFile)
-            useS3Bucket = settings['useS3Bucket']
+            USE_S3_BUCKET = settings['USE_S3_BUCKET']
+            MINIMUM_LAW_DURATION = int(settings['MINIMUM_LAW_DURATION_DAYS']*DAY_IN_SECONDS)
+            ACTIVE_USER_TIMEOUT = int(settings['ACTIVE_USER_TIMEOUT_DAYS']*DAY_IN_SECONDS)
+            MINIMUM_EXPEDITE_DURATION = int(settings['MINIMUM_EXPEDITE_DURATION_HOURS']*HOUR_IN_SECONDS)
     except:
-        useS3Bucket = False
+        USE_S3_BUCKET = False
+        MINIMUM_LAW_DURATION = 2419200    #28 days  in seconds
+        ACTIVE_USER_TIMEOUT = 604800      #7  days  in seconds
+        MINIMUM_EXPEDITE_DURATION = 86400 #24 hours in seconds
+    
+    if expedite:
+        if expediteDate < int(time.time()) + MINIMUM_EXPEDITE_DURATION:
+            raise Exception('The expedite date must be at least '+str(int(MINIMUM_EXPEDITE_DURATION/HOUR_IN_SECONDS))+' hours later than now.')
+    
+    newLawId = generateNewId()
 
-    if not useS3Bucket:
+    if not USE_S3_BUCKET:
         if not os.path.exists('data'):
             os.makedirs('data')
     
     users = {}
     
-    if useS3Bucket:
+    if USE_S3_BUCKET:
         inputFileNames = ['users.json', 'proposedLaws.json', 'acceptedLaws.json', 'rejectedLaws.json']
         dataByFileName = readFromS3(inputFileNames)
         try:
@@ -144,7 +159,7 @@ def proposeLaw(payload):
         for versionId in rejectedLaws[existingLawId]['versions'].keys():
             if rejectedLaws[existingLawId]['versions'][versionId]['content'] == proposedLaw:
                 if rejectedLaws[existingLawId]['versions'][versionId]['rejectedTime']+MINIMUM_LAW_DURATION>int(time.time()):
-                    raise Exception('the proposed law was rejected less than 28 days ago')
+                    raise Exception('the proposed law was rejected less than '+str(int(MINIMUM_LAW_DURATION/DAY_IN_SECONDS))+' days ago')
     
     users[username]['proposedLaws'].append(newLawId+':1')
     
@@ -152,7 +167,7 @@ def proposeLaw(payload):
     
     proposedLaws = orderLaws(proposedLaws)
     
-    if useS3Bucket:
+    if USE_S3_BUCKET:
         jsonDataByFileName = {'users.json': json.dumps(users),'proposedLaws.json': json.dumps(proposedLaws)}
         writeToS3(jsonDataByFileName)
     else:
@@ -177,14 +192,20 @@ def proposeAbrogationLaw(payload):
     try:
         with open('settings.json', 'r') as settingsFile:
             settings = json.load(settingsFile)
-            useS3Bucket = settings['useS3Bucket']
+            USE_S3_BUCKET = settings['USE_S3_BUCKET']
+            MINIMUM_LAW_DURATION = int(settings['MINIMUM_LAW_DURATION_DAYS']*DAY_IN_SECONDS)
+            ACTIVE_USER_TIMEOUT = int(settings['ACTIVE_USER_TIMEOUT_DAYS']*DAY_IN_SECONDS)
+            MINIMUM_EXPEDITE_DURATION = int(settings['MINIMUM_EXPEDITE_DURATION_HOURS']*HOUR_IN_SECONDS)
     except:
-        useS3Bucket = False
+        USE_S3_BUCKET = False
+        MINIMUM_LAW_DURATION = 2419200    #28 days  in seconds
+        ACTIVE_USER_TIMEOUT = 604800      #7  days  in seconds
+        MINIMUM_EXPEDITE_DURATION = 86400 #24 hours in seconds
 
-    if not useS3Bucket:
+    if not USE_S3_BUCKET:
         if not os.path.exists('data'):
             os.makedirs('data')
-    if useS3Bucket:
+    if USE_S3_BUCKET:
         inputFileNames = ['users.json', 'proposedLaws.json', 'acceptedLaws.json', 'rejectedLaws.json']
         dataByFileName = readFromS3(inputFileNames)
         try:
@@ -246,7 +267,7 @@ def proposeAbrogationLaw(payload):
     
     for versionNumber in acceptedLaws[lawId]['versions'].keys():
         if acceptedLaws[lawId]['versions'][versionNumber]['acceptedTime']+MINIMUM_LAW_DURATION>int(time.time()):
-            raise Exception('cannot abrogate a law that was accepted less than 28 days ago.')
+            raise Exception('cannot abrogate a law that was accepted less than '+str(int(MINIMUM_LAW_DURATION/DAY_IN_SECONDS))+' days ago.')
         proposedLaws[lawId] = {'title':acceptedLaws[lawId]['title'],'category':acceptedLaws[lawId]['category'],'expedite':acceptedLaws[lawId]['expedite'],'expediteDate':acceptedLaws[lawId]['expediteDate'],'versions':{versionNumber:{'content':acceptedLaws[lawId]['versions'][versionNumber]['content'], 'yes':0, 'no':1}}}
         
         for userkey in users.keys():
@@ -272,7 +293,7 @@ def proposeAbrogationLaw(payload):
             for versionId in rejectedLaws[existingLawId]['versions'].keys():
                 if rejectedLaws[existingLawId]['versions'][versionId]['content'] == replacementLaw:
                     if rejectedLaws[existingLawId]['versions'][versionId]['rejectedTime']+MINIMUM_LAW_DURATION>int(time.time()):
-                        raise Exception('the proposed law was rejected less than 28 days ago')
+                        raise Exception('the proposed law was rejected less than '+str(int(MINIMUM_LAW_DURATION/DAY_IN_SECONDS))+' days ago')
                     
         versionNumbers = list(proposedLaws[lawId]['versions'].keys())
         if rejectedLaws.get(lawId) != None:
@@ -287,7 +308,7 @@ def proposeAbrogationLaw(payload):
             }
         users[username]['proposedLaws'].append(lawId+':'+str(versionNumber))
     
-    if useS3Bucket:
+    if USE_S3_BUCKET:
         jsonDataByFileName = {'users.json': json.dumps(users),'proposedLaws.json': json.dumps(proposedLaws)}
         writeToS3(jsonDataByFileName)
     else:
@@ -311,7 +332,6 @@ def orderLaws(lawsToOrder):
             nonExpediteLaws[lawId] = lawsToOrder[lawId]
     
     for key in sorted(expediteLaws, key = lambda lawId: expediteLaws[lawId]['expediteDate']):
-        print(expediteLaws[key]['expediteDate'])
         sortedLaws[key] = expediteLaws[key]
     
     for lawId in nonExpediteLaws.keys():
@@ -326,14 +346,20 @@ def getLawsToVote(payload):
     try:
         with open('settings.json', 'r') as settingsFile:
             settings = json.load(settingsFile)
-            useS3Bucket = settings['useS3Bucket']
+            USE_S3_BUCKET = settings['USE_S3_BUCKET']
+            MINIMUM_LAW_DURATION = int(settings['MINIMUM_LAW_DURATION_DAYS']*DAY_IN_SECONDS)
+            ACTIVE_USER_TIMEOUT = int(settings['ACTIVE_USER_TIMEOUT_DAYS']*DAY_IN_SECONDS)
+            MINIMUM_EXPEDITE_DURATION = int(settings['MINIMUM_EXPEDITE_DURATION_HOURS']*HOUR_IN_SECONDS)
     except:
-        useS3Bucket = False
+        USE_S3_BUCKET = False
+        MINIMUM_LAW_DURATION = 2419200    #28 days  in seconds
+        ACTIVE_USER_TIMEOUT = 604800      #7  days  in seconds
+        MINIMUM_EXPEDITE_DURATION = 86400 #24 hours in seconds
 
-    if not useS3Bucket:
+    if not USE_S3_BUCKET:
         if not os.path.exists('data'):
             os.makedirs('data')
-    if useS3Bucket:
+    if USE_S3_BUCKET:
         inputFileNames = ['users.json', 'proposedLaws.json']
         dataByFileName = readFromS3(inputFileNames)
         try:
@@ -373,7 +399,7 @@ def getLawsToVote(payload):
                     lawsToVote[lawId] = {'title':proposedLaws[lawId]['title'],'category':proposedLaws[lawId]['category'],'expedite':proposedLaws[lawId]['expedite'],'expediteDate':proposedLaws[lawId]['expediteDate'],'versions':{}}
                 lawsToVote[lawId]['versions'][versionNumber] = proposedLaws[lawId]['versions'][versionNumber]
     
-    if useS3Bucket:
+    if USE_S3_BUCKET:
         jsonDataByFileName = {'users.json': json.dumps(users)}
         writeToS3(jsonDataByFileName)
     else:
@@ -381,20 +407,132 @@ def getLawsToVote(payload):
             json.dump(users, usersFile)
     
     return lawsToVote
+
+def getVotedLaws(payload):
+    checkExpedites({})
+    username = payload['username']
+    
+    try:
+        with open('settings.json', 'r') as settingsFile:
+            settings = json.load(settingsFile)
+            USE_S3_BUCKET = settings['USE_S3_BUCKET']
+            MINIMUM_LAW_DURATION = int(settings['MINIMUM_LAW_DURATION_DAYS']*DAY_IN_SECONDS)
+            ACTIVE_USER_TIMEOUT = int(settings['ACTIVE_USER_TIMEOUT_DAYS']*DAY_IN_SECONDS)
+            MINIMUM_EXPEDITE_DURATION = int(settings['MINIMUM_EXPEDITE_DURATION_HOURS']*HOUR_IN_SECONDS)
+    except:
+        USE_S3_BUCKET = False
+        MINIMUM_LAW_DURATION = 2419200    #28 days  in seconds
+        ACTIVE_USER_TIMEOUT = 604800      #7  days  in seconds
+        MINIMUM_EXPEDITE_DURATION = 86400 #24 hours in seconds
+
+    if not USE_S3_BUCKET:
+        if not os.path.exists('data'):
+            os.makedirs('data')
+    if USE_S3_BUCKET:
+        inputFileNames = ['users.json', 'proposedLaws.json', 'acceptedLaws.json', 'rejectedLaws.json']
+        dataByFileName = readFromS3(inputFileNames)
+        try:
+            users = dataByFileName['users.json']
+        except:
+            users = {}
+        try:
+            proposedLaws = dataByFileName['proposedLaws.json']
+        except:
+            proposedLaws = {}
+        try:
+            acceptedLaws = dataByFileName['acceptedLaws.json']
+        except:
+            acceptedLaws = {}
+        try:
+            rejectedLaws = dataByFileName['rejectedLaws.json']
+        except:
+            rejectedLaws = {}
+    else:
+        users = {}
+        try:
+            with open('data/users.json') as usersFile:
+                users = json.load(usersFile)
+        except:
+            raise Exception('no users found, use createUser.py')
+        
+        if users.get(username) == None:
+            raise Exception('no user with username : '+username+'\nplease use createUser.py')
+        
+        proposedLaws = {}
+        try:
+            with open('data/proposedLaws.json') as proposedLawsFile:
+                proposedLaws = json.load(proposedLawsFile)
+        except:
+            pass
+        
+        acceptedLaws = {}
+        try:
+            with open('data/acceptedLaws.json') as acceptedLawsFile:
+                acceptedLaws = json.load(acceptedLawsFile)
+        except:
+            pass
+        
+        rejectedLaws = {}
+        try:
+            with open('data/rejectedLaws.json') as rejectedLawsFile:
+                rejectedLaws = json.load(rejectedLawsFile)
+        except:
+            pass
+    
+    users[username]['latestActivity'] = int(time.time())
+    
+    votedLaws = {}
+    
+    for lawId in proposedLaws.keys():
+        for versionNumber in proposedLaws[lawId]['versions'].keys():
+            if (lawId+':'+versionNumber in users[username]['proposedLaws']) or (lawId+':'+versionNumber in users[username]['votedLaws']):
+                if votedLaws.get(lawId) == None:
+                    votedLaws[lawId] = {'title':proposedLaws[lawId]['title'],'category':proposedLaws[lawId]['category'],'expedite':proposedLaws[lawId]['expedite'],'expediteDate':proposedLaws[lawId]['expediteDate'],'versions':{}}
+                votedLaws[lawId]['versions'][versionNumber] = proposedLaws[lawId]['versions'][versionNumber]
+    
+    for lawId in acceptedLaws.keys():
+        for versionNumber in acceptedLaws[lawId]['versions'].keys():
+            if (lawId+':'+versionNumber in users[username]['proposedLaws']) or (lawId+':'+versionNumber in users[username]['votedLaws']):
+                if votedLaws.get(lawId) == None:
+                    votedLaws[lawId] = {'title':acceptedLaws[lawId]['title'],'category':acceptedLaws[lawId]['category'],'expedite':acceptedLaws[lawId]['expedite'],'expediteDate':acceptedLaws[lawId]['expediteDate'],'versions':{}}
+                votedLaws[lawId]['versions'][versionNumber] = acceptedLaws[lawId]['versions'][versionNumber]
+                
+    for lawId in rejectedLaws.keys():
+        for versionNumber in rejectedLaws[lawId]['versions'].keys():
+            if (lawId+':'+versionNumber in users[username]['proposedLaws']) or (lawId+':'+versionNumber in users[username]['votedLaws']):
+                if votedLaws.get(lawId) == None:
+                    votedLaws[lawId] = {'title':rejectedLaws[lawId]['title'],'category':rejectedLaws[lawId]['category'],'expedite':rejectedLaws[lawId]['expedite'],'expediteDate':rejectedLaws[lawId]['expediteDate'],'versions':{}}
+                votedLaws[lawId]['versions'][versionNumber] = rejectedLaws[lawId]['versions'][versionNumber]
+    
+    if USE_S3_BUCKET:
+        jsonDataByFileName = {'users.json': json.dumps(users)}
+        writeToS3(jsonDataByFileName)
+    else:
+        with open('data/users.json', 'w') as usersFile:
+            json.dump(users, usersFile)
+    
+    return votedLaws
+    
     
 def getAcceptedLaws(payload):
     checkExpedites({})
     try:
         with open('settings.json', 'r') as settingsFile:
             settings = json.load(settingsFile)
-            useS3Bucket = settings['useS3Bucket']
+            USE_S3_BUCKET = settings['USE_S3_BUCKET']
+            MINIMUM_LAW_DURATION = int(settings['MINIMUM_LAW_DURATION_DAYS']*DAY_IN_SECONDS)
+            ACTIVE_USER_TIMEOUT = int(settings['ACTIVE_USER_TIMEOUT_DAYS']*DAY_IN_SECONDS)
+            MINIMUM_EXPEDITE_DURATION = int(settings['MINIMUM_EXPEDITE_DURATION_HOURS']*HOUR_IN_SECONDS)
     except:
-        useS3Bucket = False
+        USE_S3_BUCKET = False
+        MINIMUM_LAW_DURATION = 2419200    #28 days  in seconds
+        ACTIVE_USER_TIMEOUT = 604800      #7  days  in seconds
+        MINIMUM_EXPEDITE_DURATION = 86400 #24 hours in seconds
 
-    if not useS3Bucket:
+    if not USE_S3_BUCKET:
         if not os.path.exists('data'):
             os.makedirs('data')
-    if useS3Bucket:
+    if USE_S3_BUCKET:
         inputFileNames = ['acceptedLaws.json']
         dataByFileName = readFromS3(inputFileNames)
         try:
@@ -416,14 +554,20 @@ def getNonExpediteAcceptedLaws(payload):
     try:
         with open('settings.json', 'r') as settingsFile:
             settings = json.load(settingsFile)
-            useS3Bucket = settings['useS3Bucket']
+            USE_S3_BUCKET = settings['USE_S3_BUCKET']
+            MINIMUM_LAW_DURATION = int(settings['MINIMUM_LAW_DURATION_DAYS']*DAY_IN_SECONDS)
+            ACTIVE_USER_TIMEOUT = int(settings['ACTIVE_USER_TIMEOUT_DAYS']*DAY_IN_SECONDS)
+            MINIMUM_EXPEDITE_DURATION = int(settings['MINIMUM_EXPEDITE_DURATION_HOURS']*HOUR_IN_SECONDS)
     except:
-        useS3Bucket = False
+        USE_S3_BUCKET = False
+        MINIMUM_LAW_DURATION = 2419200    #28 days  in seconds
+        ACTIVE_USER_TIMEOUT = 604800      #7  days  in seconds
+        MINIMUM_EXPEDITE_DURATION = 86400 #24 hours in seconds
 
-    if not useS3Bucket:
+    if not USE_S3_BUCKET:
         if not os.path.exists('data'):
             os.makedirs('data')
-    if useS3Bucket:
+    if USE_S3_BUCKET:
         inputFileNames = ['acceptedLaws.json']
         dataByFileName = readFromS3(inputFileNames)
         try:
@@ -450,14 +594,20 @@ def checkExpedites(payload):
     try:
         with open('settings.json', 'r') as settingsFile:
             settings = json.load(settingsFile)
-            useS3Bucket = settings['useS3Bucket']
+            USE_S3_BUCKET = settings['USE_S3_BUCKET']
+            MINIMUM_LAW_DURATION = int(settings['MINIMUM_LAW_DURATION_DAYS']*DAY_IN_SECONDS)
+            ACTIVE_USER_TIMEOUT = int(settings['ACTIVE_USER_TIMEOUT_DAYS']*DAY_IN_SECONDS)
+            MINIMUM_EXPEDITE_DURATION = int(settings['MINIMUM_EXPEDITE_DURATION_HOURS']*HOUR_IN_SECONDS)
     except:
-        useS3Bucket = False
+        USE_S3_BUCKET = False
+        MINIMUM_LAW_DURATION = 2419200    #28 days  in seconds
+        ACTIVE_USER_TIMEOUT = 604800      #7  days  in seconds
+        MINIMUM_EXPEDITE_DURATION = 86400 #24 hours in seconds
 
-    if not useS3Bucket:
+    if not USE_S3_BUCKET:
         if not os.path.exists('data'):
             os.makedirs('data')
-    if useS3Bucket:
+    if USE_S3_BUCKET:
         inputFileNames = ['users.json', 'proposedLaws.json', 'acceptedLaws.json', 'rejectedLaws.json']
         dataByFileName = readFromS3(inputFileNames)
         try:
@@ -556,7 +706,7 @@ def checkExpedites(payload):
                 if (rejectedLaws.get(lawId) != None and not rejectedLaws[lawId]):
                     rejectedLaws.pop(lawId)
         
-    if useS3Bucket:
+    if USE_S3_BUCKET:
         jsonDataByFileName = {
             'users.json': json.dumps(users),
             'proposedLaws.json': json.dumps(proposedLaws),
@@ -592,14 +742,20 @@ def vote(payload):
     try:
         with open('settings.json', 'r') as settingsFile:
             settings = json.load(settingsFile)
-            useS3Bucket = settings['useS3Bucket']
+            USE_S3_BUCKET = settings['USE_S3_BUCKET']
+            MINIMUM_LAW_DURATION = int(settings['MINIMUM_LAW_DURATION_DAYS']*DAY_IN_SECONDS)
+            ACTIVE_USER_TIMEOUT = int(settings['ACTIVE_USER_TIMEOUT_DAYS']*DAY_IN_SECONDS)
+            MINIMUM_EXPEDITE_DURATION = int(settings['MINIMUM_EXPEDITE_DURATION_HOURS']*HOUR_IN_SECONDS)
     except:
-        useS3Bucket = False
+        USE_S3_BUCKET = False
+        MINIMUM_LAW_DURATION = 2419200    #28 days  in seconds
+        ACTIVE_USER_TIMEOUT = 604800      #7  days  in seconds
+        MINIMUM_EXPEDITE_DURATION = 86400 #24 hours in seconds
 
-    if not useS3Bucket:
+    if not USE_S3_BUCKET:
         if not os.path.exists('data'):
             os.makedirs('data')
-    if useS3Bucket:
+    if USE_S3_BUCKET:
         inputFileNames = ['users.json', 'proposedLaws.json', 'acceptedLaws.json', 'rejectedLaws.json']
         dataByFileName = readFromS3(inputFileNames)
         try:
@@ -711,7 +867,7 @@ def vote(payload):
                 for versionId in rejectedLaws[existingLawId]['versions'].keys():
                     if rejectedLaws[existingLawId]['versions'][versionId]['content'] == amendedLaw:
                         if rejectedLaws[existingLawId]['versions'][versionId]['rejectedTime']+MINIMUM_LAW_DURATION>int(time.time()):
-                            raise Exception('the proposed law was rejected less than 28 days ago')
+                            raise Exception('the proposed law was rejected less than '+str(int(MINIMUM_LAW_DURATION/DAY_IN_SECONDS))+' days ago')
             versionNumbers = list(proposedLaws[lawId]['versions'].keys())
             if rejectedLaws.get(lawId) != None:
                 versionNumbers += list(rejectedLaws[lawId]['versions'].keys())
@@ -770,7 +926,7 @@ def vote(payload):
         if (rejectedLaws.get(lawId) != None and not rejectedLaws[lawId]['versions']):
             rejectedLaws.pop(lawId)
         
-    if useS3Bucket:
+    if USE_S3_BUCKET:
         jsonDataByFileName = {
             'users.json': json.dumps(users),
             'proposedLaws.json': json.dumps(proposedLaws),
@@ -868,4 +1024,3 @@ def writeToS3(jsonDataByFileName):
             Bucket=creds[2],
             Key=filename
         )
-
