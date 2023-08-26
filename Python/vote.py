@@ -1,5 +1,4 @@
 import pttp
-import json
 
 username = input('please type your username : ')
 

@@ -18,7 +18,10 @@ def lambda_handler(event, context):
         'proposeLaw': pttp.proposeLaw,
         'proposeAbrogationLaw': pttp.proposeAbrogationLaw,
         'getLawsToVote': pttp.getLawsToVote,
+        'getVotedLaws' : pttp.getVotedLaws,
         'getAcceptedLaws': pttp.getAcceptedLaws,
+        'getNonExpediteAcceptedLaws' : pttp.getNonExpediteAcceptedLaws,
+        'checkExpedites' : pttp.checkExpedites,
         'vote' : pttp.vote
     }
 
