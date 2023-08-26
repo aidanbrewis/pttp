@@ -4,6 +4,10 @@ import os
 
 DAY_IN_SECONDS  = 86400 #1 day  in seconds
 HOUR_IN_SECONDS = 3600  #1 hour in seconds
+USE_S3_BUCKET = False
+MINIMUM_LAW_DURATION = 2419200    #28 days  in seconds
+ACTIVE_USER_TIMEOUT = 604800      #7  days  in seconds
+MINIMUM_EXPEDITE_DURATION = 86400 #24 hours in seconds
 
 def createUser(payload):
     username = payload['username']
