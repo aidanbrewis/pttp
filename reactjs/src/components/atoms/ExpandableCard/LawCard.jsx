@@ -1,41 +1,20 @@
 import { useState } from "react";
 import { Button, Card } from "@mui/material";
 import Collapse from "@material-ui/core/Collapse";
-import ExpandLessIcon from "@mui/icons-material/ExpandLess";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import unixToDate from "../../../unixToDate";
-import styles from "./ExpandableCard.styles";
+import styles from "./LawCard.styles";
+import OpenInNewIcon from "@mui/icons-material/OpenInNew";
+import LawWithAction from "../LawWithAction/LawWithAction";
+import ExpandButton from "../ExpandButton/ExpandButton";
 
-export const LawWithAction = (version, onOptionClick, voteResult) => {
-  const handleOptionClick = (option) => {
-    onOptionClick(option);
-  };
 
+const OpenInNewButton = ({ onClick, style }) => {
   return (
-    <div style={styles.lawWithAction}>
-      <div style={styles.lawVersion}>{version.version.content}</div>
-      <div style={styles.votingButtonsContainer}>
-        <Button
-          variant={voteResult === "yes" ? "contained" : "text"}
-          color={voteResult === "yes" ? "success" : "inherit"}
-          onClick={() => handleOptionClick("yes")}
-        >
-          Yes
-        </Button>
-        <Button
-          variant={voteResult === "no" ? "contained" : "text"}
-          color={voteResult === "no" ? "error" : "inherit"}
-          onClick={() => handleOptionClick("no")}
-        >
-          No
-        </Button>
-      </div>
+    <div onClick={onClick} style={styles}>
+      <OpenInNewIcon />
     </div>
   );
 };
-
-const ExpandIcon = ({ expanded }) =>
-  expanded ? <ExpandLessIcon /> : <ExpandMoreIcon />;
 
 const ExpandableCard = (law) => {
   const [expanded, setExpanded] = useState(false);
@@ -52,7 +31,6 @@ const ExpandableCard = (law) => {
       [versionId]: option,
     }));
   };
-  console.log(law);
 
   const date = unixToDate(law.law.expediteDate);
 
@@ -60,7 +38,7 @@ const ExpandableCard = (law) => {
 
   return (
     <Card style={isExpedite ? styles.expiditeCard : styles.notExpiditeCard}>
-      <div style={styles.collapsedContentContainer} onClick={toggleExpanded}>
+      <div style={styles.collapsedContentContainer}>
         <div style={styles.title}>{law.law.title}</div>
         {isExpedite && (
           <div style={styles.expiditeDate}>
@@ -68,9 +46,18 @@ const ExpandableCard = (law) => {
             {date}
           </div>
         )}
-
-        <div style={styles.expandIcon} onClick={toggleExpanded}>
-          <ExpandIcon expanded={expanded} />
+        <div style={styles.icons}>
+          <OpenInNewButton
+            onClick={console.log("need a screen to navigate to...")}
+            style={styles.openInNew}
+          />
+          <div>
+            <ExpandButton
+              expanded={expanded}
+              onClick={toggleExpanded}
+              style={styles.expandButton}
+            />
+          </div>
         </div>
       </div>
       <Collapse in={expanded}>
@@ -86,6 +73,7 @@ const ExpandableCard = (law) => {
         </div>
         <div style={styles.commitButtons}>
           <Button color="inherit">Amend</Button>
+
           <Button color="inherit">Confirm Votes</Button>
         </div>
       </Collapse>
