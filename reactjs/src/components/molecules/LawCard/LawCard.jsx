@@ -36,8 +36,6 @@ const LawCard = (law) => {
   const sendVotes = () => {
     submitVotes({ voteResults });
   };
-  
-  console.log(law.law.versions)
 
   const date = unixToDate(law.law.expediteDate);
 
@@ -69,19 +67,20 @@ const LawCard = (law) => {
           ))}
         </div>
         <div style={styles.commitButtons}>
-          <Button color="inherit">Amend</Button>
-
           <Button
             color="inherit"
-            disabled={isDisabled}
-            onClick={sendVotes}
+            onClick={() => console.log("need a screen to navigate to...")}
           >
+            Amend
+          </Button>
+
+          <Button color="inherit" disabled={isDisabled} onClick={sendVotes}>
             Confirm Votes
           </Button>
         </div>
         <div style={{ marginRight: 20, marginBottom: 20 }}>
           <OpenInNewButton
-            onClick={console.log("need a screen to navigate to...")}
+            onClick={() => console.log("need a screen to navigate to...")}
             style={styles.openInNew}
           />
         </div>
