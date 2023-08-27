@@ -1,5 +1,3 @@
-import theme from "../../../theme/theme";
-
 const cardContainer = {
   marginTop: 20,
   marginBottom: 20,
@@ -8,34 +6,24 @@ const cardContainer = {
 };
 
 let styles = {
-  lawWithAction: {
-    display: "flex",
-    alignItems: "center",
-    marginTop: 10,
-  },
-  lawVersion: {
-    flex: 5,
-  },
-  votingButtonsContainer: {
-    display: "flex",
-    justifyContent: "space-between",
-  },
   expiditeCard: {
     backgroundColor: "rgba(164, 3, 56, 1)",
-    color: 'white',
+    color: "white",
+    borderRadius: 10,
   },
   notExpiditeCard: {
     backgroundColor: "rgb(248,203,214)",
+    borderRadius: 10,
   },
   collapsedContentContainer: {
     display: "flex",
     justifyContent: "space-between",
-    alignItems: 'center',
+    alignItems: "center",
     ...cardContainer,
   },
   title: {
     fontSize: "2rem",
-    flex: 0.3,
+    flex: 1.5,
     textAlign: "start",
   },
   expiditeDate: {
@@ -43,20 +31,24 @@ let styles = {
     flex: 1,
     textAlign: "center",
   },
-
-  expandIcon: {
+  icons: { display: "flex" },
+  expandButton: {
     fontSize: "1rem",
     flex: 0.2,
+    textAlign: "end",
+  },
+  openInNew: {
+    fontSize: "1rem",
+    flex: 0.1,
     textAlign: "end",
   },
   expandedContentContainer: {
     ...cardContainer,
   },
   commitButtons: {
-    display: 'flex',
-    justifyContent: 'space-evenly',
-    marginBottom: 20
-  }
+    display: "flex",
+    justifyContent: "space-evenly",
+  },
 };
 
 export default styles;
