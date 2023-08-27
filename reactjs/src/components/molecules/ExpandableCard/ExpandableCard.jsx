@@ -6,14 +6,14 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import unixToDate from "../../../unixToDate";
 import styles from "./ExpandableCard.styles";
 
-export const LawWithAction = (version, onOptionClick, voteResult) => {
+export const LawWithAction = ({ version, onOptionClick, voteResult }) => {
   const handleOptionClick = (option) => {
     onOptionClick(option);
   };
 
   return (
     <div style={styles.lawWithAction}>
-      <div style={styles.lawVersion}>{version.version.content}</div>
+      <div style={styles.lawVersion}>{version.content}</div>
       <div style={styles.votingButtonsContainer}>
         <Button
           variant={voteResult === "yes" ? "contained" : "text"}
@@ -52,7 +52,6 @@ const ExpandableCard = (law) => {
       [versionId]: option,
     }));
   };
-  console.log(law);
 
   const date = unixToDate(law.law.expediteDate);
 
