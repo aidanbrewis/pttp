@@ -1,8 +1,8 @@
 const cardContainer = {
-  marginTop: 20,
-  marginBottom: 20,
-  marginInlineEnd: 20,
-  marginInlineStart: 20,
+  marginTop: 35,
+  marginBottom: 35,
+  marginInlineEnd: 35,
+  marginInlineStart: 35,
 };
 
 let styles = {
@@ -16,18 +16,20 @@ let styles = {
     borderRadius: 10,
   },
   collapsedContentContainer: {
+    ...cardContainer,
     display: "flex",
     justifyContent: "space-between",
     alignItems: "center",
-    ...cardContainer,
   },
   title: {
-    fontSize: "2rem",
-    flex: 1.5,
-    textAlign: "start",
+    fontSize: "1.8rem",
+    flex: 1.6,
+    textAlign: "justify",
   },
   expiditeDate: {
-    fontSize: "1rem",
+    fontStyle: "italic",
+    fontSize: "1.4rem",
+    fontWeight: 350,
     flex: 1,
     textAlign: "center",
   },
@@ -37,17 +39,19 @@ let styles = {
     flex: 0.2,
     textAlign: "end",
   },
-  openInNew: {
-    fontSize: "1rem",
-    flex: 0.1,
-    textAlign: "end",
-  },
   expandedContentContainer: {
     ...cardContainer,
+    marginTop: 0,
   },
   commitButtons: {
     display: "flex",
     justifyContent: "space-evenly",
+    marginTop: 35,
+  },
+  openInNew: {
+    fontSize: "1rem",
+    flex: 0.1,
+    textAlign: "end",
   },
 };
 
