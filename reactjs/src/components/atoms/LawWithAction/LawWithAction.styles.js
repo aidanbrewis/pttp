@@ -1,13 +1,15 @@
 let styles = {
   lawWithAction: {
     display: "flex",
+    alignItems: "center",
+    justifyContent: "space-between",
   },
   lawVersion: {
     flex: 1,
+    marginRight: 20,
   },
   votingButtonsContainer: {
-    flex: 1,
-    justifyContent: "space-between",
+    justifyItems: "space-between",
   },
 };
 

@@ -1,4 +1,4 @@
-import styles from "../../molecules/LawCard/LawCard.styles";
+import styles from "./LawWithAction.styles";
 import { Button } from "@mui/material";
 
 const LawWithAction = ({ version, onOptionClick, voteResult }) => {
@@ -14,6 +14,7 @@ const LawWithAction = ({ version, onOptionClick, voteResult }) => {
           variant={voteResult === "yes" ? "contained" : "text"}
           color={voteResult === "yes" ? "success" : "inherit"}
           onClick={() => handleOptionClick("yes")}
+          style={{marginRight: 20}}
         >
           Yes
         </Button>
