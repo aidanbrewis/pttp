@@ -1,15 +1,15 @@
-const submitVotes = (votes) => {
+const submitVotes = (lawId,votes) => {
   async function ApiCall() {
 
     const response = await fetch(
-      "putUrlhere",
+      "putUrlHere",
       {
         method: "POST",
         body: JSON.stringify({
           operation: "vote",
           payload: {
             username: "july",
-            lawId: "b053299b-0a16-4d4b-8942-dcba23247bc9",
+            lawId: lawId,
             votes: votes,
           },
         }),
@@ -17,7 +17,7 @@ const submitVotes = (votes) => {
       }
     );
     const result = await response.json();
-    console.log(result)
+
     return result;
   }
   return ApiCall();

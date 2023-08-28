@@ -8,7 +8,7 @@ import ExpandButton from "../../atoms/ExpandButton/ExpandButton";
 import OpenInNewButton from "../../atoms/OpenInNewButton/OpenInNewButton";
 import submitVotes from "../../../api/submitVotes";
 
-const LawCard = (law) => {
+const LawCard = ({ law, lawId }) => {
   const [expanded, setExpanded] = useState(false);
   const [isDisabled, setIsDisabled] = useState(true);
   const [voteResults, setVoteResults] = useState({});
@@ -29,22 +29,22 @@ const LawCard = (law) => {
   };
 
   const toggleDisabled = () => {
-    Object.keys(voteResults).length == Object.keys(law.law.versions).length &&
+    Object.keys(voteResults).length == Object.keys(law.versions).length &&
       setIsDisabled(false);
   };
 
   const sendVotes = () => {
-    submitVotes({ voteResults });
+    submitVotes(lawId, voteResults);
   };
 
-  const date = unixToDate(law.law.expediteDate);
+  const date = unixToDate(law.expediteDate);
 
-  const isExpedite = law.law.expedite;
+  const isExpedite = law.expedite;
 
   return (
     <Card style={isExpedite ? styles.expiditeCard : styles.notExpiditeCard}>
       <div style={styles.collapsedContentContainer} onClick={toggleExpanded}>
-        <div style={styles.title}>{law.law.title}</div>
+        <div style={styles.title}>{law.title}</div>
         {isExpedite && (
           <div style={styles.expiditeDate}>
             {"voting ends on "}
@@ -57,11 +57,11 @@ const LawCard = (law) => {
       </div>
       <Collapse in={expanded}>
         <div style={styles.expandedContentContainer}>
-          {Object.keys(law.law.versions).map((key) => (
+          {Object.keys(law.versions).map((key) => (
             <LawWithAction
               key={key}
               onOptionClick={(option) => handleOptionClick(key, option)}
-              version={law.law.versions[key]}
+              version={law.versions[key]}
               voteResult={voteResults[key] || null}
             />
           ))}
