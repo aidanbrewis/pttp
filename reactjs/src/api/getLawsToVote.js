@@ -1,6 +1,6 @@
 import { awsExports } from "../aws-exports";
 
-const getLawsToVote = () => {
+const getLawsToVote = (username, jwtToken) => {
   async function ApiCall() {
     const response = await fetch(awsExports.INVOKE_URL, {
       method: "POST",
@@ -10,7 +10,7 @@ const getLawsToVote = () => {
           username: "july",
         },
       }),
-      headers: {},
+      headers: { Authorization: jwtToken },
     });
     const result = await response.json();
 
