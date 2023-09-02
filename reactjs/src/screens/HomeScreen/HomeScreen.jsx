@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import getLawsToVote from "../../api/getLawsToVote";
 import LawCards from "../../components/organisms/LawCards/LawCards";
 
-const Home = () => {
+const HomeScreen = () => {
   const [laws, setLaws] = useState([]);
 
   useEffect(() => {
@@ -31,4 +31,4 @@ const Home = () => {
   );
 };
 
-export default Home;
+export default HomeScreen;
