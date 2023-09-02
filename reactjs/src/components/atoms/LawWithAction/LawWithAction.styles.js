@@ -1,5 +1,3 @@
-import { fontWeight } from "@material-ui/system";
-
 let styles = {
   lawWithAction: {
     display: "flex",
@@ -8,9 +6,7 @@ let styles = {
   },
   lawVersion: {
     flex: 1,
-    marginRight: 35,
-    textAlign: 'justify',
-    fontSize: "1.2rem",
+    marginRight: 20,
   },
   votingButtonsContainer: {
     justifyItems: "space-between",

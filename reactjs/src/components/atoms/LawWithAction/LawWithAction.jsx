@@ -14,7 +14,7 @@ const LawWithAction = ({ version, onOptionClick, voteResult }) => {
           variant={voteResult === "yes" ? "contained" : "text"}
           color={voteResult === "yes" ? "success" : "inherit"}
           onClick={() => handleOptionClick("yes")}
-          style={{marginRight: 10}}
+          style={{marginRight: 20}}
         >
           Yes
         </Button>
