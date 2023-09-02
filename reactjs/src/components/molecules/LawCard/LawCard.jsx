@@ -65,20 +65,19 @@ const LawCard = ({ law, lawId }) => {
               voteResult={voteResults[key] || null}
             />
           ))}
-        </div>
-        <div style={styles.commitButtons}>
-          <Button
-            color="inherit"
-            onClick={() => console.log("need a screen to navigate to...")}
-          >
-            Amend
-          </Button>
 
-          <Button color="inherit" disabled={isDisabled} onClick={sendVotes}>
-            Confirm Votes
-          </Button>
-        </div>
-        <div style={{ marginRight: 20, marginBottom: 20 }}>
+          <div style={styles.commitButtons}>
+            <Button
+              color="inherit"
+              onClick={() => console.log("need a screen to navigate to...")}
+            >
+              Amend
+            </Button>
+
+            <Button color="inherit" disabled={isDisabled} onClick={sendVotes}>
+              Confirm Votes
+            </Button>
+          </div>
           <OpenInNewButton
             onClick={() => console.log("need a screen to navigate to...")}
             style={styles.openInNew}
