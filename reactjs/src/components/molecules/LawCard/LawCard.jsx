@@ -8,7 +8,7 @@ import ExpandButton from "../../atoms/ExpandButton/ExpandButton";
 import OpenInNewButton from "../../atoms/OpenInNewButton/OpenInNewButton";
 import submitVotes from "../../../api/submitVotes";
 
-const LawCard = ({ law, lawId }) => {
+const LawCard = ({ law, lawId, username, jwtToken }) => {
   const [expanded, setExpanded] = useState(false);
   const [isDisabled, setIsDisabled] = useState(true);
   const [voteResults, setVoteResults] = useState({});
@@ -34,7 +34,7 @@ const LawCard = ({ law, lawId }) => {
   };
 
   const sendVotes = () => {
-    submitVotes(lawId, voteResults);
+    submitVotes(username, jwtToken, lawId, voteResults);
   };
 
   const date = unixToDate(law.expediteDate);

@@ -7,7 +7,7 @@ const getLawsToVote = (username, jwtToken) => {
       body: JSON.stringify({
         operation: "getLawsToVote",
         payload: {
-          username: "july",
+          username: username,
         },
       }),
       headers: { Authorization: jwtToken },

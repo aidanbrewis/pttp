@@ -10,11 +10,18 @@ def lambda_handler(event, context):
       - payload: a JSON object containing parameters to pass to the 
                  operation being performed
     '''
+    cognitoRequest = event['request']
+
+    if cognitoRequest:
+        username = cognitoRequest['userAttributes']['email']
+        event['response'] = pttp.createUser({'username':username})
+        return event
+
+
 
     operation = event['operation']
 
     operations = {
-        'createUser': pttp.createUser,
         'proposeLaw': pttp.proposeLaw,
         'proposeAbrogationLaw': pttp.proposeAbrogationLaw,
         'getLawsToVote': pttp.getLawsToVote,
