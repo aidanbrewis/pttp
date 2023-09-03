@@ -20,8 +20,6 @@ const HomeScreen = () => {
       const username = userInfo.attributes.email;
       setUsername(username);
       let data = await getLawsToVote(username, jwtToken);
-      // data["username"] = username;
-      // data["jwtToken"] = jwtToken;
       setLaws(data);
     } catch (error) {
       console.log("Error fetching JWT token:", error);
