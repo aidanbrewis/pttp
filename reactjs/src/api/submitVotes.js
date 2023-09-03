@@ -2,8 +2,6 @@ import { awsExports } from "../aws-exports";
 
 const submitVotes = (username, jwtToken, lawId, votes) => {
   async function ApiCall() {
-    console.log("submit vote username " + username);
-    console.log("submit vote jwtToken " + jwtToken);
     const response = await fetch(awsExports.INVOKE_URL, {
       method: "POST",
       body: JSON.stringify({

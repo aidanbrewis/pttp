@@ -1,9 +1,15 @@
 import LawCard from "../../molecules/LawCard/LawCard";
 
-const LawCards = (laws) => {
-  return Object.keys(laws.laws).map((key) => (
+const LawCards = (data) => {
+  return Object.keys(data.laws).map((key) => (
     <div style={{ marginTop: 20 }}>
-      <LawCard key={key} law={laws.laws[key]} lawId={key}/>
+      <LawCard
+        key={key}
+        law={data.laws[key]}
+        lawId={key}
+        username={data.username}
+        jwtToken={data.jwtToken}
+      />
     </div>
   ));
 };
