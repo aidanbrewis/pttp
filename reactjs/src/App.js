@@ -2,8 +2,7 @@ import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { ThemeProvider } from "@material-ui/styles";
 import Theme from "./theme/theme";
-import Home from "./screens/Home/Home";
-import Screen2 from "./screens/Screen2/Screen2.jsx";
+import HomeScreen from "./screens/HomeScreen/HomeScreen";
 import { Amplify } from "aws-amplify";
 import { awsExports } from "./aws-exports";
 import { Authenticator } from "@aws-amplify/ui-react";
@@ -25,8 +24,7 @@ function App() {
           <ThemeProvider theme={Theme}>
             <Router>
               <Routes>
-                <Route path="/" element={<Home />} />
-                <Route path="/Screen2" element={<Screen2 />} />
+                <Route path="/" element={<HomeScreen />} />
               </Routes>
             </Router>
           </ThemeProvider>
