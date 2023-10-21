@@ -1,9 +1,17 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Button } from "@material-ui/core";
 import styles from "./ProposeLawScreen.styles";
 import ProposeLawCard from "../../components/molecules/ProposeLawCard/ProposeLawCard";
+import { useNavigate } from "react-router-dom";
 
 const ProposeLawScreen = () => {
+  let navigate = useNavigate();
+
+  const routeChange = () => {
+    let path = `/`;
+    navigate(path);
+  };
+
   return (
     <>
       <div
@@ -18,7 +26,9 @@ const ProposeLawScreen = () => {
         }}
       >
         <div style={styles.proposalButton}>
-          <Link to="/">back</Link>
+          <Button color="inherit" variant="contained" onClick={routeChange}>
+            back
+          </Button>
         </div>
         <ProposeLawCard />
       </div>
