@@ -33,8 +33,12 @@ const LawCard = ({ law, lawId, username, jwtToken }) => {
       setIsDisabled(false);
   };
 
-  const sendVotes = () => {
-    submitVotes(username, jwtToken, lawId, voteResults);
+  const sendVotes = async () => {
+    const result = await submitVotes(username, jwtToken, lawId, voteResults);
+    if (result.errorMessage) {
+      throw Error(result.errorMessage);
+    }
+    window.location.reload();
   };
 
   const date = unixToDate(law.expediteDate);
