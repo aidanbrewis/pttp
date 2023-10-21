@@ -2,6 +2,10 @@ import React, { useEffect, useState } from "react";
 import { Auth } from "aws-amplify";
 import getLawsToVote from "../../api/getLawsToVote";
 import LawCards from "../../components/organisms/LawCards/LawCards";
+import { Button } from "@material-ui/core";
+import styles from "./HomeScreen.styles";
+import { useNavigate } from "react-router-dom";
+
 
 const HomeScreen = () => {
   const [laws, setLaws] = useState([]);
@@ -11,6 +15,7 @@ const HomeScreen = () => {
   useEffect(() => {
     fetchData();
   }, []);
+  
   const fetchData = async () => {
     try {
       const session = await Auth.currentSession();
@@ -26,20 +31,32 @@ const HomeScreen = () => {
     }
   };
 
+  let navigate = useNavigate(); 
+  
+  const routeChange = () =>{ 
+    let path = `/propose_law`; 
+    navigate(path);
+  }
+
   return (
-    <div
-      style={{
-        margin: "auto",
-        padding: 150,
-        backgroundColor: "rgb(92,92,92)",
-        justifyContent: "center",
-        alignSelf: "center",
-        overflow: "hidden",
-        maxWidth: "60%",
-      }}
-    >
-      <LawCards laws={laws} username={username} jwtToken={jwtToken} />
-    </div>
+    <>
+      <div
+        style={{
+          margin: "auto",
+          padding: 150,
+          backgroundColor: "rgb(92,92,92)",
+          justifyContent: "center",
+          alignSelf: "center",
+          overflow: "hidden",
+          maxWidth: "60%",
+        }}
+      >
+        <div style={styles.proposalButton}>
+          <Button color="inherit" variant="contained" onClick={routeChange} >Propose New Law</Button>
+        </div>
+        <LawCards laws={laws} username={username} jwtToken={jwtToken} />
+      </div>
+    </>
   );
 };
 

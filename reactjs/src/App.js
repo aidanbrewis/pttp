@@ -7,6 +7,7 @@ import { Amplify } from "aws-amplify";
 import { awsExports } from "./aws-exports";
 import { Authenticator } from "@aws-amplify/ui-react";
 import "@aws-amplify/ui-react/styles.css";
+import ProposeLawScreen from "./screens/ProposeLaw/ProposeLawScreen";
 
 function App() {
   Amplify.configure({
@@ -25,6 +26,7 @@ function App() {
             <Router>
               <Routes>
                 <Route path="/" element={<HomeScreen />} />
+                <Route path="/propose_law" element={<ProposeLawScreen />} />
               </Routes>
             </Router>
           </ThemeProvider>
