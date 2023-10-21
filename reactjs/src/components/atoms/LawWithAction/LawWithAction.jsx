@@ -11,8 +11,6 @@ const LawWithAction = ({
     onOptionClick(option);
   };
 
-  console.log("has buttons :" + hasVotingButtons);
-
   if (hasVotingButtons) {
     return (
       <div style={styles.lawWithAction}>
