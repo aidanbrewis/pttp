@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { Auth } from "aws-amplify";
-import getLawsToVote from "../../api/getLawsToVote";
+import getAcceptedLaws from "../../api/getAcceptedLaws";
 import LawCards from "../../components/organisms/LawCards/LawCards";
 import { Button } from "@material-ui/core";
-import styles from "./HomeScreen.styles";
+import styles from "./AcceptedLawsScreen.styles";
 import { useNavigate } from "react-router-dom";
 
 const HomeScreen = () => {
@@ -23,7 +23,7 @@ const HomeScreen = () => {
       const userInfo = await Auth.currentUserInfo();
       const username = userInfo.attributes.email;
       setUsername(username);
-      const result = await getLawsToVote(username, jwtToken);
+      const result = await getAcceptedLaws(jwtToken);
       if (result.errorMessage) {
         throw Error(result.errorMessage);
       }
@@ -40,8 +40,8 @@ const HomeScreen = () => {
     navigate(path);
   };
 
-  const acceptedLawsNavigate = () => {
-    let path = `/accepted_laws`;
+  const HomeScreenNavigate = () => {
+    let path = `/`;
     navigate(path);
   };
 
@@ -66,12 +66,14 @@ const HomeScreen = () => {
           >
             Propose New Law
           </Button>
+        </div>
+        <div style={styles.proposalButton}>
           <Button
             color="inherit"
             variant="contained"
-            onClick={acceptedLawsNavigate}
+            onClick={HomeScreenNavigate}
           >
-            Accepted Laws
+            Back
           </Button>
         </div>
         <LawCards laws={laws} username={username} jwtToken={jwtToken} />
