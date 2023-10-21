@@ -6,7 +6,7 @@ import { Button } from "@material-ui/core";
 import styles from "./AcceptedLawsScreen.styles";
 import { useNavigate } from "react-router-dom";
 
-const HomeScreen = () => {
+const AcceptedLawsScreen = () => {
   const [laws, setLaws] = useState([]);
   const [jwtToken, setJwtToken] = useState("");
   const [username, setUsername] = useState("");
@@ -87,4 +87,4 @@ const HomeScreen = () => {
   );
 };
 
-export default HomeScreen;
+export default AcceptedLawsScreen;

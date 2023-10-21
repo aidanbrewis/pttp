@@ -1,7 +1,6 @@
 import { React, useState, useEffect } from "react";
 import { Button, TextField } from "@material-ui/core";
 import styles from "./ProposeLawScreen.styles";
-import ProposeLawCard from "../../components/molecules/ProposeLawCard/ProposeLawCard";
 import { useNavigate } from "react-router-dom";
 import proposeLaw from "../../api/proposeLaw";
 import { Auth } from "aws-amplify";
@@ -99,7 +98,6 @@ const ProposeLawScreen = () => {
             Back
           </Button>
         </div>
-        <ProposeLawCard />
       </div>
       ;
     </>

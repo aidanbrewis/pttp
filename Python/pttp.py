@@ -520,14 +520,8 @@ def getAcceptedLaws(payload):
         with open('settings.json', 'r') as settingsFile:
             settings = json.load(settingsFile)
             USE_S3_BUCKET = settings['USE_S3_BUCKET']
-            MINIMUM_LAW_DURATION = int(settings['MINIMUM_LAW_DURATION_DAYS']*DAY_IN_SECONDS)
-            ACTIVE_USER_TIMEOUT = int(settings['ACTIVE_USER_TIMEOUT_DAYS']*DAY_IN_SECONDS)
-            MINIMUM_EXPEDITE_DURATION = int(settings['MINIMUM_EXPEDITE_DURATION_HOURS']*HOUR_IN_SECONDS)
     except:
         USE_S3_BUCKET = False
-        MINIMUM_LAW_DURATION = 2419200    #28 days  in seconds
-        ACTIVE_USER_TIMEOUT = 604800      #7  days  in seconds
-        MINIMUM_EXPEDITE_DURATION = 86400 #24 hours in seconds
 
     if not USE_S3_BUCKET:
         if not os.path.exists('data'):
@@ -548,6 +542,35 @@ def getAcceptedLaws(payload):
             pass
     
     return acceptedLaws
+
+def getRejectedLaws(payload):
+    checkExpedites({})
+    try:
+        with open('settings.json', 'r') as settingsFile:
+            settings = json.load(settingsFile)
+            USE_S3_BUCKET = settings['USE_S3_BUCKET']
+    except:
+        USE_S3_BUCKET = False
+
+    if not USE_S3_BUCKET:
+        if not os.path.exists('data'):
+            os.makedirs('data')
+    if USE_S3_BUCKET:
+        inputFileNames = ['rejectedLaws.json']
+        dataByFileName = readFromS3(inputFileNames)
+        try:
+            rejectedLaws = dataByFileName['rejectedLaws.json']
+        except:
+            rejectedLaws = {}
+    else:
+        rejectedLaws = {}
+        try:
+            with open('data/rejectedLaws.json') as rejectedLawsFile:
+                rejectedLaws = json.load(rejectedLawsFile)
+        except:
+            pass
+    
+    return rejectedLaws
 
 def getNonExpediteAcceptedLaws(payload):
     checkExpedites({})

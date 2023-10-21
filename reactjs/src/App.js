@@ -9,6 +9,7 @@ import { Authenticator } from "@aws-amplify/ui-react";
 import "@aws-amplify/ui-react/styles.css";
 import ProposeLawScreen from "./screens/ProposeLawScreen/ProposeLawScreen";
 import AcceptedLawsScreen from "./screens/AcceptedLawsScreen/AcceptedLawsScreen";
+import RejectedLawsScreen from "./screens/RejectedLawsScreen/RejectedLawsScreen";
 import { Button } from "@material-ui/core";
 import styles from "./screens/HomeScreen/HomeScreen.styles";
 
@@ -31,6 +32,7 @@ function App() {
                 <Route path="/" element={<HomeScreen />} />
                 <Route path="/propose_law" element={<ProposeLawScreen />} />
                 <Route path="/accepted_laws" element={<AcceptedLawsScreen />} />
+                <Route path="/rejected_laws" element={<RejectedLawsScreen />} />
               </Routes>
             </Router>
           </ThemeProvider>
