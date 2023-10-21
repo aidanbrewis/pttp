@@ -1,1 +1,1 @@
-export const url = "https://2rjuhfp2o6.execute-api.eu-west-3.amazonaws.com/test/pttpmanager"
+export const url = "[PUT YOUR API INVOKE URL HERE]";
