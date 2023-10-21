@@ -76,7 +76,12 @@ const HomeScreen = () => {
             Back
           </Button>
         </div>
-        <LawCards laws={laws} username={username} jwtToken={jwtToken} />
+        <LawCards
+          laws={laws}
+          username={username}
+          jwtToken={jwtToken}
+          hasVotingButtons={false}
+        />
       </div>
     </>
   );

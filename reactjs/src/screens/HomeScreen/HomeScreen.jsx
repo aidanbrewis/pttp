@@ -74,7 +74,12 @@ const HomeScreen = () => {
             Accepted Laws
           </Button>
         </div>
-        <LawCards laws={laws} username={username} jwtToken={jwtToken} />
+        <LawCards
+          laws={laws}
+          username={username}
+          jwtToken={jwtToken}
+          hasVotingButtons={true}
+        />
       </div>
     </>
   );
