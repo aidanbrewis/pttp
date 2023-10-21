@@ -8,7 +8,6 @@ import { Auth } from "aws-amplify";
 
 const ProposeLawScreen = () => {
   const [lawTitle, setLawTitle] = useState("");
-  const [lawCategory, setLawCategory] = useState("");
   const [lawContent, setLawContent] = useState("");
   const [jwtToken, setJwtToken] = useState("");
   const [username, setUsername] = useState("");
@@ -42,9 +41,6 @@ const ProposeLawScreen = () => {
       case "law-title":
         setLawTitle(e.target.value);
         break;
-      case "law-category":
-        setLawCategory(e.target.value);
-        break;
       case "law-content":
         setLawContent(e.target.value);
     }
@@ -56,7 +52,7 @@ const ProposeLawScreen = () => {
       jwtToken,
       lawContent,
       lawTitle,
-      lawCategory,
+      "",
       false,
       null
     );
@@ -83,13 +79,6 @@ const ProposeLawScreen = () => {
           id="law-title"
           label="Title"
           value={lawTitle}
-          onChange={handleChange}
-          margin="normal"
-        />
-        <TextField
-          id="law-category"
-          label="Category"
-          value={lawCategory}
           onChange={handleChange}
           margin="normal"
         />
