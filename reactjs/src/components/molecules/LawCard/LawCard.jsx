@@ -8,7 +8,7 @@ import ExpandButton from "../../atoms/ExpandButton/ExpandButton";
 import OpenInNewButton from "../../atoms/OpenInNewButton/OpenInNewButton";
 import submitVotes from "../../../api/submitVotes";
 
-const LawCard = ({ law, lawId, username, jwtToken }) => {
+const LawCard = ({ law, lawId, username, jwtToken, hasVotingButtons }) => {
   const [expanded, setExpanded] = useState(false);
   const [isDisabled, setIsDisabled] = useState(true);
   const [voteResults, setVoteResults] = useState({});
@@ -67,21 +67,24 @@ const LawCard = ({ law, lawId, username, jwtToken }) => {
               onOptionClick={(option) => handleOptionClick(key, option)}
               version={law.versions[key]}
               voteResult={voteResults[key] || null}
+              hasVotingButtons={hasVotingButtons}
             />
           ))}
 
-          <div style={styles.commitButtons}>
-            <Button
-              color="inherit"
-              onClick={() => console.log("need a screen to navigate to...")}
-            >
-              Amend
-            </Button>
+          {hasVotingButtons && (
+            <div style={styles.commitButtons}>
+              <Button
+                color="inherit"
+                onClick={() => console.log("need a screen to navigate to...")}
+              >
+                Amend
+              </Button>
 
-            <Button color="inherit" disabled={isDisabled} onClick={sendVotes}>
-              Confirm Votes
-            </Button>
-          </div>
+              <Button color="inherit" disabled={isDisabled} onClick={sendVotes}>
+                Confirm Votes
+              </Button>
+            </div>
+          )}
           <OpenInNewButton
             onClick={() => console.log("need a screen to navigate to...")}
             style={styles.openInNew}

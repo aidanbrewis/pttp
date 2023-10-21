@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { Auth } from "aws-amplify";
-import getLawsToVote from "../../api/getLawsToVote";
+import getRejectedLaws from "../../api/getRejectedLaws";
 import LawCards from "../../components/organisms/LawCards/LawCards";
 import { Button } from "@material-ui/core";
-import styles from "./HomeScreen.styles";
+import styles from "./RejectedLawsScreen.styles";
 import { useNavigate } from "react-router-dom";
 
-const HomeScreen = () => {
+const RejectedLawsScreen = () => {
   const [laws, setLaws] = useState([]);
   const [jwtToken, setJwtToken] = useState("");
   const [username, setUsername] = useState("");
@@ -23,7 +23,7 @@ const HomeScreen = () => {
       const userInfo = await Auth.currentUserInfo();
       const username = userInfo.attributes.email;
       setUsername(username);
-      const result = await getLawsToVote(username, jwtToken);
+      const result = await getRejectedLaws(jwtToken);
       if (result.errorMessage) {
         throw Error(result.errorMessage);
       }
@@ -40,13 +40,8 @@ const HomeScreen = () => {
     navigate(path);
   };
 
-  const acceptedLawsNavigate = () => {
-    let path = `/accepted_laws`;
-    navigate(path);
-  };
-
-  const rejectedLawsNavigate = () => {
-    let path = `/rejected_laws`;
+  const HomeScreenNavigate = () => {
+    let path = `/`;
     navigate(path);
   };
 
@@ -71,30 +66,25 @@ const HomeScreen = () => {
           >
             Propose New Law
           </Button>
+        </div>
+        <div style={styles.proposalButton}>
           <Button
             color="inherit"
             variant="contained"
-            onClick={acceptedLawsNavigate}
+            onClick={HomeScreenNavigate}
           >
-            Accepted Laws
-          </Button>
-          <Button
-            color="inherit"
-            variant="contained"
-            onClick={rejectedLawsNavigate}
-          >
-            Rejected Laws
+            Back
           </Button>
         </div>
         <LawCards
           laws={laws}
           username={username}
           jwtToken={jwtToken}
-          hasVotingButtons={true}
+          hasVotingButtons={false}
         />
       </div>
     </>
   );
 };
 
-export default HomeScreen;
+export default RejectedLawsScreen;

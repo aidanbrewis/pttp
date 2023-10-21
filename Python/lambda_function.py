@@ -10,7 +10,7 @@ def lambda_handler(event, context):
       - payload: a JSON object containing parameters to pass to the 
                  operation being performed
     '''
-    cognitoRequest = event['request']
+    cognitoRequest = event.get('request')
 
     if cognitoRequest:
         username = cognitoRequest['userAttributes']['email']
@@ -27,6 +27,7 @@ def lambda_handler(event, context):
         'getLawsToVote': pttp.getLawsToVote,
         'getVotedLaws' : pttp.getVotedLaws,
         'getAcceptedLaws': pttp.getAcceptedLaws,
+        'getRejectedLaws': pttp.getRejectedLaws,
         'getNonExpediteAcceptedLaws' : pttp.getNonExpediteAcceptedLaws,
         'checkExpedites' : pttp.checkExpedites,
         'vote' : pttp.vote
