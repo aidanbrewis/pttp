@@ -2,7 +2,6 @@
 !/reactjs/package.json
 !/reactjs/package-lock.json
 /reactjs/src/aws-exports.js
-/reactjs/src/api/invokeUrl.js
 *.csv
 *.pem
 *.pyc
