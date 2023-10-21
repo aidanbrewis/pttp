@@ -5,6 +5,8 @@ import LawCards from "../../components/organisms/LawCards/LawCards";
 import { Button } from "@material-ui/core";
 import styles from "./AcceptedLawsScreen.styles";
 import { useNavigate } from "react-router-dom";
+import { createTheme, ThemeProvider } from "@mui/material/styles";
+import { deepPurple } from "@mui/material/colors";
 
 const AcceptedLawsScreen = () => {
   const [laws, setLaws] = useState([]);
@@ -40,42 +42,68 @@ const AcceptedLawsScreen = () => {
     navigate(path);
   };
 
-  const HomeScreenNavigate = () => {
+  const homeScreenNavigate = () => {
     let path = `/`;
     navigate(path);
   };
 
+  const rejectedLawsNavigate = () => {
+    let path = `/rejected_laws`;
+    navigate(path);
+  };
+
+  const theme = createTheme({
+    palette: {
+      primary: {
+        main: deepPurple[800],
+      },
+    },
+  });
+
   return (
     <>
-      <div
-        style={{
-          margin: "auto",
-          padding: 150,
-          backgroundColor: "rgb(92,92,92)",
-          justifyContent: "center",
-          alignSelf: "center",
-          overflow: "hidden",
-          maxWidth: "60%",
-        }}
-      >
-        <div style={styles.proposalButton}>
+      <ThemeProvider theme={theme}>
+        <div style={styles.tabs}>
           <Button
+            style={{ marginLeft: 0 }}
+            color="inherit"
+            variant="contained"
+            onClick={homeScreenNavigate}
+          >
+            Vote
+          </Button>
+          <Button
+            style={{ marginLeft: 0 }}
             color="inherit"
             variant="contained"
             onClick={proposeLawNavigate}
           >
             Propose New Law
           </Button>
-        </div>
-        <div style={styles.proposalButton}>
+          <Button style={{ marginLeft: 0 }} color="primary" variant="contained">
+            Accepted Laws
+          </Button>
           <Button
+            style={{ marginRight: "auto" }}
             color="inherit"
             variant="contained"
-            onClick={HomeScreenNavigate}
+            onClick={rejectedLawsNavigate}
           >
-            Back
+            Rejected Laws
           </Button>
         </div>
+      </ThemeProvider>
+      <div
+        style={{
+          margin: "auto",
+          padding: 50,
+          backgroundColor: "rgb(63,81,181)",
+          justifyContent: "center",
+          alignSelf: "center",
+          overflow: "hidden",
+          maxWidth: "80%",
+        }}
+      >
         <LawCards
           laws={laws}
           username={username}

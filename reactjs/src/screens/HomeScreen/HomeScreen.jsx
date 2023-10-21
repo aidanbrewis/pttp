@@ -2,9 +2,11 @@ import React, { useEffect, useState } from "react";
 import { Auth } from "aws-amplify";
 import getLawsToVote from "../../api/getLawsToVote";
 import LawCards from "../../components/organisms/LawCards/LawCards";
-import { Button } from "@material-ui/core";
+import { Button, Container } from "@material-ui/core";
 import styles from "./HomeScreen.styles";
 import { useNavigate } from "react-router-dom";
+import { createTheme, ThemeProvider } from "@mui/material/styles";
+import { deepPurple, pink } from "@mui/material/colors";
 
 const HomeScreen = () => {
   const [laws, setLaws] = useState([]);
@@ -50,21 +52,23 @@ const HomeScreen = () => {
     navigate(path);
   };
 
+  const theme = createTheme({
+    palette: {
+      primary: {
+        main: deepPurple[800],
+      },
+    },
+  });
+
   return (
     <>
-      <div
-        style={{
-          margin: "auto",
-          padding: 150,
-          backgroundColor: "rgb(92,92,92)",
-          justifyContent: "center",
-          alignSelf: "center",
-          overflow: "hidden",
-          maxWidth: "60%",
-        }}
-      >
-        <div style={styles.proposalButton}>
+      <ThemeProvider theme={theme}>
+        <div style={styles.tabs}>
+          <Button style={{ marginLeft: 0 }} color="primary" variant="contained">
+            Vote
+          </Button>
           <Button
+            style={{ marginLeft: 0 }}
             color="inherit"
             variant="contained"
             onClick={proposeLawNavigate}
@@ -72,6 +76,7 @@ const HomeScreen = () => {
             Propose New Law
           </Button>
           <Button
+            style={{ marginLeft: 0 }}
             color="inherit"
             variant="contained"
             onClick={acceptedLawsNavigate}
@@ -79,6 +84,7 @@ const HomeScreen = () => {
             Accepted Laws
           </Button>
           <Button
+            style={{ marginRight: "auto" }}
             color="inherit"
             variant="contained"
             onClick={rejectedLawsNavigate}
@@ -86,13 +92,25 @@ const HomeScreen = () => {
             Rejected Laws
           </Button>
         </div>
-        <LawCards
-          laws={laws}
-          username={username}
-          jwtToken={jwtToken}
-          hasVotingButtons={true}
-        />
-      </div>
+        <Container
+          style={{
+            margin: "auto",
+            padding: 50,
+            backgroundColor: "rgb(63,81,181)",
+            justifyContent: "center",
+            alignSelf: "center",
+            overflow: "hidden",
+            maxWidth: "80%",
+          }}
+        >
+          <LawCards
+            laws={laws}
+            username={username}
+            jwtToken={jwtToken}
+            hasVotingButtons={true}
+          />
+        </Container>
+      </ThemeProvider>
     </>
   );
 };

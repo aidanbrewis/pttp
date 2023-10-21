@@ -46,11 +46,11 @@ const LawCard = ({ law, lawId, username, jwtToken, hasVotingButtons }) => {
   const isExpedite = law.expedite;
 
   return (
-    <Card style={isExpedite ? styles.expiditeCard : styles.notExpiditeCard}>
+    <Card style={isExpedite ? styles.expediteCard : styles.notExpediteCard}>
       <div style={styles.collapsedContentContainer} onClick={toggleExpanded}>
         <div style={styles.title}>{law.title}</div>
         {isExpedite && (
-          <div style={styles.expiditeDate}>
+          <div style={styles.expediteDate}>
             {"voting ends on "}
             {date}
           </div>
