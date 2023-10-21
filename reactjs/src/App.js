@@ -8,6 +8,8 @@ import { awsExports } from "./aws-exports";
 import { Authenticator } from "@aws-amplify/ui-react";
 import "@aws-amplify/ui-react/styles.css";
 import ProposeLawScreen from "./screens/ProposeLaw/ProposeLawScreen";
+import { Button } from "@material-ui/core";
+import styles from "./screens/HomeScreen/HomeScreen.styles";
 
 function App() {
   Amplify.configure({
@@ -30,7 +32,11 @@ function App() {
               </Routes>
             </Router>
           </ThemeProvider>
-          <button onClick={signOut}>Sign out</button>
+          <div style={styles.proposalButton}>
+            <Button color="inherit" variant="contained" onClick={signOut}>
+              Sign out
+            </Button>
+          </div>
         </div>
       )}
     </Authenticator>
