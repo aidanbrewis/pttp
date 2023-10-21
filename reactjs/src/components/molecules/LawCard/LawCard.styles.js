@@ -6,12 +6,11 @@ const cardContainer = {
 };
 
 let styles = {
-  expiditeCard: {
-    backgroundColor: "rgba(164, 3, 56, 1)",
-    color: "white",
+  expediteCard: {
+    backgroundColor: "rgb(255, 239, 98)",
     borderRadius: 10,
   },
-  notExpiditeCard: {
+  notExpediteCard: {
     backgroundColor: "rgb(248,203,214)",
     borderRadius: 10,
   },
@@ -26,7 +25,7 @@ let styles = {
     flex: 1.6,
     textAlign: "justify",
   },
-  expiditeDate: {
+  expediteDate: {
     fontStyle: "italic",
     fontSize: "1.4rem",
     fontWeight: 350,

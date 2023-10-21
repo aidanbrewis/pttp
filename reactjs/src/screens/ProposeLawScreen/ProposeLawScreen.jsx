@@ -4,6 +4,8 @@ import styles from "./ProposeLawScreen.styles";
 import { useNavigate } from "react-router-dom";
 import proposeLaw from "../../api/proposeLaw";
 import { Auth } from "aws-amplify";
+import { createTheme, ThemeProvider } from "@mui/material/styles";
+import { deepPurple, pink } from "@mui/material/colors";
 
 const ProposeLawScreen = () => {
   const [lawTitle, setLawTitle] = useState("");
@@ -30,8 +32,18 @@ const ProposeLawScreen = () => {
 
   let navigate = useNavigate();
 
-  const routeChange = () => {
+  const homeScreenNavigate = () => {
     let path = `/`;
+    navigate(path);
+  };
+
+  const acceptedLawsNavigate = () => {
+    let path = `/accepted_laws`;
+    navigate(path);
+  };
+
+  const rejectedLawsNavigate = () => {
+    let path = `/rejected_laws`;
     navigate(path);
   };
 
@@ -58,20 +70,59 @@ const ProposeLawScreen = () => {
     if (result.errorMessage) {
       throw Error(result.errorMessage);
     }
-    routeChange();
+    homeScreenNavigate();
   };
+
+  const theme = createTheme({
+    palette: {
+      primary: {
+        main: pink[100],
+      },
+    },
+  });
 
   return (
     <>
+      <ThemeProvider theme={theme}>
+        <div style={styles.tabs}>
+          <Button
+            style={{ marginLeft: 0 }}
+            color="inherit"
+            variant="contained"
+            onClick={homeScreenNavigate}
+          >
+            Vote
+          </Button>
+          <Button style={{ marginLeft: 0 }} color="primary" variant="contained">
+            Propose New Law
+          </Button>
+          <Button
+            style={{ marginLeft: 0 }}
+            color="inherit"
+            variant="contained"
+            onClick={acceptedLawsNavigate}
+          >
+            Accepted Laws
+          </Button>
+          <Button
+            style={{ marginRight: "auto" }}
+            color="inherit"
+            variant="contained"
+            onClick={rejectedLawsNavigate}
+          >
+            Rejected Laws
+          </Button>
+        </div>
+      </ThemeProvider>
       <div
         style={{
           margin: "auto",
-          padding: 150,
-          backgroundColor: "rgb(92,92,92)",
+          padding: 50,
+          backgroundColor: "rgb(248,203,214)",
           justifyContent: "center",
           alignSelf: "center",
           overflow: "hidden",
-          maxWidth: "60%",
+          maxWidth: "80%",
         }}
       >
         <TextField
@@ -93,13 +144,7 @@ const ProposeLawScreen = () => {
             Propose Law
           </Button>
         </div>
-        <div style={styles.proposalButton}>
-          <Button color="inherit" variant="contained" onClick={routeChange}>
-            Back
-          </Button>
-        </div>
       </div>
-      ;
     </>
   );
 };

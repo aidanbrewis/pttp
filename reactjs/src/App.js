@@ -36,10 +36,12 @@ function App() {
               </Routes>
             </Router>
           </ThemeProvider>
-          <div style={styles.proposalButton}>
-            <Button color="inherit" variant="contained" onClick={signOut}>
-              Sign out
-            </Button>
+          <div style={styles.tabs}>
+            <div style={{ marginRight: "auto" }}>
+              <Button color="inherit" variant="contained" onClick={signOut}>
+                Sign out
+              </Button>
+            </div>
           </div>
         </div>
       )}
