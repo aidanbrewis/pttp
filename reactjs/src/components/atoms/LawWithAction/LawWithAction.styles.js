@@ -9,7 +9,7 @@ let styles = {
   lawVersion: {
     flex: 1,
     marginRight: 35,
-    textAlign: 'justify',
+    textAlign: "justify",
     fontSize: "1.2rem",
   },
   votingButtonsContainer: {

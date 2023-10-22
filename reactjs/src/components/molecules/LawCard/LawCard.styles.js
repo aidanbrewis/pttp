@@ -23,7 +23,7 @@ let styles = {
   title: {
     fontSize: "1.8rem",
     flex: 1.6,
-    textAlign: "justify",
+    textAlign: "left",
   },
   expediteDate: {
     fontStyle: "italic",
