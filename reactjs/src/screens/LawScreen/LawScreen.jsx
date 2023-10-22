@@ -8,7 +8,7 @@ import { Auth } from "aws-amplify";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { pink } from "@mui/material/colors";
 
-const LawScreen = (amend) => {
+const LawScreen = ({ amend }) => {
   const [laws, setLaws] = useState({});
   const [jwtToken, setJwtToken] = useState("");
   const [username, setUsername] = useState("");

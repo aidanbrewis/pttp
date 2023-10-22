@@ -1,6 +1,6 @@
 import { awsExports } from "../aws-exports";
 
-const amendLaw = (username, jwtToken, lawId, amendedLaw) => {
+const amendLaw = (username, jwtToken, lawId, votes, amendedLaw) => {
   async function ApiCall() {
     const response = await fetch(awsExports.INVOKE_URL, {
       method: "POST",
@@ -9,7 +9,7 @@ const amendLaw = (username, jwtToken, lawId, amendedLaw) => {
         payload: {
           username: username,
           lawId: lawId,
-          votes: {},
+          votes: votes,
           amend: true,
           amendedLaw: amendedLaw,
         },

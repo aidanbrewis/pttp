@@ -27,21 +27,19 @@ function App() {
     <Authenticator>
       {({ signOut, user }) => (
         <div className="App">
-          <ThemeProvider theme={Theme}>
-            <Router>
-              <Routes>
-                <Route path="/" element={<HomeScreen />} />
-                <Route path="/propose_law" element={<ProposeLawScreen />} />
-                <Route path="/accepted_laws" element={<AcceptedLawsScreen />} />
-                <Route path="/rejected_laws" element={<RejectedLawsScreen />} />
-                <Route
-                  path="/:lawId/amend"
-                  element={<LawScreen amend={true} />}
-                />
-                <Route path="/:lawId" element={<LawScreen amend={false} />} />
-              </Routes>
-            </Router>
-          </ThemeProvider>
+          <Router>
+            <Routes>
+              <Route path="/" element={<HomeScreen />} />
+              <Route path="/propose_law" element={<ProposeLawScreen />} />
+              <Route path="/accepted_laws" element={<AcceptedLawsScreen />} />
+              <Route path="/rejected_laws" element={<RejectedLawsScreen />} />
+              <Route
+                path="/:lawId/amend"
+                element={<LawScreen amend={true} />}
+              />
+              <Route path="/:lawId" element={<LawScreen amend={false} />} />
+            </Routes>
+          </Router>
           <div style={styles.tabs}>
             <div style={{ marginRight: "auto" }}>
               <Button color="inherit" variant="contained" onClick={signOut}>
