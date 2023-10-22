@@ -116,6 +116,7 @@ const RejectedLawsScreen = () => {
           hasProposeLawButton={false}
           lockExpanded={false}
           hasLawPageButton={false}
+          amend={false}
         />
       </div>
     </>

@@ -109,6 +109,7 @@ const HomeScreen = () => {
             hasProposeLawButton={false}
             lockExpanded={false}
             hasLawPageButton={true}
+            amend={false}
           />
         </div>
       </ThemeProvider>
