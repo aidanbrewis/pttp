@@ -1,15 +1,13 @@
 import { React, useState, useEffect } from "react";
-import { Button, TextField } from "@material-ui/core";
+import LawCards from "../../components/organisms/LawCards/LawCards";
+import { Button } from "@material-ui/core";
 import styles from "./ProposeLawScreen.styles";
 import { useNavigate } from "react-router-dom";
-import proposeLaw from "../../api/proposeLaw";
 import { Auth } from "aws-amplify";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { deepPurple, pink } from "@mui/material/colors";
 
 const ProposeLawScreen = () => {
-  const [lawTitle, setLawTitle] = useState("");
-  const [lawContent, setLawContent] = useState("");
   const [jwtToken, setJwtToken] = useState("");
   const [username, setUsername] = useState("");
 
@@ -18,16 +16,12 @@ const ProposeLawScreen = () => {
   }, []);
 
   const fetchData = async () => {
-    try {
-      const session = await Auth.currentSession();
-      const jwtToken = session.getIdToken().getJwtToken();
-      setJwtToken(jwtToken);
-      const userInfo = await Auth.currentUserInfo();
-      const username = userInfo.attributes.email;
-      setUsername(username);
-    } catch (error) {
-      throw Error("Error fetching JWT token:", error);
-    }
+    const session = await Auth.currentSession();
+    const jwtToken = session.getIdToken().getJwtToken();
+    setJwtToken(jwtToken);
+    const userInfo = await Auth.currentUserInfo();
+    const username = userInfo.attributes.email;
+    setUsername(username);
   };
 
   let navigate = useNavigate();
@@ -45,32 +39,6 @@ const ProposeLawScreen = () => {
   const rejectedLawsNavigate = () => {
     let path = `/rejected_laws`;
     navigate(path);
-  };
-
-  const handleChange = (e) => {
-    switch (e.target.id) {
-      case "law-title":
-        setLawTitle(e.target.value);
-        break;
-      case "law-content":
-        setLawContent(e.target.value);
-    }
-  };
-
-  const callProposeLaw = async () => {
-    const result = await proposeLaw(
-      username,
-      jwtToken,
-      lawContent,
-      lawTitle,
-      "",
-      false,
-      null
-    );
-    if (result.errorMessage) {
-      throw Error(result.errorMessage);
-    }
-    homeScreenNavigate();
   };
 
   const theme = createTheme({
@@ -118,32 +86,24 @@ const ProposeLawScreen = () => {
         style={{
           margin: "auto",
           padding: 50,
-          backgroundColor: "rgb(248,203,214)",
+          backgroundColor: "rgb(63,81,181)",
           justifyContent: "center",
           alignSelf: "center",
           overflow: "hidden",
-          maxWidth: "80%",
+          maxWidth: "1700px",
         }}
       >
-        <TextField
-          id="law-title"
-          label="Title"
-          value={lawTitle}
-          onChange={handleChange}
-          margin="normal"
+        <LawCards
+          laws={{ blank: { versions: {} } }}
+          username={username}
+          jwtToken={jwtToken}
+          hasTitleField={true}
+          hasContentField={true}
+          hasVotingButtons={false}
+          hasProposeLawButton={true}
+          lockExpanded={true}
+          hasLawPageButton={false}
         />
-        <TextField
-          id="law-content"
-          label="Law"
-          value={lawContent}
-          onChange={handleChange}
-          margin="normal"
-        />
-        <div style={styles.proposalButton}>
-          <Button color="inherit" variant="contained" onClick={callProposeLaw}>
-            Propose Law
-          </Button>
-        </div>
       </div>
     </>
   );

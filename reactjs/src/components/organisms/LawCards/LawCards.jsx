@@ -9,7 +9,12 @@ const LawCards = (data) => {
         lawId={key}
         username={data.username}
         jwtToken={data.jwtToken}
+        hasTitleField={data.hasTitleField}
+        hasContentField={data.hasContentField}
         hasVotingButtons={data.hasVotingButtons}
+        hasProposeLawButton={data.hasProposeLawButton}
+        lockExpanded={data.lockExpanded}
+        hasLawPageButton={data.hasLawPageButton}
       />
     </div>
   ));

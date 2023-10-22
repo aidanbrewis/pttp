@@ -18,21 +18,17 @@ const RejectedLawsScreen = () => {
   }, []);
 
   const fetchData = async () => {
-    try {
-      const session = await Auth.currentSession();
-      const jwtToken = session.getIdToken().getJwtToken();
-      setJwtToken(jwtToken);
-      const userInfo = await Auth.currentUserInfo();
-      const username = userInfo.attributes.email;
-      setUsername(username);
-      const result = await getRejectedLaws(jwtToken);
-      if (result.errorMessage) {
-        throw Error(result.errorMessage);
-      }
-      setLaws(result);
-    } catch (error) {
-      throw Error("Error fetching JWT token:", error);
+    const session = await Auth.currentSession();
+    const jwtToken = session.getIdToken().getJwtToken();
+    setJwtToken(jwtToken);
+    const userInfo = await Auth.currentUserInfo();
+    const username = userInfo.attributes.email;
+    setUsername(username);
+    const result = await getRejectedLaws(jwtToken);
+    if (result.errorMessage) {
+      throw Error(result.errorMessage);
     }
+    setLaws(result);
   };
 
   let navigate = useNavigate();
@@ -107,14 +103,19 @@ const RejectedLawsScreen = () => {
           justifyContent: "center",
           alignSelf: "center",
           overflow: "hidden",
-          maxWidth: "80%",
+          maxWidth: "1700px",
         }}
       >
         <LawCards
           laws={laws}
           username={username}
           jwtToken={jwtToken}
+          hasTitleField={false}
+          hasContentField={false}
           hasVotingButtons={false}
+          hasProposeLawButton={false}
+          lockExpanded={false}
+          hasLawPageButton={false}
         />
       </div>
     </>

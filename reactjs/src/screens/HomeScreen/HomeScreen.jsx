@@ -2,11 +2,11 @@ import React, { useEffect, useState } from "react";
 import { Auth } from "aws-amplify";
 import getLawsToVote from "../../api/getLawsToVote";
 import LawCards from "../../components/organisms/LawCards/LawCards";
-import { Button, Container } from "@material-ui/core";
+import { Button } from "@material-ui/core";
 import styles from "./HomeScreen.styles";
 import { useNavigate } from "react-router-dom";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-import { deepPurple, pink } from "@mui/material/colors";
+import { deepPurple } from "@mui/material/colors";
 
 const HomeScreen = () => {
   const [laws, setLaws] = useState([]);
@@ -18,21 +18,17 @@ const HomeScreen = () => {
   }, []);
 
   const fetchData = async () => {
-    try {
-      const session = await Auth.currentSession();
-      const jwtToken = session.getIdToken().getJwtToken();
-      setJwtToken(jwtToken);
-      const userInfo = await Auth.currentUserInfo();
-      const username = userInfo.attributes.email;
-      setUsername(username);
-      const result = await getLawsToVote(username, jwtToken);
-      if (result.errorMessage) {
-        throw Error(result.errorMessage);
-      }
-      setLaws(result);
-    } catch (error) {
-      throw Error("Error fetching JWT token:", error);
+    const session = await Auth.currentSession();
+    const jwtToken = session.getIdToken().getJwtToken();
+    setJwtToken(jwtToken);
+    const userInfo = await Auth.currentUserInfo();
+    const username = userInfo.attributes.email;
+    setUsername(username);
+    const result = await getLawsToVote(username, jwtToken);
+    if (result.errorMessage) {
+      throw Error(result.errorMessage);
     }
+    setLaws(result);
   };
 
   let navigate = useNavigate();
@@ -92,7 +88,7 @@ const HomeScreen = () => {
             Rejected Laws
           </Button>
         </div>
-        <Container
+        <div
           style={{
             margin: "auto",
             padding: 50,
@@ -100,16 +96,21 @@ const HomeScreen = () => {
             justifyContent: "center",
             alignSelf: "center",
             overflow: "hidden",
-            maxWidth: "80%",
+            maxWidth: "1700px",
           }}
         >
           <LawCards
             laws={laws}
             username={username}
             jwtToken={jwtToken}
+            hasTitleField={false}
+            hasContentField={false}
             hasVotingButtons={true}
+            hasProposeLawButton={false}
+            lockExpanded={false}
+            hasLawPageButton={true}
           />
-        </Container>
+        </div>
       </ThemeProvider>
     </>
   );
