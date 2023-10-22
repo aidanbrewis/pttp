@@ -107,7 +107,7 @@ const RejectedLawsScreen = () => {
           justifyContent: "center",
           alignSelf: "center",
           overflow: "hidden",
-          maxWidth: "80%",
+          maxWidth: "1700px",
         }}
       >
         <LawCards
@@ -119,6 +119,7 @@ const RejectedLawsScreen = () => {
           hasVotingButtons={false}
           hasProposeLawButton={false}
           lockExpanded={false}
+          hasLawPageButton={false}
         />
       </div>
     </>

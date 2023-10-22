@@ -26,6 +26,7 @@ const LawCard = ({
   hasVotingButtons,
   hasProposeLawButton,
   lockExpanded,
+  hasLawPageButton,
 }) => {
   const hasTitle = !hasTitleField;
 
@@ -177,10 +178,12 @@ const LawCard = ({
               </Button>
             </div>
           )}
-          <OpenInNewButton
-            onClick={() => console.log("need a screen to navigate to...")}
-            style={styles.openInNew}
-          />
+          {hasLawPageButton && (
+            <OpenInNewButton
+              onClick={() => console.log("need a screen to navigate to...")}
+              style={styles.openInNew}
+            />
+          )}
         </div>
       </Collapse>
     </Card>

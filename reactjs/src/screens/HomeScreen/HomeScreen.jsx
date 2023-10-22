@@ -100,7 +100,7 @@ const HomeScreen = () => {
             justifyContent: "center",
             alignSelf: "center",
             overflow: "hidden",
-            maxWidth: "80%",
+            maxWidth: "1700px",
           }}
         >
           <LawCards
@@ -112,6 +112,7 @@ const HomeScreen = () => {
             hasVotingButtons={true}
             hasProposeLawButton={false}
             lockExpanded={false}
+            hasLawPageButton={true}
           />
         </div>
       </ThemeProvider>

@@ -7,7 +7,7 @@ let styles = {
     justifyContent: "center",
     alignSelf: "center",
     overflow: "hidden",
-    maxWidth: "80%",
+    maxWidth: "1700px",
   },
 };
 

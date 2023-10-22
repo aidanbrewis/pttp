@@ -14,6 +14,7 @@ const LawCards = (data) => {
         hasVotingButtons={data.hasVotingButtons}
         hasProposeLawButton={data.hasProposeLawButton}
         lockExpanded={data.lockExpanded}
+        hasLawPageButton={data.hasLawPageButton}
       />
     </div>
   ));
