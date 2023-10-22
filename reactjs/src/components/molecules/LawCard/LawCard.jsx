@@ -15,6 +15,7 @@ import ExpandButton from "../../atoms/ExpandButton/ExpandButton";
 import OpenInNewButton from "../../atoms/OpenInNewButton/OpenInNewButton";
 import submitVotes from "../../../api/submitVotes";
 import proposeLaw from "../../../api/proposeLaw";
+import amendLaw from "../../../api/amendLaw";
 
 const LawCard = ({
   law,
@@ -27,11 +28,13 @@ const LawCard = ({
   hasProposeLawButton,
   lockExpanded,
   hasLawPageButton,
+  amend,
 }) => {
   const hasTitle = !hasTitleField;
 
   const [expanded, setExpanded] = useState(lockExpanded);
   const [isDisabled, setIsDisabled] = useState(true);
+  const [isAmend, setIsAmend] = useState(amend);
   const [voteResults, setVoteResults] = useState({});
   const [lawTitle, setLawTitle] = useState("");
   const [lawContent, setLawContent] = useState("");
@@ -43,8 +46,8 @@ const LawCard = ({
     navigate(path);
   };
 
-  const LawScreenNavigate = () => {
-    let path = `/` + lawId;
+  const LawScreenNavigate = (amend) => {
+    let path = `/` + lawId + amend ? "/amend" : "";
     navigate(path);
   };
 
@@ -59,10 +62,23 @@ const LawCard = ({
   };
 
   const handleOptionClick = (versionId, option) => {
+    if (isAmend && option === "yes") {
+      setIsAmend(false);
+    }
     setVoteResults((prevResults) => ({
       ...prevResults,
       [versionId]: option,
     }));
+  };
+
+  const handleAmend = () => {
+    if (hasLawPageButton) {
+      LawScreenNavigate(true);
+    }
+    if (!isAmend) {
+      Object.keys(law.versions).map((key) => handleOptionClick(key, "No"));
+    }
+    setIsAmend(!isAmend);
   };
 
   const handleChange = (e) => {
@@ -82,6 +98,18 @@ const LawCard = ({
 
   const sendVotes = async () => {
     const result = await submitVotes(username, jwtToken, lawId, voteResults);
+    if (result.errorMessage) {
+      throw Error(result.errorMessage);
+    }
+    if (hasLawPageButton) {
+      window.location.reload();
+    } else {
+      homeScreenNavigate();
+    }
+  };
+
+  const amendLaw = async () => {
+    const result = await amendLaw(username, jwtToken, lawId, lawContent);
     if (result.errorMessage) {
       throw Error(result.errorMessage);
     }
@@ -150,7 +178,7 @@ const LawCard = ({
             />
           ))}
 
-          {hasContentField && (
+          {(hasContentField || isAmend) && (
             <TextField
               id="law-content"
               label="Law"
@@ -164,14 +192,15 @@ const LawCard = ({
 
           {hasVotingButtons && (
             <div style={styles.commitButtons}>
-              <Button
-                color="inherit"
-                onClick={() => console.log("need a screen to navigate to...")}
-              >
+              <Button color="inherit" onClick={handleAmend}>
                 Amend
               </Button>
 
-              <Button color="inherit" disabled={isDisabled} onClick={sendVotes}>
+              <Button
+                color="inherit"
+                disabled={isDisabled}
+                onClick={isAmend ? amendLaw : sendVotes}
+              >
                 Confirm Votes
               </Button>
             </div>
@@ -189,7 +218,7 @@ const LawCard = ({
           )}
           {hasLawPageButton && (
             <OpenInNewButton
-              onClick={LawScreenNavigate}
+              onClick={LawScreenNavigate(false)}
               style={styles.openInNew}
             />
           )}

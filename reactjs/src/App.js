@@ -34,7 +34,11 @@ function App() {
                 <Route path="/propose_law" element={<ProposeLawScreen />} />
                 <Route path="/accepted_laws" element={<AcceptedLawsScreen />} />
                 <Route path="/rejected_laws" element={<RejectedLawsScreen />} />
-                <Route path="/:lawId" element={<LawScreen />} />
+                <Route
+                  path="/:lawId/amend"
+                  element={<LawScreen amend={true} />}
+                />
+                <Route path="/:lawId" element={<LawScreen amend={false} />} />
               </Routes>
             </Router>
           </ThemeProvider>
