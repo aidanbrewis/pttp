@@ -92,7 +92,7 @@ const HomeScreen = () => {
             Rejected Laws
           </Button>
         </div>
-        <Container
+        <div
           style={{
             margin: "auto",
             padding: 50,
@@ -107,9 +107,13 @@ const HomeScreen = () => {
             laws={laws}
             username={username}
             jwtToken={jwtToken}
+            hasTitleField={false}
+            hasContentField={false}
             hasVotingButtons={true}
+            hasProposeLawButton={false}
+            lockExpanded={false}
           />
-        </Container>
+        </div>
       </ThemeProvider>
     </>
   );

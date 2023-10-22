@@ -108,7 +108,11 @@ const AcceptedLawsScreen = () => {
           laws={laws}
           username={username}
           jwtToken={jwtToken}
+          hasTitleField={false}
+          hasContentField={false}
           hasVotingButtons={false}
+          hasProposeLawButton={false}
+          lockExpanded={false}
         />
       </div>
     </>
