@@ -9,7 +9,7 @@ import {
 import Collapse from "@material-ui/core/Collapse";
 import unixToDate from "../../../unixToDate";
 import styles from "./LawCard.styles";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import LawWithAction from "../../atoms/LawWithAction/LawWithAction";
 import ExpandButton from "../../atoms/ExpandButton/ExpandButton";
 import OpenInNewButton from "../../atoms/OpenInNewButton/OpenInNewButton";
@@ -40,6 +40,11 @@ const LawCard = ({
 
   const homeScreenNavigate = () => {
     let path = `/`;
+    navigate(path);
+  };
+
+  const LawScreenNavigate = () => {
+    let path = `/` + lawId;
     navigate(path);
   };
 
@@ -80,7 +85,11 @@ const LawCard = ({
     if (result.errorMessage) {
       throw Error(result.errorMessage);
     }
-    window.location.reload();
+    if (hasLawPageButton) {
+      window.location.reload();
+    } else {
+      homeScreenNavigate();
+    }
   };
 
   const callProposeLaw = async () => {
@@ -180,7 +189,7 @@ const LawCard = ({
           )}
           {hasLawPageButton && (
             <OpenInNewButton
-              onClick={() => console.log("need a screen to navigate to...")}
+              onClick={LawScreenNavigate}
               style={styles.openInNew}
             />
           )}

@@ -8,8 +8,6 @@ import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { deepPurple, pink } from "@mui/material/colors";
 
 const ProposeLawScreen = () => {
-  const [lawTitle, setLawTitle] = useState("");
-  const [lawContent, setLawContent] = useState("");
   const [jwtToken, setJwtToken] = useState("");
   const [username, setUsername] = useState("");
 
@@ -18,16 +16,12 @@ const ProposeLawScreen = () => {
   }, []);
 
   const fetchData = async () => {
-    try {
-      const session = await Auth.currentSession();
-      const jwtToken = session.getIdToken().getJwtToken();
-      setJwtToken(jwtToken);
-      const userInfo = await Auth.currentUserInfo();
-      const username = userInfo.attributes.email;
-      setUsername(username);
-    } catch (error) {
-      throw Error("Error fetching JWT token:", error);
-    }
+    const session = await Auth.currentSession();
+    const jwtToken = session.getIdToken().getJwtToken();
+    setJwtToken(jwtToken);
+    const userInfo = await Auth.currentUserInfo();
+    const username = userInfo.attributes.email;
+    setUsername(username);
   };
 
   let navigate = useNavigate();
