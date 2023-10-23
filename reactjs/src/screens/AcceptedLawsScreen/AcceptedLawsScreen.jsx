@@ -124,6 +124,7 @@ const AcceptedLawsScreen = () => {
           lockExpanded={false}
           hasLawPageButton={false}
           amend={false}
+          hasUserVoteResults={false}
         />
       </div>
     </>

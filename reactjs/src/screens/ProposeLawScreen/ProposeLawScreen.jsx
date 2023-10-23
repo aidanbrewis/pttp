@@ -117,6 +117,7 @@ const ProposeLawScreen = () => {
           lockExpanded={true}
           hasLawPageButton={false}
           amend={false}
+          hasUserVoteResults={false}
         />
       </div>
     </>

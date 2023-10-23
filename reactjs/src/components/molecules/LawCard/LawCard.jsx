@@ -31,6 +31,7 @@ const LawCard = ({
   lockExpanded,
   hasLawPageButton,
   amend,
+  hasUserVoteResults,
 }) => {
   const hasTitle = !hasTitleField;
 
@@ -65,6 +66,13 @@ const LawCard = ({
         setVoteResults((prevResults) => ({
           ...prevResults,
           [key]: "no",
+        }))
+      );
+    } else if (hasUserVoteResults) {
+      Object.keys(law.versions).map((key) =>
+        setVoteResults((prevResults) => ({
+          ...prevResults,
+          [key]: law.versions[key].vote,
         }))
       );
     }
@@ -214,6 +222,7 @@ const LawCard = ({
                 version={law.versions[key]}
                 voteResult={voteResults[key] || null}
                 hasVotingButtons={hasVotingButtons}
+                hasUserVoteResults={hasUserVoteResults}
               />
             ))}
 

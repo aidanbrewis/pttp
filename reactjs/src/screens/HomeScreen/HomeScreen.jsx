@@ -123,6 +123,7 @@ const HomeScreen = () => {
             lockExpanded={false}
             hasLawPageButton={true}
             amend={false}
+            hasUserVoteResults={false}
           />
         </div>
       </ThemeProvider>

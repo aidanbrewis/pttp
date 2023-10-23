@@ -124,6 +124,7 @@ const VotedLawsScreen = () => {
           lockExpanded={false}
           hasLawPageButton={false}
           amend={false}
+          hasUserVoteResults={true}
         />
       </div>
     </>

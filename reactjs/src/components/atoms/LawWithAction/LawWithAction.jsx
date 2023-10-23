@@ -6,6 +6,7 @@ const LawWithAction = ({
   onOptionClick,
   voteResult,
   hasVotingButtons,
+  hasUserVoteResults,
 }) => {
   const handleOptionClick = (option) => {
     onOptionClick(option);
@@ -28,6 +29,27 @@ const LawWithAction = ({
             variant={voteResult === "no" ? "contained" : "text"}
             color={voteResult === "no" ? "error" : "inherit"}
             onClick={() => handleOptionClick("no")}
+          >
+            No
+          </Button>
+        </div>
+      </div>
+    );
+  } else if (hasUserVoteResults) {
+    return (
+      <div style={styles.lawWithAction}>
+        <div style={styles.lawVersion}>{version.content}</div>
+        <div style={styles.votingButtonsContainer}>
+          <Button
+            variant={voteResult === "yes" ? "contained" : "text"}
+            color={voteResult === "yes" ? "success" : "inherit"}
+            style={{ marginRight: 10 }}
+          >
+            Yes
+          </Button>
+          <Button
+            variant={voteResult === "no" ? "contained" : "text"}
+            color={voteResult === "no" ? "error" : "inherit"}
           >
             No
           </Button>

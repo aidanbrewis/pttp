@@ -145,6 +145,7 @@ const LawScreen = ({ amend }) => {
           lockExpanded={true}
           hasLawPageButton={false}
           amend={amend}
+          hasUserVoteResults={false}
         />
       </div>
     </>
