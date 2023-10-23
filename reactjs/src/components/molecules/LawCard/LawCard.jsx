@@ -49,6 +49,11 @@ const LawCard = ({
     navigate(path);
   };
 
+  const votedLawsNavigate = () => {
+    let path = `/voted_laws`;
+    navigate(path);
+  };
+
   const LawScreenNavigate = () => {
     let path = `/` + lawId;
     navigate(path);
@@ -151,11 +156,7 @@ const LawCard = ({
     if (result.errorMessage) {
       throw Error(result.errorMessage);
     }
-    if (hasLawPageButton) {
-      window.location.reload();
-    } else {
-      homeScreenNavigate();
-    }
+    votedLawsNavigate();
   };
 
   const callProposeLaw = async () => {
@@ -171,7 +172,7 @@ const LawCard = ({
     if (result.errorMessage) {
       throw Error(result.errorMessage);
     }
-    homeScreenNavigate();
+    votedLawsNavigate();
   };
 
   const date = unixToDate(law?.expediteDate);
