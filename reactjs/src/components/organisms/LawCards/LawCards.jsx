@@ -16,6 +16,7 @@ const LawCards = (data) => {
         lockExpanded={data.lockExpanded}
         hasLawPageButton={data.hasLawPageButton}
         amend={data.amend}
+        hasUserVoteResults={data.hasUserVoteResults}
       />
     </div>
   ));

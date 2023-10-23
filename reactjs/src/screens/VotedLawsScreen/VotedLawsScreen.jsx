@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { Auth } from "aws-amplify";
-import getLawsToVote from "../../api/getLawsToVote";
+import getVotedProposedLaws from "../../api/getVotedProposedLaws";
 import LawCards from "../../components/organisms/LawCards/LawCards";
 import { Button } from "@material-ui/core";
-import styles from "./HomeScreen.styles";
+import styles from "./VotedLawsScreen.styles";
 import { useNavigate } from "react-router-dom";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { deepPurple } from "@mui/material/colors";
 
-const HomeScreen = () => {
+const VotedLawsScreen = () => {
   const [laws, setLaws] = useState([]);
   const [jwtToken, setJwtToken] = useState("");
   const [username, setUsername] = useState("");
@@ -24,7 +24,7 @@ const HomeScreen = () => {
     const userInfo = await Auth.currentUserInfo();
     const username = userInfo.attributes.email;
     setUsername(username);
-    const result = await getLawsToVote(username, jwtToken);
+    const result = await getVotedProposedLaws(username, jwtToken);
     if (result.errorMessage) {
       throw Error(result.errorMessage);
     }
@@ -38,8 +38,8 @@ const HomeScreen = () => {
     navigate(path);
   };
 
-  const votedLawsNavigate = () => {
-    let path = `/voted_laws`;
+  const homeScreenNavigate = () => {
+    let path = `/`;
     navigate(path);
   };
 
@@ -65,7 +65,12 @@ const HomeScreen = () => {
     <>
       <ThemeProvider theme={theme}>
         <div style={styles.tabs}>
-          <Button style={{ marginLeft: 0 }} color="primary" variant="contained">
+          <Button
+            style={{ marginLeft: 0 }}
+            color="inherit"
+            variant="contained"
+            onClick={homeScreenNavigate}
+          >
             Vote
           </Button>
           <Button
@@ -76,12 +81,7 @@ const HomeScreen = () => {
           >
             Propose New Law
           </Button>
-          <Button
-            style={{ marginLeft: 0 }}
-            color="inherit"
-            variant="contained"
-            onClick={votedLawsNavigate}
-          >
+          <Button style={{ marginLeft: 0 }} color="primary" variant="contained">
             Voted Laws
           </Button>
           <Button
@@ -101,34 +101,34 @@ const HomeScreen = () => {
             Rejected Laws
           </Button>
         </div>
-        <div
-          style={{
-            margin: "auto",
-            padding: 50,
-            backgroundColor: "rgb(63,81,181)",
-            justifyContent: "center",
-            alignSelf: "center",
-            overflow: "hidden",
-            maxWidth: "1700px",
-          }}
-        >
-          <LawCards
-            laws={laws}
-            username={username}
-            jwtToken={jwtToken}
-            hasTitleField={false}
-            hasContentField={false}
-            hasVotingButtons={true}
-            hasProposeLawButton={false}
-            lockExpanded={false}
-            hasLawPageButton={true}
-            amend={false}
-            hasUserVoteResults={false}
-          />
-        </div>
       </ThemeProvider>
+      <div
+        style={{
+          margin: "auto",
+          padding: 50,
+          backgroundColor: "rgb(63,81,181)",
+          justifyContent: "center",
+          alignSelf: "center",
+          overflow: "hidden",
+          maxWidth: "1700px",
+        }}
+      >
+        <LawCards
+          laws={laws}
+          username={username}
+          jwtToken={jwtToken}
+          hasTitleField={false}
+          hasContentField={false}
+          hasVotingButtons={false}
+          hasProposeLawButton={false}
+          lockExpanded={false}
+          hasLawPageButton={false}
+          amend={false}
+          hasUserVoteResults={true}
+        />
+      </div>
     </>
   );
 };
 
-export default HomeScreen;
+export default VotedLawsScreen;

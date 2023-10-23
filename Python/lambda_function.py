@@ -3,6 +3,7 @@ import json
 
 print('Loading function')
 
+
 def lambda_handler(event, context):
     '''Provide an event that contains the following keys:
 
@@ -14,10 +15,8 @@ def lambda_handler(event, context):
 
     if cognitoRequest:
         username = cognitoRequest['userAttributes']['email']
-        event['response'] = pttp.createUser({'username':username})
+        event['response'] = pttp.createUser({'username': username})
         return event
-
-
 
     operation = event['operation']
 
@@ -25,12 +24,13 @@ def lambda_handler(event, context):
         'proposeLaw': pttp.proposeLaw,
         'proposeAbrogationLaw': pttp.proposeAbrogationLaw,
         'getLawsToVote': pttp.getLawsToVote,
-        'getVotedLaws' : pttp.getVotedLaws,
+        'getVotedLaws': pttp.getVotedLaws,
+        'getVotedProposedLaws': pttp.getVotedProposedLaws,
         'getAcceptedLaws': pttp.getAcceptedLaws,
         'getRejectedLaws': pttp.getRejectedLaws,
-        'getNonExpediteAcceptedLaws' : pttp.getNonExpediteAcceptedLaws,
-        'checkExpedites' : pttp.checkExpedites,
-        'vote' : pttp.vote
+        'getNonExpediteAcceptedLaws': pttp.getNonExpediteAcceptedLaws,
+        'checkExpedites': pttp.checkExpedites,
+        'vote': pttp.vote
     }
 
     if operation in operations:

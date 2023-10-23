@@ -54,6 +54,11 @@ const LawScreen = ({ amend }) => {
     navigate(path);
   };
 
+  const votedLawsNavigate = () => {
+    let path = `/voted_laws`;
+    navigate(path);
+  };
+
   const acceptedLawsNavigate = () => {
     let path = `/accepted_laws`;
     navigate(path);
@@ -96,6 +101,14 @@ const LawScreen = ({ amend }) => {
             style={{ marginLeft: 0 }}
             color="inherit"
             variant="contained"
+            onClick={votedLawsNavigate}
+          >
+            Voted Laws
+          </Button>
+          <Button
+            style={{ marginLeft: 0 }}
+            color="inherit"
+            variant="contained"
             onClick={acceptedLawsNavigate}
           >
             Accepted Laws
@@ -132,6 +145,7 @@ const LawScreen = ({ amend }) => {
           lockExpanded={true}
           hasLawPageButton={false}
           amend={amend}
+          hasUserVoteResults={false}
         />
       </div>
     </>

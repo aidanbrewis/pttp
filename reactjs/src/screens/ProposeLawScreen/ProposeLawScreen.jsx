@@ -31,6 +31,11 @@ const ProposeLawScreen = () => {
     navigate(path);
   };
 
+  const votedLawsNavigate = () => {
+    let path = `/voted_laws`;
+    navigate(path);
+  };
+
   const acceptedLawsNavigate = () => {
     let path = `/accepted_laws`;
     navigate(path);
@@ -63,6 +68,14 @@ const ProposeLawScreen = () => {
           </Button>
           <Button style={{ marginLeft: 0 }} color="primary" variant="contained">
             Propose New Law
+          </Button>
+          <Button
+            style={{ marginLeft: 0 }}
+            color="inherit"
+            variant="contained"
+            onClick={votedLawsNavigate}
+          >
+            Voted Laws
           </Button>
           <Button
             style={{ marginLeft: 0 }}
@@ -104,6 +117,7 @@ const ProposeLawScreen = () => {
           lockExpanded={true}
           hasLawPageButton={false}
           amend={false}
+          hasUserVoteResults={false}
         />
       </div>
     </>

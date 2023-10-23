@@ -38,6 +38,11 @@ const AcceptedLawsScreen = () => {
     navigate(path);
   };
 
+  const votedLawsNavigate = () => {
+    let path = `/voted_laws`;
+    navigate(path);
+  };
+
   const homeScreenNavigate = () => {
     let path = `/`;
     navigate(path);
@@ -76,6 +81,14 @@ const AcceptedLawsScreen = () => {
           >
             Propose New Law
           </Button>
+          <Button
+            style={{ marginLeft: 0 }}
+            color="inherit"
+            variant="contained"
+            onClick={votedLawsNavigate}
+          >
+            Voted Laws
+          </Button>
           <Button style={{ marginLeft: 0 }} color="primary" variant="contained">
             Accepted Laws
           </Button>
@@ -111,6 +124,7 @@ const AcceptedLawsScreen = () => {
           lockExpanded={false}
           hasLawPageButton={false}
           amend={false}
+          hasUserVoteResults={false}
         />
       </div>
     </>
