@@ -924,7 +924,7 @@ def vote(payload):
                 proposedLaws[lawId]['versions'][versionNumber]['acceptedTime'] = int(time.time())
                 acceptedLaws[lawId] = {'title':proposedLaws[lawId]['title'],'category':proposedLaws[lawId]['category'],'expedite':proposedLaws[lawId]['expedite'],'expediteDate':proposedLaws[lawId]['expediteDate'],'versions':{versionNumber:proposedLaws[lawId]['versions'][versionNumber]}}
                 if rejectedLaws.get(lawId) == None:
-                    rejectedLaws[lawId] = proposedLaws[lawId]
+                    rejectedLaws[lawId] = proposedLaws[lawId].copy()
                     rejectedLaws[lawId]['versions'].pop(versionNumber)
                 else:
                     rejectedLaws[lawId].update(proposedLaws[lawId])
