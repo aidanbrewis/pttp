@@ -38,6 +38,11 @@ const HomeScreen = () => {
     navigate(path);
   };
 
+  const votedLawsNavigate = () => {
+    let path = `/voted_laws`;
+    navigate(path);
+  };
+
   const acceptedLawsNavigate = () => {
     let path = `/accepted_laws`;
     navigate(path);
@@ -70,6 +75,14 @@ const HomeScreen = () => {
             onClick={proposeLawNavigate}
           >
             Propose New Law
+          </Button>
+          <Button
+            style={{ marginLeft: 0 }}
+            color="inherit"
+            variant="contained"
+            onClick={votedLawsNavigate}
+          >
+            Voted Laws
           </Button>
           <Button
             style={{ marginLeft: 0 }}

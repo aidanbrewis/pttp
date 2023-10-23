@@ -38,6 +38,11 @@ const RejectedLawsScreen = () => {
     navigate(path);
   };
 
+  const votedLawsNavigate = () => {
+    let path = `/voted_laws`;
+    navigate(path);
+  };
+
   const homeScreenNavigate = () => {
     let path = `/`;
     navigate(path);
@@ -80,9 +85,15 @@ const RejectedLawsScreen = () => {
             style={{ marginLeft: 0 }}
             color="inherit"
             variant="contained"
+            onClick={votedLawsNavigate}
+          >
+            Voted Laws
+          </Button>
+          <Button
+            style={{ marginLeft: 0 }}
+            color="inherit"
+            variant="contained"
             onClick={acceptedLawsNavigate}
-            Accepted
-            Laws
           >
             Accepted Laws
           </Button>

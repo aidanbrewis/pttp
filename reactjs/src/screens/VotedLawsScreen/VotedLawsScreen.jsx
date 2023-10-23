@@ -1,19 +1,17 @@
-import { React, useState, useEffect } from "react";
-import LawCards from "../../components/organisms/LawCards/LawCards";
-import getLawsToVote from "../../api/getLawsToVote";
-import { Button } from "@material-ui/core";
-import styles from "./LawScreen.styles";
-import { useNavigate, useLocation } from "react-router-dom";
+import React, { useEffect, useState } from "react";
 import { Auth } from "aws-amplify";
+import getVotedProposedLaws from "../../api/getVotedProposedLaws";
+import LawCards from "../../components/organisms/LawCards/LawCards";
+import { Button } from "@material-ui/core";
+import styles from "./VotedLawsScreen.styles";
+import { useNavigate } from "react-router-dom";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-import { pink } from "@mui/material/colors";
+import { deepPurple } from "@mui/material/colors";
 
-const LawScreen = ({ amend }) => {
-  const [laws, setLaws] = useState({});
+const VotedLawsScreen = () => {
+  const [laws, setLaws] = useState([]);
   const [jwtToken, setJwtToken] = useState("");
   const [username, setUsername] = useState("");
-
-  const lawId = useLocation().pathname.split("/")[1];
 
   useEffect(() => {
     fetchData();
@@ -26,36 +24,22 @@ const LawScreen = ({ amend }) => {
     const userInfo = await Auth.currentUserInfo();
     const username = userInfo.attributes.email;
     setUsername(username);
-    const result = await getLawsToVote(username, jwtToken);
+    const result = await getVotedProposedLaws(username, jwtToken);
     if (result.errorMessage) {
       throw Error(result.errorMessage);
     }
-    if (result[lawId]) {
-      const lawWithId = {};
-      lawWithId[lawId] = result[lawId];
-      setLaws((laws) => ({
-        ...laws,
-        ...lawWithId,
-      }));
-    } else {
-      throw Error(lawId + " is not a valid path");
-    }
+    setLaws(result);
   };
 
   let navigate = useNavigate();
-
-  const homeScreenNavigate = () => {
-    let path = `/`;
-    navigate(path);
-  };
 
   const proposeLawNavigate = () => {
     let path = `/propose_law`;
     navigate(path);
   };
 
-  const votedLawsNavigate = () => {
-    let path = `/voted_laws`;
+  const homeScreenNavigate = () => {
+    let path = `/`;
     navigate(path);
   };
 
@@ -72,7 +56,7 @@ const LawScreen = ({ amend }) => {
   const theme = createTheme({
     palette: {
       primary: {
-        main: pink[100],
+        main: deepPurple[800],
       },
     },
   });
@@ -97,12 +81,7 @@ const LawScreen = ({ amend }) => {
           >
             Propose New Law
           </Button>
-          <Button
-            style={{ marginLeft: 0 }}
-            color="inherit"
-            variant="contained"
-            onClick={votedLawsNavigate}
-          >
+          <Button style={{ marginLeft: 0 }} color="primary" variant="contained">
             Voted Laws
           </Button>
           <Button
@@ -140,15 +119,15 @@ const LawScreen = ({ amend }) => {
           jwtToken={jwtToken}
           hasTitleField={false}
           hasContentField={false}
-          hasVotingButtons={true}
+          hasVotingButtons={false}
           hasProposeLawButton={false}
-          lockExpanded={true}
+          lockExpanded={false}
           hasLawPageButton={false}
-          amend={amend}
+          amend={false}
         />
       </div>
     </>
   );
 };
 
-export default LawScreen;
+export default VotedLawsScreen;
