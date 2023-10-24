@@ -249,13 +249,21 @@ const LawCard = ({
                   Amend
                 </Button>
 
-                <Button
-                  color="inherit"
-                  disabled={isDisabled}
-                  onClick={isAmend ? callAmendLaw : sendVotes}
-                >
-                  {isAmend ? "Confirm Amendment" : "Confirm Votes"}
-                </Button>
+                {!isAmend && (
+                  <Button color="inherit" onClick={sendVotes}>
+                    Confirm Votes
+                  </Button>
+                )}
+
+                {isAmend && (
+                  <Button
+                    color="inherit"
+                    disabled={lawContent == ""}
+                    onClick={callAmendLaw}
+                  >
+                    Confirm Amendment
+                  </Button>
+                )}
               </div>
             )}
             {hasProposeLawButton && (
@@ -264,7 +272,11 @@ const LawCard = ({
                   control={<Checkbox disabled></Checkbox>}
                   label="Expedite Law"
                 />
-                <Button color="inherit" onClick={callProposeLaw}>
+                <Button
+                  color="inherit"
+                  disabled={lawContent == ""}
+                  onClick={callProposeLaw}
+                >
                   Propose Law
                 </Button>
               </div>
