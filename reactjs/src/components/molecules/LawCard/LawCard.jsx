@@ -5,6 +5,7 @@ import {
   Checkbox,
   TextField,
   FormControlLabel,
+  CircularProgress,
 } from "@mui/material";
 import Collapse from "@material-ui/core/Collapse";
 import unixToDate from "../../../unixToDate";
@@ -40,6 +41,9 @@ const LawCard = ({
   const [voteResults, setVoteResults] = useState({});
   const [lawTitle, setLawTitle] = useState("");
   const [lawContent, setLawContent] = useState("");
+  const [proposeLawLoading, setProposeLawLoading] = useState(false);
+  const [sendVotesLoading, setSendVotesLoading] = useState(false);
+  const [callAmendLawLoading, setCallAmendLawLoading] = useState(false);
 
   let navigate = useNavigate();
 
@@ -126,8 +130,10 @@ const LawCard = ({
   };
 
   const sendVotes = async () => {
+    setSendVotesLoading(true);
     const result = await submitVotes(username, jwtToken, lawId, voteResults);
     if (result.errorMessage) {
+      setSendVotesLoading(false);
       throw Error(result.errorMessage);
     }
     if (hasLawPageButton) {
@@ -138,6 +144,7 @@ const LawCard = ({
   };
 
   const callAmendLaw = async () => {
+    setCallAmendLawLoading(true);
     const result = await amendLaw(
       username,
       jwtToken,
@@ -146,12 +153,14 @@ const LawCard = ({
       lawContent
     );
     if (result.errorMessage) {
+      setCallAmendLawLoading(false);
       throw Error(result.errorMessage);
     }
     votedLawsNavigate();
   };
 
   const callProposeLaw = async () => {
+    setProposeLawLoading(true);
     const result = await proposeLaw(
       username,
       jwtToken,
@@ -162,6 +171,7 @@ const LawCard = ({
       null
     );
     if (result.errorMessage) {
+      setProposeLawLoading(false);
       throw Error(result.errorMessage);
     }
     votedLawsNavigate();
@@ -244,9 +254,14 @@ const LawCard = ({
                 {!isAmend && (
                   <Button
                     color="inherit"
-                    disabled={Object.keys(voteResults).length === 0}
+                    disabled={
+                      sendVotesLoading || Object.keys(voteResults).length === 0
+                    }
                     onClick={sendVotes}
                   >
+                    {sendVotesLoading && (
+                      <CircularProgress size="1rem" color="primary" />
+                    )}
                     Confirm Votes
                   </Button>
                 )}
@@ -254,9 +269,12 @@ const LawCard = ({
                 {isAmend && (
                   <Button
                     color="inherit"
-                    disabled={lawContent == ""}
+                    disabled={callAmendLawLoading || lawContent == ""}
                     onClick={callAmendLaw}
                   >
+                    {callAmendLawLoading && (
+                      <CircularProgress size="1rem" color="primary" />
+                    )}
                     Confirm Amendment
                   </Button>
                 )}
@@ -270,9 +288,14 @@ const LawCard = ({
                 />
                 <Button
                   color="inherit"
-                  disabled={lawTitle == "" || lawContent == ""}
+                  disabled={
+                    proposeLawLoading || lawTitle == "" || lawContent == ""
+                  }
                   onClick={callProposeLaw}
                 >
+                  {proposeLawLoading && (
+                    <CircularProgress size="1rem" color="primary" />
+                  )}
                   Propose Law
                 </Button>
               </div>

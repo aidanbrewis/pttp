@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Auth } from "aws-amplify";
 import getVotedProposedLaws from "../../api/getVotedProposedLaws";
 import LawCards from "../../components/organisms/LawCards/LawCards";
-import { Button } from "@material-ui/core";
+import { Button, CircularProgress } from "@material-ui/core";
 import styles from "./VotedLawsScreen.styles";
 import { useNavigate } from "react-router-dom";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
@@ -12,6 +12,7 @@ const VotedLawsScreen = () => {
   const [laws, setLaws] = useState([]);
   const [jwtToken, setJwtToken] = useState("");
   const [username, setUsername] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     fetchData();
@@ -25,6 +26,7 @@ const VotedLawsScreen = () => {
     const username = userInfo.attributes.email;
     setUsername(username);
     const result = await getVotedProposedLaws(username, jwtToken);
+    setIsLoading(false);
     if (result.errorMessage) {
       throw Error(result.errorMessage);
     }
@@ -113,6 +115,11 @@ const VotedLawsScreen = () => {
           maxWidth: "1700px",
         }}
       >
+        {isLoading && (
+          <div style={{ display: "flex", justifyContent: "center" }}>
+            <CircularProgress color="success" />
+          </div>
+        )}
         <LawCards
           laws={laws}
           username={username}

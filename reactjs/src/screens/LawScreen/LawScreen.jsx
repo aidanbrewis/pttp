@@ -1,7 +1,7 @@
 import { React, useState, useEffect } from "react";
 import LawCards from "../../components/organisms/LawCards/LawCards";
 import getLawsToVote from "../../api/getLawsToVote";
-import { Button } from "@material-ui/core";
+import { Button, CircularProgress } from "@material-ui/core";
 import styles from "./LawScreen.styles";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Auth } from "aws-amplify";
@@ -12,6 +12,7 @@ const LawScreen = ({ amend }) => {
   const [laws, setLaws] = useState({});
   const [jwtToken, setJwtToken] = useState("");
   const [username, setUsername] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
 
   const lawId = useLocation().pathname.split("/")[1];
 
@@ -27,6 +28,7 @@ const LawScreen = ({ amend }) => {
     const username = userInfo.attributes.email;
     setUsername(username);
     const result = await getLawsToVote(username, jwtToken);
+    setIsLoading(false);
     if (result.errorMessage) {
       throw Error(result.errorMessage);
     }
@@ -134,6 +136,11 @@ const LawScreen = ({ amend }) => {
           maxWidth: "1700px",
         }}
       >
+        {isLoading && (
+          <div style={{ display: "flex", justifyContent: "center" }}>
+            <CircularProgress color="success" />
+          </div>
+        )}
         <LawCards
           laws={laws}
           username={username}
