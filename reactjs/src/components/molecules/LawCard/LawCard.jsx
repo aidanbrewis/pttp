@@ -36,7 +36,6 @@ const LawCard = ({
   const hasTitle = !hasTitleField;
 
   const [expanded, setExpanded] = useState(lockExpanded);
-  const [isDisabled, setIsDisabled] = useState(true);
   const [isAmend, setIsAmend] = useState(amend);
   const [voteResults, setVoteResults] = useState({});
   const [lawTitle, setLawTitle] = useState("");
@@ -65,7 +64,6 @@ const LawCard = ({
   };
 
   useEffect(() => {
-    toggleDisabled();
     if (isAmend) {
       Object.keys(law.versions).map((key) =>
         setVoteResults((prevResults) => ({
@@ -112,7 +110,6 @@ const LawCard = ({
         }))
       );
     } else {
-      setIsDisabled(true);
       setVoteResults({});
     }
     setIsAmend(!isAmend);
@@ -126,11 +123,6 @@ const LawCard = ({
       case "law-content":
         setLawContent(e.target.value);
     }
-  };
-
-  const toggleDisabled = () => {
-    Object.keys(voteResults).length == Object.keys(law.versions).length &&
-      setIsDisabled(false);
   };
 
   const sendVotes = async () => {
@@ -250,7 +242,11 @@ const LawCard = ({
                 </Button>
 
                 {!isAmend && (
-                  <Button color="inherit" onClick={sendVotes}>
+                  <Button
+                    color="inherit"
+                    disabled={Object.keys(voteResults).length === 0}
+                    onClick={sendVotes}
+                  >
                     Confirm Votes
                   </Button>
                 )}
@@ -274,7 +270,7 @@ const LawCard = ({
                 />
                 <Button
                   color="inherit"
-                  disabled={lawContent == ""}
+                  disabled={lawTitle == "" || lawContent == ""}
                   onClick={callProposeLaw}
                 >
                   Propose Law
