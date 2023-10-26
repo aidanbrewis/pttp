@@ -6,6 +6,7 @@ import {
   TextField,
   FormControlLabel,
   CircularProgress,
+  Alert,
 } from "@mui/material";
 import Collapse from "@material-ui/core/Collapse";
 import unixToDate from "../../../unixToDate";
@@ -44,6 +45,7 @@ const LawCard = ({
   const [proposeLawLoading, setProposeLawLoading] = useState(false);
   const [sendVotesLoading, setSendVotesLoading] = useState(false);
   const [callAmendLawLoading, setCallAmendLawLoading] = useState(false);
+  const [error, setError] = useState("");
 
   let navigate = useNavigate();
 
@@ -120,6 +122,7 @@ const LawCard = ({
   };
 
   const handleChange = (e) => {
+    setError("");
     switch (e.target.id) {
       case "law-title":
         setLawTitle(e.target.value);
@@ -129,12 +132,18 @@ const LawCard = ({
     }
   };
 
+  const handleCloseError = () => {
+    setError("");
+  };
+
   const sendVotes = async () => {
     setSendVotesLoading(true);
+    setError("");
     const result = await submitVotes(username, jwtToken, lawId, voteResults);
     if (result.errorMessage) {
       setSendVotesLoading(false);
-      throw Error(result.errorMessage);
+      setError(result.errorMessage);
+      return;
     }
     if (hasLawPageButton) {
       window.location.reload();
@@ -145,6 +154,7 @@ const LawCard = ({
 
   const callAmendLaw = async () => {
     setCallAmendLawLoading(true);
+    setError("");
     const result = await amendLaw(
       username,
       jwtToken,
@@ -154,13 +164,15 @@ const LawCard = ({
     );
     if (result.errorMessage) {
       setCallAmendLawLoading(false);
-      throw Error(result.errorMessage);
+      setError(result.errorMessage);
+      return;
     }
     votedLawsNavigate();
   };
 
   const callProposeLaw = async () => {
     setProposeLawLoading(true);
+    setError("");
     const result = await proposeLaw(
       username,
       jwtToken,
@@ -172,7 +184,8 @@ const LawCard = ({
     );
     if (result.errorMessage) {
       setProposeLawLoading(false);
-      throw Error(result.errorMessage);
+      setError(result.errorMessage);
+      return;
     }
     votedLawsNavigate();
   };
@@ -192,6 +205,11 @@ const LawCard = ({
   return (
     <ThemeProvider theme={theme}>
       <Card style={isExpedite ? styles.expediteCard : styles.notExpediteCard}>
+        {error && (
+          <Alert severity="error" onClose={handleCloseError}>
+            {error}
+          </Alert>
+        )}
         <div style={styles.collapsedContentContainer} onClick={toggleExpanded}>
           {hasTitle && <div style={styles.title}>{law.title}</div>}
           {hasTitleField && (
