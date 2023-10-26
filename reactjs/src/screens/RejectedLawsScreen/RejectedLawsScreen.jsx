@@ -13,6 +13,7 @@ const RejectedLawsScreen = () => {
   const [jwtToken, setJwtToken] = useState("");
   const [username, setUsername] = useState("");
   const [isLoading, setIsLoading] = useState(true);
+  const [noLawsFounds, setNoLawsFounds] = useState(false);
 
   useEffect(() => {
     fetchData();
@@ -27,6 +28,7 @@ const RejectedLawsScreen = () => {
     setUsername(username);
     const result = await getRejectedLaws(jwtToken);
     setIsLoading(false);
+    setNoLawsFounds(!Object.keys(result).length);
     if (result.errorMessage) {
       throw Error(result.errorMessage);
     }
@@ -122,6 +124,18 @@ const RejectedLawsScreen = () => {
         {isLoading && (
           <div style={{ display: "flex", justifyContent: "center" }}>
             <CircularProgress color="success" />
+          </div>
+        )}
+        {noLawsFounds && (
+          <div
+            style={{
+              color: "white",
+              fontSize: 20,
+              display: "flex",
+              justifyContent: "center",
+            }}
+          >
+            No laws have been rejected.
           </div>
         )}
         <LawCards

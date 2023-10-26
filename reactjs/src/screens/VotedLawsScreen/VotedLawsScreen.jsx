@@ -13,6 +13,7 @@ const VotedLawsScreen = () => {
   const [jwtToken, setJwtToken] = useState("");
   const [username, setUsername] = useState("");
   const [isLoading, setIsLoading] = useState(true);
+  const [noLawsFounds, setNoLawsFounds] = useState(false);
 
   useEffect(() => {
     fetchData();
@@ -27,6 +28,7 @@ const VotedLawsScreen = () => {
     setUsername(username);
     const result = await getVotedProposedLaws(username, jwtToken);
     setIsLoading(false);
+    setNoLawsFounds(!Object.keys(result).length);
     if (result.errorMessage) {
       throw Error(result.errorMessage);
     }
@@ -118,6 +120,18 @@ const VotedLawsScreen = () => {
         {isLoading && (
           <div style={{ display: "flex", justifyContent: "center" }}>
             <CircularProgress color="success" />
+          </div>
+        )}
+        {noLawsFounds && (
+          <div
+            style={{
+              color: "white",
+              fontSize: 20,
+              display: "flex",
+              justifyContent: "center",
+            }}
+          >
+            All voted laws have been accepted or rejected.
           </div>
         )}
         <LawCards
