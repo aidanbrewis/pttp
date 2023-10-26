@@ -13,6 +13,7 @@ const HomeScreen = () => {
   const [jwtToken, setJwtToken] = useState("");
   const [username, setUsername] = useState("");
   const [isLoading, setIsLoading] = useState(true);
+  const [noLawsFounds, setNoLawsFounds] = useState(false);
 
   useEffect(() => {
     fetchData();
@@ -27,6 +28,7 @@ const HomeScreen = () => {
     setUsername(username);
     const result = await getLawsToVote(username, jwtToken);
     setIsLoading(false);
+    setNoLawsFounds(!Object.keys(result).length);
     if (result.errorMessage) {
       throw Error(result.errorMessage);
     }
@@ -117,6 +119,11 @@ const HomeScreen = () => {
           {isLoading && (
             <div style={{ display: "flex", justifyContent: "center" }}>
               <CircularProgress color="success" />
+            </div>
+          )}
+          {noLawsFounds && (
+            <div style={{ display: "flex", justifyContent: "center" }}>
+              No laws to vote on.
             </div>
           )}
           <LawCards
