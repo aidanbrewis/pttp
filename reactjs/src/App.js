@@ -12,7 +12,7 @@ import AcceptedLawsScreen from "./screens/AcceptedLawsScreen/AcceptedLawsScreen"
 import RejectedLawsScreen from "./screens/RejectedLawsScreen/RejectedLawsScreen";
 import VotedLawsScreen from "./screens/VotedLawsScreen/VotedLawsScreen";
 import LawScreen from "./screens/LawScreen/LawScreen";
-import { Button } from "@material-ui/core";
+import { Button, Link } from "@material-ui/core";
 import styles from "./screens/HomeScreen/HomeScreen.styles";
 
 function App() {
@@ -46,6 +46,17 @@ function App() {
             <div style={{ marginRight: "auto" }}>
               <Button color="inherit" variant="contained" onClick={signOut}>
                 Sign out
+              </Button>
+            </div>
+            <div style={{ marginLeft: "auto" }}>
+              <Button color="inherit" variant="contained">
+                <Link
+                  target="_blank"
+                  href="https://github.com/aidanbrewis/pttp"
+                  rel="noreferrer"
+                >
+                  Source code
+                </Link>
               </Button>
             </div>
           </div>
