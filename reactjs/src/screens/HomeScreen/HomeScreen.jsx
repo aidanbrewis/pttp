@@ -122,7 +122,14 @@ const HomeScreen = () => {
             </div>
           )}
           {noLawsFounds && (
-            <div style={{ display: "flex", justifyContent: "center" }}>
+            <div
+              style={{
+                color: "white",
+                fontSize: 20,
+                display: "flex",
+                justifyContent: "center",
+              }}
+            >
               No laws to vote on.
             </div>
           )}

@@ -123,7 +123,14 @@ const VotedLawsScreen = () => {
           </div>
         )}
         {noLawsFounds && (
-          <div style={{ display: "flex", justifyContent: "center" }}>
+          <div
+            style={{
+              color: "white",
+              fontSize: 20,
+              display: "flex",
+              justifyContent: "center",
+            }}
+          >
             All voted laws have been accepted or rejected.
           </div>
         )}

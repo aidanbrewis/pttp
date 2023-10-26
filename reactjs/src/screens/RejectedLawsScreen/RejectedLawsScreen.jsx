@@ -127,7 +127,14 @@ const RejectedLawsScreen = () => {
           </div>
         )}
         {noLawsFounds && (
-          <div style={{ display: "flex", justifyContent: "center" }}>
+          <div
+            style={{
+              color: "white",
+              fontSize: 20,
+              display: "flex",
+              justifyContent: "center",
+            }}
+          >
             No laws have been rejected.
           </div>
         )}
