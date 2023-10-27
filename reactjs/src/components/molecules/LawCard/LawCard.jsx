@@ -14,11 +14,11 @@ import styles from "./LawCard.styles";
 import { useNavigate, useLocation } from "react-router-dom";
 import LawWithAction from "../../atoms/LawWithAction/LawWithAction";
 import ExpandButton from "../../atoms/ExpandButton/ExpandButton";
-import OpenInNewButton from "../../atoms/OpenInNewButton/OpenInNewButton";
 import submitVotes from "../../../api/submitVotes";
 import proposeLaw from "../../../api/proposeLaw";
 import amendLaw from "../../../api/amendLaw";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
+import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 import { purple, green, red } from "@mui/material/colors";
 
 const LawCard = ({
@@ -327,10 +327,20 @@ const LawCard = ({
               </div>
             )}
             {hasLawPageButton && (
-              <OpenInNewButton
-                onClick={LawScreenNavigate}
-                style={styles.openInNew}
-              />
+              <div style={styles.openInNew}>
+                <Button
+                  style={{
+                    maxWidth: "30px",
+                    maxHeight: "30px",
+                    minWidth: "30px",
+                    minHeight: "30px",
+                  }}
+                  color="inherit"
+                  onClick={LawScreenNavigate}
+                >
+                  <OpenInNewIcon />
+                </Button>
+              </div>
             )}
           </div>
         </Collapse>
