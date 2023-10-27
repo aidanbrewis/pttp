@@ -19,7 +19,7 @@ import submitVotes from "../../../api/submitVotes";
 import proposeLaw from "../../../api/proposeLaw";
 import amendLaw from "../../../api/amendLaw";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-import { purple } from "@mui/material/colors";
+import { purple, green, red } from "@mui/material/colors";
 
 const LawCard = ({
   law,
@@ -198,6 +198,14 @@ const LawCard = ({
     palette: {
       primary: {
         main: purple[800],
+      },
+      success: {
+        main: green[800],
+        dark: green[900],
+      },
+      error: {
+        main: red[700],
+        dark: red[800],
       },
     },
   });

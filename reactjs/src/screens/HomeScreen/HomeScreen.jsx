@@ -105,49 +105,49 @@ const HomeScreen = () => {
             Rejected Laws
           </Button>
         </div>
-        <div
-          style={{
-            margin: "auto",
-            padding: 50,
-            backgroundColor: "rgb(63,81,181)",
-            justifyContent: "center",
-            alignSelf: "center",
-            overflow: "hidden",
-            maxWidth: "1700px",
-          }}
-        >
-          {isLoading && (
-            <div style={{ display: "flex", justifyContent: "center" }}>
-              <CircularProgress color="success" />
-            </div>
-          )}
-          {noLawsFounds && (
-            <div
-              style={{
-                color: "white",
-                fontSize: 20,
-                display: "flex",
-                justifyContent: "center",
-              }}
-            >
-              No laws to vote on.
-            </div>
-          )}
-          <LawCards
-            laws={laws}
-            username={username}
-            jwtToken={jwtToken}
-            hasTitleField={false}
-            hasContentField={false}
-            hasVotingButtons={true}
-            hasProposeLawButton={false}
-            lockExpanded={false}
-            hasLawPageButton={true}
-            amend={false}
-            hasUserVoteResults={false}
-          />
-        </div>
       </ThemeProvider>
+      <div
+        style={{
+          margin: "auto",
+          padding: 50,
+          backgroundColor: "rgb(63,81,181)",
+          justifyContent: "center",
+          alignSelf: "center",
+          overflow: "hidden",
+          maxWidth: "1700px",
+        }}
+      >
+        {isLoading && (
+          <div style={{ display: "flex", justifyContent: "center" }}>
+            <CircularProgress color="success" />
+          </div>
+        )}
+        {noLawsFounds && (
+          <div
+            style={{
+              color: "white",
+              fontSize: 20,
+              display: "flex",
+              justifyContent: "center",
+            }}
+          >
+            No laws to vote on.
+          </div>
+        )}
+        <LawCards
+          laws={laws}
+          username={username}
+          jwtToken={jwtToken}
+          hasTitleField={false}
+          hasContentField={false}
+          hasVotingButtons={true}
+          hasProposeLawButton={false}
+          lockExpanded={false}
+          hasLawPageButton={true}
+          amend={false}
+          hasUserVoteResults={false}
+        />
+      </div>
     </>
   );
 };
