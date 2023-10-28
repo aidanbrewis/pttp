@@ -11,6 +11,7 @@ const LawScreen = ({ amend }) => {
   const [jwtToken, setJwtToken] = useState("");
   const [username, setUsername] = useState("");
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState("");
 
   const lawId = useLocation().pathname.split("/")[1];
 
@@ -20,20 +21,36 @@ const LawScreen = ({ amend }) => {
 
   const fetchData = async () => {
     let result;
-    try {
-      const session = await Auth.currentSession();
-      const jwtToken = session.getIdToken().getJwtToken();
-      setJwtToken(jwtToken);
-      const userInfo = await Auth.currentUserInfo();
-      const username = userInfo.attributes.email;
-      setUsername(username);
-      result = await getLawsToVote(username, jwtToken);
+    let lambdaError;
+    let hasLambdaError = false;
+    for (let i = 0; i < 10; i++) {
+      try {
+        const session = await Auth.currentSession();
+        const jwtToken = session.getIdToken().getJwtToken();
+        setJwtToken(jwtToken);
+        const userInfo = await Auth.currentUserInfo();
+        const username = userInfo.attributes.email;
+        setUsername(username);
+        result = await getLawsToVote(username, jwtToken);
+        setError("");
+        setIsLoading(false);
+        break;
+      } catch (e) {
+        if (i === 9) {
+          lambdaError = e.message;
+          hasLambdaError = true;
+        }
+      }
+    }
+    if (hasLambdaError) {
       setIsLoading(false);
-    } catch {
-      window.location.reload();
+      setError(lambdaError);
+      return;
     }
     if (result.errorMessage) {
-      throw Error(result.errorMessage);
+      setIsLoading(false);
+      setError(result.errorMessage);
+      return;
     }
     if (result[lawId]) {
       const lawWithId = {};
@@ -43,7 +60,7 @@ const LawScreen = ({ amend }) => {
         ...lawWithId,
       }));
     } else {
-      throw Error(lawId + " is not a valid path");
+      setError(lawId + " is not a valid path");
     }
   };
 
@@ -132,6 +149,18 @@ const LawScreen = ({ amend }) => {
         {isLoading && (
           <div style={{ display: "flex", justifyContent: "center" }}>
             <CircularProgress color="inherit" />
+          </div>
+        )}
+        {error && (
+          <div
+            style={{
+              color: "white",
+              fontSize: 20,
+              display: "flex",
+              justifyContent: "center",
+            }}
+          >
+            {error}
           </div>
         )}
         <LawCards

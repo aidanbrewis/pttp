@@ -146,13 +146,13 @@ const LawCard = ({
         break;
       } catch (e) {
         if (i === 9) {
-          lambdaError = e;
+          lambdaError = e.message;
         }
       }
     }
     if (lambdaError) {
       setSendVotesLoading(false);
-      setError(lambdaError.message);
+      setError(lambdaError);
       return;
     }
     if (result.errorMessage) {
@@ -184,13 +184,13 @@ const LawCard = ({
         break;
       } catch (e) {
         if (i === 9) {
-          lambdaError = e;
+          lambdaError = e.message;
         }
       }
     }
     if (lambdaError) {
       setCallAmendLawLoading(false);
-      setError(lambdaError.message);
+      setError(lambdaError);
       return;
     }
     if (result.errorMessage) {
@@ -220,13 +220,13 @@ const LawCard = ({
         break;
       } catch (e) {
         if (i === 9) {
-          lambdaError = e;
+          lambdaError = e.message;
         }
       }
     }
     if (lambdaError) {
       setProposeLawLoading(false);
-      setError(lambdaError.message);
+      setError(lambdaError);
       return;
     }
     if (result.errorMessage) {

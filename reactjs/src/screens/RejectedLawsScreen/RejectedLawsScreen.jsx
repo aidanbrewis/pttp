@@ -12,6 +12,7 @@ const RejectedLawsScreen = () => {
   const [username, setUsername] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [noLawsFounds, setNoLawsFounds] = useState(false);
+  const [error, setError] = useState("");
 
   useEffect(() => {
     fetchData();
@@ -19,22 +20,38 @@ const RejectedLawsScreen = () => {
 
   const fetchData = async () => {
     let result;
-    try {
-      const session = await Auth.currentSession();
-      const jwtToken = session.getIdToken().getJwtToken();
-      setJwtToken(jwtToken);
-      const userInfo = await Auth.currentUserInfo();
-      const username = userInfo.attributes.email;
-      setUsername(username);
-      result = await getRejectedLaws(jwtToken);
+    let lambdaError;
+    let hasLambdaError = false;
+    for (let i = 0; i < 10; i++) {
+      try {
+        const session = await Auth.currentSession();
+        const jwtToken = session.getIdToken().getJwtToken();
+        setJwtToken(jwtToken);
+        const userInfo = await Auth.currentUserInfo();
+        const username = userInfo.attributes.email;
+        setUsername(username);
+        result = await getRejectedLaws(jwtToken);
+        setError("");
+        setIsLoading(false);
+        break;
+      } catch (e) {
+        if (i === 9) {
+          lambdaError = e.message;
+          hasLambdaError = true;
+        }
+      }
+    }
+    if (hasLambdaError) {
       setIsLoading(false);
-      setNoLawsFounds(!Object.keys(result).length);
-    } catch {
-      window.location.reload();
+      setError(lambdaError);
+      return;
     }
     if (result.errorMessage) {
-      throw Error(result.errorMessage);
+      setIsLoading(false);
+      setError(result.errorMessage);
+      return;
     }
+    setNoLawsFounds(!Object.keys(result).length);
     setLaws(result);
   };
 
@@ -119,7 +136,7 @@ const RejectedLawsScreen = () => {
             <CircularProgress color="inherit" />
           </div>
         )}
-        {noLawsFounds && (
+        {!error && noLawsFounds && (
           <div
             style={{
               color: "white",
@@ -129,6 +146,18 @@ const RejectedLawsScreen = () => {
             }}
           >
             No laws have been rejected.
+          </div>
+        )}
+        {error && (
+          <div
+            style={{
+              color: "white",
+              fontSize: 20,
+              display: "flex",
+              justifyContent: "center",
+            }}
+          >
+            {error}
           </div>
         )}
         <LawCards
