@@ -5,8 +5,6 @@ import LawCards from "../../components/organisms/LawCards/LawCards";
 import { Button, CircularProgress } from "@material-ui/core";
 import styles from "./RejectedLawsScreen.styles";
 import { useNavigate } from "react-router-dom";
-import { createTheme, ThemeProvider } from "@mui/material/styles";
-import { deepPurple } from "@mui/material/colors";
 
 const RejectedLawsScreen = () => {
   const [laws, setLaws] = useState([]);
@@ -62,59 +60,49 @@ const RejectedLawsScreen = () => {
     navigate(path);
   };
 
-  const theme = createTheme({
-    palette: {
-      primary: {
-        main: deepPurple[800],
-      },
-    },
-  });
-
   return (
     <>
-      <ThemeProvider theme={theme}>
-        <div style={styles.tabs}>
-          <Button
-            style={{ marginLeft: 0 }}
-            color="inherit"
-            variant="contained"
-            onClick={homeScreenNavigate}
-          >
-            Vote
-          </Button>
-          <Button
-            style={{ marginLeft: 0 }}
-            color="inherit"
-            variant="contained"
-            onClick={proposeLawNavigate}
-          >
-            Propose New Law
-          </Button>
-          <Button
-            style={{ marginLeft: 0 }}
-            color="inherit"
-            variant="contained"
-            onClick={votedLawsNavigate}
-          >
-            Voted Laws
-          </Button>
-          <Button
-            style={{ marginLeft: 0 }}
-            color="inherit"
-            variant="contained"
-            onClick={acceptedLawsNavigate}
-          >
-            Accepted Laws
-          </Button>
-          <Button
-            style={{ marginRight: "auto" }}
-            color="primary"
-            variant="contained"
-          >
-            Rejected Laws
-          </Button>
-        </div>
-      </ThemeProvider>
+      <div style={styles.tabs}>
+        <Button
+          style={{ marginLeft: 0 }}
+          color="inherit"
+          variant="contained"
+          onClick={homeScreenNavigate}
+        >
+          Vote
+        </Button>
+        <Button
+          style={{ marginLeft: 0 }}
+          color="inherit"
+          variant="contained"
+          onClick={proposeLawNavigate}
+        >
+          Propose New Law
+        </Button>
+        <Button
+          style={{ marginLeft: 0 }}
+          color="inherit"
+          variant="contained"
+          onClick={votedLawsNavigate}
+        >
+          Voted Laws
+        </Button>
+        <Button
+          style={{ marginLeft: 0 }}
+          color="inherit"
+          variant="contained"
+          onClick={acceptedLawsNavigate}
+        >
+          Accepted Laws
+        </Button>
+        <Button
+          style={{ marginRight: "auto" }}
+          color="primary"
+          variant="contained"
+        >
+          Rejected Laws
+        </Button>
+      </div>
       <div
         style={{
           margin: "auto",
@@ -128,7 +116,7 @@ const RejectedLawsScreen = () => {
       >
         {isLoading && (
           <div style={{ display: "flex", justifyContent: "center" }}>
-            <CircularProgress color="success" />
+            <CircularProgress color="inherit" />
           </div>
         )}
         {noLawsFounds && (
