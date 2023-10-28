@@ -17,7 +17,6 @@ import ExpandButton from "../../atoms/ExpandButton/ExpandButton";
 import submitVotes from "../../../api/submitVotes";
 import proposeLaw from "../../../api/proposeLaw";
 import amendLaw from "../../../api/amendLaw";
-import { createTheme, ThemeProvider } from "@mui/material/styles";
 import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 
 const LawCard = ({
@@ -146,13 +145,13 @@ const LawCard = ({
         break;
       } catch (e) {
         if (i === 9) {
-          lambdaError = e;
+          lambdaError = e.message;
         }
       }
     }
     if (lambdaError) {
       setSendVotesLoading(false);
-      setError(lambdaError.message);
+      setError(lambdaError);
       return;
     }
     if (result.errorMessage) {
@@ -184,13 +183,13 @@ const LawCard = ({
         break;
       } catch (e) {
         if (i === 9) {
-          lambdaError = e;
+          lambdaError = e.message;
         }
       }
     }
     if (lambdaError) {
       setCallAmendLawLoading(false);
-      setError(lambdaError.message);
+      setError(lambdaError);
       return;
     }
     if (result.errorMessage) {
@@ -220,13 +219,13 @@ const LawCard = ({
         break;
       } catch (e) {
         if (i === 9) {
-          lambdaError = e;
+          lambdaError = e.message;
         }
       }
     }
     if (lambdaError) {
       setProposeLawLoading(false);
-      setError(lambdaError.message);
+      setError(lambdaError);
       return;
     }
     if (result.errorMessage) {
@@ -241,160 +240,140 @@ const LawCard = ({
 
   const isExpedite = law?.expedite;
 
-  const theme = createTheme({
-    palette: {
-      primary: {
-        main: "#6a1b9a",
-      },
-      yes: {
-        main: "#2e7d32",
-        dark: "#1b5e20",
-        contrastText: "#fafafa",
-      },
-      no: {
-        main: "#d32f2f",
-        dark: "#c62828",
-        contrastText: "#fafafa",
-      },
-    },
-  });
-
   return (
-    <ThemeProvider theme={theme}>
-      <Card style={isExpedite ? styles.expediteCard : styles.notExpediteCard}>
-        {error && (
-          <Alert severity="error" onClose={handleCloseError}>
-            {error}
-          </Alert>
+    <Card style={isExpedite ? styles.expediteCard : styles.notExpediteCard}>
+      {error && (
+        <Alert severity="error" onClose={handleCloseError}>
+          {error}
+        </Alert>
+      )}
+      <div style={styles.collapsedContentContainer} onClick={toggleExpanded}>
+        {hasTitle && <div style={styles.title}>{law.title}</div>}
+        {hasTitleField && (
+          <TextField
+            id="law-title"
+            label="Title"
+            value={lawTitle}
+            onChange={handleChange}
+            margin="normal"
+            fullWidth
+          />
         )}
-        <div style={styles.collapsedContentContainer} onClick={toggleExpanded}>
-          {hasTitle && <div style={styles.title}>{law.title}</div>}
-          {hasTitleField && (
+        {isExpedite && (
+          <div style={styles.expediteDate}>
+            {"voting ends on "}
+            {date}
+          </div>
+        )}
+        {!lockExpanded && (
+          <div>
+            <ExpandButton expanded={expanded} style={styles.expandButton} />
+          </div>
+        )}
+      </div>
+      <Collapse in={expanded}>
+        <div style={styles.expandedContentContainer}>
+          {Object.keys(law.versions).map((key) => (
+            <LawWithAction
+              key={key}
+              onOptionClick={(option) => handleOptionClick(key, option)}
+              version={law.versions[key]}
+              voteResult={voteResults[key] || null}
+              hasVotingButtons={hasVotingButtons}
+              hasUserVoteResults={hasUserVoteResults}
+            />
+          ))}
+
+          {(hasContentField || isAmend) && (
             <TextField
-              id="law-title"
-              label="Title"
-              value={lawTitle}
+              id="law-content"
+              label="Law"
+              value={lawContent}
               onChange={handleChange}
               margin="normal"
+              multiline
               fullWidth
             />
           )}
-          {isExpedite && (
-            <div style={styles.expediteDate}>
-              {"voting ends on "}
-              {date}
-            </div>
-          )}
-          {!lockExpanded && (
-            <div>
-              <ExpandButton expanded={expanded} style={styles.expandButton} />
-            </div>
-          )}
-        </div>
-        <Collapse in={expanded}>
-          <div style={styles.expandedContentContainer}>
-            {Object.keys(law.versions).map((key) => (
-              <LawWithAction
-                key={key}
-                onOptionClick={(option) => handleOptionClick(key, option)}
-                version={law.versions[key]}
-                voteResult={voteResults[key] || null}
-                hasVotingButtons={hasVotingButtons}
-                hasUserVoteResults={hasUserVoteResults}
-              />
-            ))}
 
-            {(hasContentField || isAmend) && (
-              <TextField
-                id="law-content"
-                label="Law"
-                value={lawContent}
-                onChange={handleChange}
-                margin="normal"
-                multiline
-                fullWidth
-              />
-            )}
+          {hasVotingButtons && (
+            <div style={styles.commitButtons}>
+              <Button
+                color={isAmend ? "primary" : "inherit"}
+                variant={isAmend ? "contained" : "text"}
+                onClick={handleAmend}
+              >
+                Amend
+              </Button>
 
-            {hasVotingButtons && (
-              <div style={styles.commitButtons}>
-                <Button
-                  color={isAmend ? "primary" : "inherit"}
-                  variant={isAmend ? "contained" : "text"}
-                  onClick={handleAmend}
-                >
-                  Amend
-                </Button>
-
-                {!isAmend && (
-                  <Button
-                    color="inherit"
-                    disabled={
-                      sendVotesLoading || Object.keys(voteResults).length === 0
-                    }
-                    onClick={sendVotes}
-                  >
-                    {sendVotesLoading && (
-                      <CircularProgress size="1rem" color="primary" />
-                    )}
-                    Confirm Votes
-                  </Button>
-                )}
-
-                {isAmend && (
-                  <Button
-                    color="inherit"
-                    disabled={callAmendLawLoading || lawContent == ""}
-                    onClick={callAmendLaw}
-                  >
-                    {callAmendLawLoading && (
-                      <CircularProgress size="1rem" color="primary" />
-                    )}
-                    Confirm Amendment
-                  </Button>
-                )}
-              </div>
-            )}
-            {hasProposeLawButton && (
-              <div style={styles.commitButtons}>
-                <FormControlLabel
-                  control={<Checkbox disabled></Checkbox>}
-                  label="Expedite Law"
-                />
+              {!isAmend && (
                 <Button
                   color="inherit"
                   disabled={
-                    proposeLawLoading || lawTitle == "" || lawContent == ""
+                    sendVotesLoading || Object.keys(voteResults).length === 0
                   }
-                  onClick={callProposeLaw}
+                  onClick={sendVotes}
                 >
-                  {proposeLawLoading && (
+                  {sendVotesLoading && (
                     <CircularProgress size="1rem" color="primary" />
                   )}
-                  Propose Law
+                  Confirm Votes
                 </Button>
-              </div>
-            )}
-            {hasLawPageButton && (
-              <div style={styles.openInNew}>
+              )}
+
+              {isAmend && (
                 <Button
-                  style={{
-                    maxWidth: "30px",
-                    maxHeight: "30px",
-                    minWidth: "30px",
-                    minHeight: "30px",
-                  }}
                   color="inherit"
-                  onClick={LawScreenNavigate}
+                  disabled={callAmendLawLoading || lawContent == ""}
+                  onClick={callAmendLaw}
                 >
-                  <OpenInNewIcon />
+                  {callAmendLawLoading && (
+                    <CircularProgress size="1rem" color="primary" />
+                  )}
+                  Confirm Amendment
                 </Button>
-              </div>
-            )}
-          </div>
-        </Collapse>
-      </Card>
-    </ThemeProvider>
+              )}
+            </div>
+          )}
+          {hasProposeLawButton && (
+            <div style={styles.commitButtons}>
+              <FormControlLabel
+                control={<Checkbox disabled></Checkbox>}
+                label="Expedite Law"
+              />
+              <Button
+                color="inherit"
+                disabled={
+                  proposeLawLoading || lawTitle == "" || lawContent == ""
+                }
+                onClick={callProposeLaw}
+              >
+                {proposeLawLoading && (
+                  <CircularProgress size="1rem" color="primary" />
+                )}
+                Propose Law
+              </Button>
+            </div>
+          )}
+          {hasLawPageButton && (
+            <div style={styles.openInNew}>
+              <Button
+                style={{
+                  maxWidth: "30px",
+                  maxHeight: "30px",
+                  minWidth: "30px",
+                  minHeight: "30px",
+                }}
+                color="inherit"
+                onClick={LawScreenNavigate}
+              >
+                <OpenInNewIcon />
+              </Button>
+            </div>
+          )}
+        </div>
+      </Collapse>
+    </Card>
   );
 };
 
