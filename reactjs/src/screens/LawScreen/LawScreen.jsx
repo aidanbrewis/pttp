@@ -21,14 +21,19 @@ const LawScreen = ({ amend }) => {
   }, []);
 
   const fetchData = async () => {
-    const session = await Auth.currentSession();
-    const jwtToken = session.getIdToken().getJwtToken();
-    setJwtToken(jwtToken);
-    const userInfo = await Auth.currentUserInfo();
-    const username = userInfo.attributes.email;
-    setUsername(username);
-    const result = await getLawsToVote(username, jwtToken);
-    setIsLoading(false);
+    let result;
+    try {
+      const session = await Auth.currentSession();
+      const jwtToken = session.getIdToken().getJwtToken();
+      setJwtToken(jwtToken);
+      const userInfo = await Auth.currentUserInfo();
+      const username = userInfo.attributes.email;
+      setUsername(username);
+      result = await getLawsToVote(username, jwtToken);
+      setIsLoading(false);
+    } catch {
+      window.location.reload();
+    }
     if (result.errorMessage) {
       throw Error(result.errorMessage);
     }

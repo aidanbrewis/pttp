@@ -20,15 +20,20 @@ const VotedLawsScreen = () => {
   }, []);
 
   const fetchData = async () => {
-    const session = await Auth.currentSession();
-    const jwtToken = session.getIdToken().getJwtToken();
-    setJwtToken(jwtToken);
-    const userInfo = await Auth.currentUserInfo();
-    const username = userInfo.attributes.email;
-    setUsername(username);
-    const result = await getVotedProposedLaws(username, jwtToken);
-    setIsLoading(false);
-    setNoLawsFounds(!Object.keys(result).length);
+    let result;
+    try {
+      const session = await Auth.currentSession();
+      const jwtToken = session.getIdToken().getJwtToken();
+      setJwtToken(jwtToken);
+      const userInfo = await Auth.currentUserInfo();
+      const username = userInfo.attributes.email;
+      setUsername(username);
+      result = await getVotedProposedLaws(username, jwtToken);
+      setIsLoading(false);
+      setNoLawsFounds(!Object.keys(result).length);
+    } catch {
+      window.location.reload();
+    }
     if (result.errorMessage) {
       throw Error(result.errorMessage);
     }
