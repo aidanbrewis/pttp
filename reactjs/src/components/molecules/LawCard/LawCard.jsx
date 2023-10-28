@@ -338,8 +338,8 @@ const LawCard = ({
           {hasProposeLawButton && (
             <div style={styles.commitButtons}>
               <FormControlLabel
-                control={<Checkbox disabled></Checkbox>}
-                label="Expedite Law"
+                control={<div />} //{<Checkbox disabled></Checkbox>}
+                label="" //"Expedite Law"
               />
               <Button
                 color="inherit"
