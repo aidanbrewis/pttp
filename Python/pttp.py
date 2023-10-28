@@ -544,6 +544,11 @@ def getVotedProposedLaws(payload):
                 votedLaws[lawId]['versions'][versionNumber].pop('yes')
                 votedLaws[lawId]['versions'][versionNumber].pop('no')
 
+    reversedVotedLaws = {}
+
+    for lawId in reversed(votedLaws.keys()):
+        reversedVotedLaws[lawId] = votedLaws[lawId]
+
     if USE_S3_BUCKET:
         jsonDataByFileName = {'users.json': json.dumps(users)}
         writeToS3(jsonDataByFileName)
@@ -551,7 +556,7 @@ def getVotedProposedLaws(payload):
         with open('data/users.json', 'w') as usersFile:
             json.dump(users, usersFile)
 
-    return votedLaws
+    return reversedVotedLaws
 
 
 def getVotedLaws(payload):
@@ -719,7 +724,12 @@ def getAcceptedLaws(payload):
         except:
             pass
 
-    return acceptedLaws
+    reversedAcceptedLaws = {}
+
+    for lawId in reversed(acceptedLaws.keys()):
+        reversedAcceptedLaws[lawId] = acceptedLaws[lawId]
+
+    return reversedAcceptedLaws
 
 
 def getRejectedLaws(payload):
@@ -749,7 +759,12 @@ def getRejectedLaws(payload):
         except:
             pass
 
-    return rejectedLaws
+    reversedRejectedLaws = {}
+
+    for lawId in reversed(rejectedLaws.keys()):
+        reversedRejectedLaws[lawId] = rejectedLaws[lawId]
+
+    return reversedRejectedLaws
 
 
 def getNonExpediteAcceptedLaws(payload):
