@@ -5,8 +5,6 @@ import { Button, CircularProgress } from "@material-ui/core";
 import styles from "./LawScreen.styles";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Auth } from "aws-amplify";
-import { createTheme, ThemeProvider } from "@mui/material/styles";
-import { pink } from "@mui/material/colors";
 
 const LawScreen = ({ amend }) => {
   const [laws, setLaws] = useState({});
@@ -21,14 +19,19 @@ const LawScreen = ({ amend }) => {
   }, []);
 
   const fetchData = async () => {
-    const session = await Auth.currentSession();
-    const jwtToken = session.getIdToken().getJwtToken();
-    setJwtToken(jwtToken);
-    const userInfo = await Auth.currentUserInfo();
-    const username = userInfo.attributes.email;
-    setUsername(username);
-    const result = await getLawsToVote(username, jwtToken);
-    setIsLoading(false);
+    let result;
+    try {
+      const session = await Auth.currentSession();
+      const jwtToken = session.getIdToken().getJwtToken();
+      setJwtToken(jwtToken);
+      const userInfo = await Auth.currentUserInfo();
+      const username = userInfo.attributes.email;
+      setUsername(username);
+      result = await getLawsToVote(username, jwtToken);
+      setIsLoading(false);
+    } catch {
+      window.location.reload();
+    }
     if (result.errorMessage) {
       throw Error(result.errorMessage);
     }
@@ -71,60 +74,50 @@ const LawScreen = ({ amend }) => {
     navigate(path);
   };
 
-  const theme = createTheme({
-    palette: {
-      primary: {
-        main: pink[100],
-      },
-    },
-  });
-
   return (
     <>
-      <ThemeProvider theme={theme}>
-        <div style={styles.tabs}>
-          <Button
-            style={{ marginLeft: 0 }}
-            color="inherit"
-            variant="contained"
-            onClick={homeScreenNavigate}
-          >
-            Vote
-          </Button>
-          <Button
-            style={{ marginLeft: 0 }}
-            color="inherit"
-            variant="contained"
-            onClick={proposeLawNavigate}
-          >
-            Propose New Law
-          </Button>
-          <Button
-            style={{ marginLeft: 0 }}
-            color="inherit"
-            variant="contained"
-            onClick={votedLawsNavigate}
-          >
-            Voted Laws
-          </Button>
-          <Button
-            style={{ marginLeft: 0 }}
-            color="inherit"
-            variant="contained"
-            onClick={acceptedLawsNavigate}
-          >
-            Accepted Laws
-          </Button>
-          <Button
-            style={{ marginRight: "auto" }}
-            color="inherit"
-            variant="contained"
-            onClick={rejectedLawsNavigate}
-          >
-            Rejected Laws
-          </Button>
-        </div>
-      </ThemeProvider>
+      <div style={styles.tabs}>
+        <Button
+          style={{ marginLeft: 0 }}
+          color="inherit"
+          variant="contained"
+          onClick={homeScreenNavigate}
+        >
+          Vote
+        </Button>
+        <Button
+          style={{ marginLeft: 0 }}
+          color="inherit"
+          variant="contained"
+          onClick={proposeLawNavigate}
+        >
+          Propose New Law
+        </Button>
+        <Button
+          style={{ marginLeft: 0 }}
+          color="inherit"
+          variant="contained"
+          onClick={votedLawsNavigate}
+        >
+          Voted Laws
+        </Button>
+        <Button
+          style={{ marginLeft: 0 }}
+          color="inherit"
+          variant="contained"
+          onClick={acceptedLawsNavigate}
+        >
+          Accepted Laws
+        </Button>
+        <Button
+          style={{ marginRight: "auto" }}
+          color="inherit"
+          variant="contained"
+          onClick={rejectedLawsNavigate}
+        >
+          Rejected Laws
+        </Button>
+      </div>
       <div
         style={{
           margin: "auto",
@@ -138,7 +131,7 @@ const LawScreen = ({ amend }) => {
       >
         {isLoading && (
           <div style={{ display: "flex", justifyContent: "center" }}>
-            <CircularProgress color="success" />
+            <CircularProgress color="inherit" />
           </div>
         )}
         <LawCards

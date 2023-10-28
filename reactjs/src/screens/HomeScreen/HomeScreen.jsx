@@ -5,8 +5,6 @@ import LawCards from "../../components/organisms/LawCards/LawCards";
 import { Button, CircularProgress } from "@material-ui/core";
 import styles from "./HomeScreen.styles";
 import { useNavigate } from "react-router-dom";
-import { createTheme, ThemeProvider } from "@mui/material/styles";
-import { deepPurple } from "@mui/material/colors";
 
 const HomeScreen = () => {
   const [laws, setLaws] = useState([]);
@@ -20,15 +18,20 @@ const HomeScreen = () => {
   }, []);
 
   const fetchData = async () => {
-    const session = await Auth.currentSession();
-    const jwtToken = session.getIdToken().getJwtToken();
-    setJwtToken(jwtToken);
-    const userInfo = await Auth.currentUserInfo();
-    const username = userInfo.attributes.email;
-    setUsername(username);
-    const result = await getLawsToVote(username, jwtToken);
-    setIsLoading(false);
-    setNoLawsFounds(!Object.keys(result).length);
+    let result;
+    try {
+      const session = await Auth.currentSession();
+      const jwtToken = session.getIdToken().getJwtToken();
+      setJwtToken(jwtToken);
+      const userInfo = await Auth.currentUserInfo();
+      const username = userInfo.attributes.email;
+      setUsername(username);
+      result = await getLawsToVote(username, jwtToken);
+      setIsLoading(false);
+      setNoLawsFounds(!Object.keys(result).length);
+    } catch {
+      window.location.reload();
+    }
     if (result.errorMessage) {
       throw Error(result.errorMessage);
     }
@@ -57,55 +60,45 @@ const HomeScreen = () => {
     navigate(path);
   };
 
-  const theme = createTheme({
-    palette: {
-      primary: {
-        main: deepPurple[800],
-      },
-    },
-  });
-
   return (
     <>
-      <ThemeProvider theme={theme}>
-        <div style={styles.tabs}>
-          <Button style={{ marginLeft: 0 }} color="primary" variant="contained">
-            Vote
-          </Button>
-          <Button
-            style={{ marginLeft: 0 }}
-            color="inherit"
-            variant="contained"
-            onClick={proposeLawNavigate}
-          >
-            Propose New Law
-          </Button>
-          <Button
-            style={{ marginLeft: 0 }}
-            color="inherit"
-            variant="contained"
-            onClick={votedLawsNavigate}
-          >
-            Voted Laws
-          </Button>
-          <Button
-            style={{ marginLeft: 0 }}
-            color="inherit"
-            variant="contained"
-            onClick={acceptedLawsNavigate}
-          >
-            Accepted Laws
-          </Button>
-          <Button
-            style={{ marginRight: "auto" }}
-            color="inherit"
-            variant="contained"
-            onClick={rejectedLawsNavigate}
-          >
-            Rejected Laws
-          </Button>
-        </div>
-      </ThemeProvider>
+      <div style={styles.tabs}>
+        <Button style={{ marginLeft: 0 }} color="primary" variant="contained">
+          Vote
+        </Button>
+        <Button
+          style={{ marginLeft: 0 }}
+          color="inherit"
+          variant="contained"
+          onClick={proposeLawNavigate}
+        >
+          Propose New Law
+        </Button>
+        <Button
+          style={{ marginLeft: 0 }}
+          color="inherit"
+          variant="contained"
+          onClick={votedLawsNavigate}
+        >
+          Voted Laws
+        </Button>
+        <Button
+          style={{ marginLeft: 0 }}
+          color="inherit"
+          variant="contained"
+          onClick={acceptedLawsNavigate}
+        >
+          Accepted Laws
+        </Button>
+        <Button
+          style={{ marginRight: "auto" }}
+          color="inherit"
+          variant="contained"
+          onClick={rejectedLawsNavigate}
+        >
+          Rejected Laws
+        </Button>
+      </div>
       <div
         style={{
           margin: "auto",
@@ -119,7 +112,7 @@ const HomeScreen = () => {
       >
         {isLoading && (
           <div style={{ display: "flex", justifyContent: "center" }}>
-            <CircularProgress color="success" />
+            <CircularProgress color="inherit" />
           </div>
         )}
         {noLawsFounds && (

@@ -19,7 +19,6 @@ import proposeLaw from "../../../api/proposeLaw";
 import amendLaw from "../../../api/amendLaw";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import OpenInNewIcon from "@mui/icons-material/OpenInNew";
-import { purple, green, red } from "@mui/material/colors";
 
 const LawCard = ({
   law,
@@ -139,7 +138,23 @@ const LawCard = ({
   const sendVotes = async () => {
     setSendVotesLoading(true);
     setError("");
-    const result = await submitVotes(username, jwtToken, lawId, voteResults);
+    let result;
+    let lambdaError;
+    for (let i = 0; i < 10; i++) {
+      try {
+        result = await submitVotes(username, jwtToken, lawId, voteResults);
+        break;
+      } catch (e) {
+        if (i === 9) {
+          lambdaError = e;
+        }
+      }
+    }
+    if (lambdaError) {
+      setSendVotesLoading(false);
+      setError(lambdaError.message);
+      return;
+    }
     if (result.errorMessage) {
       setSendVotesLoading(false);
       setError(result.errorMessage);
@@ -155,13 +170,29 @@ const LawCard = ({
   const callAmendLaw = async () => {
     setCallAmendLawLoading(true);
     setError("");
-    const result = await amendLaw(
-      username,
-      jwtToken,
-      lawId,
-      voteResults,
-      lawContent
-    );
+    let result;
+    let lambdaError;
+    for (let i = 0; i < 10; i++) {
+      try {
+        result = await amendLaw(
+          username,
+          jwtToken,
+          lawId,
+          voteResults,
+          lawContent
+        );
+        break;
+      } catch (e) {
+        if (i === 9) {
+          lambdaError = e;
+        }
+      }
+    }
+    if (lambdaError) {
+      setCallAmendLawLoading(false);
+      setError(lambdaError.message);
+      return;
+    }
     if (result.errorMessage) {
       setCallAmendLawLoading(false);
       setError(result.errorMessage);
@@ -173,15 +204,31 @@ const LawCard = ({
   const callProposeLaw = async () => {
     setProposeLawLoading(true);
     setError("");
-    const result = await proposeLaw(
-      username,
-      jwtToken,
-      lawContent,
-      lawTitle,
-      "",
-      false,
-      null
-    );
+    let result;
+    let lambdaError;
+    for (let i = 0; i < 10; i++) {
+      try {
+        result = await proposeLaw(
+          username,
+          jwtToken,
+          lawContent,
+          lawTitle,
+          "",
+          false,
+          null
+        );
+        break;
+      } catch (e) {
+        if (i === 9) {
+          lambdaError = e;
+        }
+      }
+    }
+    if (lambdaError) {
+      setProposeLawLoading(false);
+      setError(lambdaError.message);
+      return;
+    }
     if (result.errorMessage) {
       setProposeLawLoading(false);
       setError(result.errorMessage);
@@ -197,15 +244,17 @@ const LawCard = ({
   const theme = createTheme({
     palette: {
       primary: {
-        main: purple[800],
+        main: "#6a1b9a",
       },
-      success: {
-        main: green[800],
-        dark: green[900],
+      yes: {
+        main: "#2e7d32",
+        dark: "#1b5e20",
+        contrastText: "#fafafa",
       },
-      error: {
-        main: red[700],
-        dark: red[800],
+      no: {
+        main: "#d32f2f",
+        dark: "#c62828",
+        contrastText: "#fafafa",
       },
     },
   });

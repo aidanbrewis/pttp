@@ -19,7 +19,7 @@ const LawWithAction = ({
         <div style={styles.votingButtonsContainer}>
           <Button
             variant={voteResult === "yes" ? "contained" : "text"}
-            color={voteResult === "yes" ? "success" : "inherit"}
+            color={voteResult === "yes" ? "yes" : "inherit"}
             onClick={() => handleOptionClick("yes")}
             style={{ marginRight: 10 }}
           >
@@ -27,7 +27,7 @@ const LawWithAction = ({
           </Button>
           <Button
             variant={voteResult === "no" ? "contained" : "text"}
-            color={voteResult === "no" ? "error" : "inherit"}
+            color={voteResult === "no" ? "no" : "inherit"}
             onClick={() => handleOptionClick("no")}
           >
             No
@@ -42,14 +42,14 @@ const LawWithAction = ({
         <div style={styles.votingButtonsContainer}>
           <Button
             variant={voteResult === "yes" ? "contained" : "text"}
-            color={voteResult === "yes" ? "success" : "inherit"}
+            color={voteResult === "yes" ? "yes" : "inherit"}
             style={{ marginRight: 10 }}
           >
             Yes
           </Button>
           <Button
             variant={voteResult === "no" ? "contained" : "text"}
-            color={voteResult === "no" ? "error" : "inherit"}
+            color={voteResult === "no" ? "no" : "inherit"}
           >
             No
           </Button>
@@ -63,12 +63,12 @@ const LawWithAction = ({
         <div style={styles.votingButtonsContainer}>
           <Button
             variant={"contained"}
-            color={"success"}
+            color={"yes"}
             style={{ marginRight: 10 }}
           >
             {version.yes}
           </Button>
-          <Button variant={"contained"} color={"error"}>
+          <Button variant={"contained"} color={"no"}>
             {version.no}
           </Button>
         </div>

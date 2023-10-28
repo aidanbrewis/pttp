@@ -1,7 +1,5 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import { ThemeProvider } from "@material-ui/styles";
-import Theme from "./theme/theme";
 import HomeScreen from "./screens/HomeScreen/HomeScreen";
 import { Amplify } from "aws-amplify";
 import { awsExports } from "./aws-exports";

@@ -4,7 +4,6 @@ const LawCards = (data) => {
   return Object.keys(data.laws).map((key) => (
     <div style={{ marginTop: 20 }}>
       <LawCard
-        key={key}
         law={data.laws[key]}
         lawId={key}
         username={data.username}

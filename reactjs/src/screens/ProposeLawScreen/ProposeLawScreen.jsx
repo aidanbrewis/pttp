@@ -4,8 +4,6 @@ import { Button } from "@material-ui/core";
 import styles from "./ProposeLawScreen.styles";
 import { useNavigate } from "react-router-dom";
 import { Auth } from "aws-amplify";
-import { createTheme, ThemeProvider } from "@mui/material/styles";
-import { deepPurple, pink } from "@mui/material/colors";
 
 const ProposeLawScreen = () => {
   const [jwtToken, setJwtToken] = useState("");
@@ -46,55 +44,45 @@ const ProposeLawScreen = () => {
     navigate(path);
   };
 
-  const theme = createTheme({
-    palette: {
-      primary: {
-        main: pink[100],
-      },
-    },
-  });
-
   return (
     <>
-      <ThemeProvider theme={theme}>
-        <div style={styles.tabs}>
-          <Button
-            style={{ marginLeft: 0 }}
-            color="inherit"
-            variant="contained"
-            onClick={homeScreenNavigate}
-          >
-            Vote
-          </Button>
-          <Button style={{ marginLeft: 0 }} color="primary" variant="contained">
-            Propose New Law
-          </Button>
-          <Button
-            style={{ marginLeft: 0 }}
-            color="inherit"
-            variant="contained"
-            onClick={votedLawsNavigate}
-          >
-            Voted Laws
-          </Button>
-          <Button
-            style={{ marginLeft: 0 }}
-            color="inherit"
-            variant="contained"
-            onClick={acceptedLawsNavigate}
-          >
-            Accepted Laws
-          </Button>
-          <Button
-            style={{ marginRight: "auto" }}
-            color="inherit"
-            variant="contained"
-            onClick={rejectedLawsNavigate}
-          >
-            Rejected Laws
-          </Button>
-        </div>
-      </ThemeProvider>
+      <div style={styles.tabs}>
+        <Button
+          style={{ marginLeft: 0 }}
+          color="inherit"
+          variant="contained"
+          onClick={homeScreenNavigate}
+        >
+          Vote
+        </Button>
+        <Button style={{ marginLeft: 0 }} color="primary" variant="contained">
+          Propose New Law
+        </Button>
+        <Button
+          style={{ marginLeft: 0 }}
+          color="inherit"
+          variant="contained"
+          onClick={votedLawsNavigate}
+        >
+          Voted Laws
+        </Button>
+        <Button
+          style={{ marginLeft: 0 }}
+          color="inherit"
+          variant="contained"
+          onClick={acceptedLawsNavigate}
+        >
+          Accepted Laws
+        </Button>
+        <Button
+          style={{ marginRight: "auto" }}
+          color="inherit"
+          variant="contained"
+          onClick={rejectedLawsNavigate}
+        >
+          Rejected Laws
+        </Button>
+      </div>
       <div
         style={{
           margin: "auto",
