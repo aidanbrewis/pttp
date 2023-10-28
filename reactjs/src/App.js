@@ -1,3 +1,4 @@
+import { createTheme, ThemeProvider } from "@mui/material/styles";
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import HomeScreen from "./screens/HomeScreen/HomeScreen";
@@ -22,45 +23,65 @@ function App() {
     },
   });
 
+  const theme = createTheme({
+    palette: {
+      primary: {
+        main: "#6a1b9a",
+      },
+      yes: {
+        main: "#2e7d32",
+        dark: "#1b5e20",
+        contrastText: "#fafafa",
+      },
+      no: {
+        main: "#d32f2f",
+        dark: "#c62828",
+        contrastText: "#fafafa",
+      },
+    },
+  });
+
   return (
-    <Authenticator>
-      {({ signOut, user }) => (
-        <div className="App">
-          <Router>
-            <Routes>
-              <Route path="/" element={<HomeScreen />} />
-              <Route path="/propose_law" element={<ProposeLawScreen />} />
-              <Route path="/accepted_laws" element={<AcceptedLawsScreen />} />
-              <Route path="/rejected_laws" element={<RejectedLawsScreen />} />
-              <Route path="/voted_laws" element={<VotedLawsScreen />} />
-              <Route
-                path="/:lawId/amend"
-                element={<LawScreen amend={true} />}
-              />
-              <Route path="/:lawId" element={<LawScreen amend={false} />} />
-            </Routes>
-          </Router>
-          <div style={styles.tabs}>
-            <div style={{ marginRight: "auto" }}>
-              <Button color="inherit" variant="contained" onClick={signOut}>
-                Sign out
-              </Button>
-            </div>
-            <div style={{ marginLeft: "auto" }}>
-              <Button color="inherit" variant="contained">
-                <Link
-                  target="_blank"
-                  href="https://github.com/aidanbrewis/pttp"
-                  rel="noreferrer"
-                >
-                  Source code
-                </Link>
-              </Button>
+    <ThemeProvider theme={theme}>
+      <Authenticator>
+        {({ signOut, user }) => (
+          <div className="App">
+            <Router>
+              <Routes>
+                <Route path="/" element={<HomeScreen />} />
+                <Route path="/propose_law" element={<ProposeLawScreen />} />
+                <Route path="/accepted_laws" element={<AcceptedLawsScreen />} />
+                <Route path="/rejected_laws" element={<RejectedLawsScreen />} />
+                <Route path="/voted_laws" element={<VotedLawsScreen />} />
+                <Route
+                  path="/:lawId/amend"
+                  element={<LawScreen amend={true} />}
+                />
+                <Route path="/:lawId" element={<LawScreen amend={false} />} />
+              </Routes>
+            </Router>
+            <div style={styles.tabs}>
+              <div style={{ marginRight: "auto" }}>
+                <Button color="inherit" variant="contained" onClick={signOut}>
+                  Sign out
+                </Button>
+              </div>
+              <div style={{ marginLeft: "auto" }}>
+                <Button color="inherit" variant="contained">
+                  <Link
+                    target="_blank"
+                    href="https://github.com/aidanbrewis/pttp"
+                    rel="noreferrer"
+                  >
+                    Source code
+                  </Link>
+                </Button>
+              </div>
             </div>
           </div>
-        </div>
-      )}
-    </Authenticator>
+        )}
+      </Authenticator>
+    </ThemeProvider>
   );
 }
 
