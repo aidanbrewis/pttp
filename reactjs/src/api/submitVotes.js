@@ -2,7 +2,7 @@ import { awsExports } from "../aws-exports";
 
 const submitVotes = (username, jwtToken, lawId, votes) => {
   async function ApiCall() {
-    const response = await fetch(awsExports.INVOKE_URL, {
+    const response = await fetch(awsExports.INVOKE_URL + "/pttp-vote", {
       method: "POST",
       body: JSON.stringify({
         operation: "vote",
