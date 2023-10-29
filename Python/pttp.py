@@ -156,6 +156,16 @@ def proposeLaw(payload):
         except:
             pass
 
+    data = {'users': users, 'proposedLaws': proposedLaws,
+            'acceptedLaws': acceptedLaws, 'rejectedLaws': rejectedLaws}
+
+    data = checkExpedites(data)
+
+    users = data['users']
+    proposedLaws = data['proposedLaws']
+    acceptedLaws = data['acceptedLaws']
+    rejectedLaws = data['rejectedLaws']
+
     for existingLawId in acceptedLaws.keys():
         for versionId in acceptedLaws[existingLawId]['versions'].keys():
             if acceptedLaws[existingLawId]['versions'][versionId]['content'] == proposedLaw:
@@ -181,6 +191,8 @@ def proposeLaw(payload):
                               'expediteDate': expediteDate, 'versions': {1: {'content': proposedLaw, 'yes': 1, 'no': 0}}}
 
     proposedLaws = orderLaws(proposedLaws)
+
+    users[username]['latestActivity'] = int(time.time())
 
     if USE_S3_BUCKET:
         jsonDataByFileName = {'users.json': json.dumps(
@@ -278,6 +290,16 @@ def proposeAbrogationLaw(payload):
         except:
             pass
 
+    data = {'users': users, 'proposedLaws': proposedLaws,
+            'acceptedLaws': acceptedLaws, 'rejectedLaws': rejectedLaws}
+
+    data = checkExpedites(data)
+
+    users = data['users']
+    proposedLaws = data['proposedLaws']
+    acceptedLaws = data['acceptedLaws']
+    rejectedLaws = data['rejectedLaws']
+
     if acceptedLaws.get(lawId) == None:
         raise Exception('no accepted law with id : '+lawId)
 
@@ -335,6 +357,8 @@ def proposeAbrogationLaw(payload):
         }
         users[username]['proposedLaws'].append(lawId+':'+str(versionNumber))
 
+    users[username]['latestActivity'] = int(time.time())
+
     if USE_S3_BUCKET:
         jsonDataByFileName = {'users.json': json.dumps(
             users), 'proposedLaws.json': json.dumps(proposedLaws)}
@@ -370,7 +394,6 @@ def orderLaws(lawsToOrder):
 
 
 def getLawsToVote(payload):
-    checkExpedites({})
     username = payload['username']
 
     try:
@@ -422,8 +445,6 @@ def getLawsToVote(payload):
         except:
             pass
 
-    users[username]['latestActivity'] = int(time.time())
-
     lawsToVote = {}
 
     for lawId in proposedLaws.keys():
@@ -434,18 +455,10 @@ def getLawsToVote(payload):
                                          'expedite': proposedLaws[lawId]['expedite'], 'expediteDate': proposedLaws[lawId]['expediteDate'], 'versions': {}}
                 lawsToVote[lawId]['versions'][versionNumber] = proposedLaws[lawId]['versions'][versionNumber]
 
-    if USE_S3_BUCKET:
-        jsonDataByFileName = {'users.json': json.dumps(users)}
-        writeToS3(jsonDataByFileName)
-    else:
-        with open('data/users.json', 'w') as usersFile:
-            json.dump(users, usersFile)
-
     return lawsToVote
 
 
 def getVotedProposedLaws(payload):
-    checkExpedites({})
     username = payload['username']
 
     try:
@@ -519,8 +532,6 @@ def getVotedProposedLaws(payload):
                 rejectedLaws = json.load(rejectedLawsFile)
         except:
             pass
-
-    users[username]['latestActivity'] = int(time.time())
 
     votedLaws = {}
 
@@ -549,18 +560,10 @@ def getVotedProposedLaws(payload):
     for lawId in reversed(votedLaws.keys()):
         reversedVotedLaws[lawId] = votedLaws[lawId]
 
-    if USE_S3_BUCKET:
-        jsonDataByFileName = {'users.json': json.dumps(users)}
-        writeToS3(jsonDataByFileName)
-    else:
-        with open('data/users.json', 'w') as usersFile:
-            json.dump(users, usersFile)
-
     return reversedVotedLaws
 
 
 def getVotedLaws(payload):
-    checkExpedites({})
     username = payload['username']
 
     try:
@@ -634,8 +637,6 @@ def getVotedLaws(payload):
                 rejectedLaws = json.load(rejectedLawsFile)
         except:
             pass
-
-    users[username]['latestActivity'] = int(time.time())
 
     votedLaws = {}
 
@@ -687,18 +688,10 @@ def getVotedLaws(payload):
                 votedLaws[lawId]['versions'][versionNumber]['vote'] = 'yes' if users[username]['votedLaws'][lawId +
                                                                                                             ':'+versionNumber] else 'no'
 
-    if USE_S3_BUCKET:
-        jsonDataByFileName = {'users.json': json.dumps(users)}
-        writeToS3(jsonDataByFileName)
-    else:
-        with open('data/users.json', 'w') as usersFile:
-            json.dump(users, usersFile)
-
     return votedLaws
 
 
 def getAcceptedLaws(payload):
-    checkExpedites({})
     try:
         with open('settings.json', 'r') as settingsFile:
             settings = json.load(settingsFile)
@@ -733,7 +726,6 @@ def getAcceptedLaws(payload):
 
 
 def getRejectedLaws(payload):
-    checkExpedites({})
     try:
         with open('settings.json', 'r') as settingsFile:
             settings = json.load(settingsFile)
@@ -768,7 +760,6 @@ def getRejectedLaws(payload):
 
 
 def getNonExpediteAcceptedLaws(payload):
-    checkExpedites({})
     try:
         with open('settings.json', 'r') as settingsFile:
             settings = json.load(settingsFile)
@@ -811,74 +802,12 @@ def getNonExpediteAcceptedLaws(payload):
     return nonExpediteAcceptedLaws
 
 
-def checkExpedites(payload):
-    try:
-        with open('settings.json', 'r') as settingsFile:
-            settings = json.load(settingsFile)
-            USE_S3_BUCKET = settings['USE_S3_BUCKET']
-            MINIMUM_LAW_DURATION = int(
-                settings['MINIMUM_LAW_DURATION_DAYS']*DAY_IN_SECONDS)
-            ACTIVE_USER_TIMEOUT = int(
-                settings['ACTIVE_USER_TIMEOUT_DAYS']*DAY_IN_SECONDS)
-            MINIMUM_EXPEDITE_DURATION = int(
-                settings['MINIMUM_EXPEDITE_DURATION_HOURS']*HOUR_IN_SECONDS)
-    except:
-        USE_S3_BUCKET = False
-        MINIMUM_LAW_DURATION = 2419200  # 28 days  in seconds
-        ACTIVE_USER_TIMEOUT = 604800  # 7  days  in seconds
-        MINIMUM_EXPEDITE_DURATION = 86400  # 24 hours in seconds
+def checkExpedites(data):
+    users = data['users']
+    proposedLaws = data['proposedLaws']
+    acceptedLaws = data['acceptedLaws']
+    rejectedLaws = data['rejectedLaws']
 
-    if not USE_S3_BUCKET:
-        if not os.path.exists('data'):
-            os.makedirs('data')
-    if USE_S3_BUCKET:
-        inputFileNames = ['users.json', 'proposedLaws.json',
-                          'acceptedLaws.json', 'rejectedLaws.json']
-        dataByFileName = readFromS3(inputFileNames)
-        try:
-            users = dataByFileName['users.json']
-        except:
-            users = {}
-        try:
-            proposedLaws = dataByFileName['proposedLaws.json']
-        except:
-            proposedLaws = {}
-        try:
-            acceptedLaws = dataByFileName['acceptedLaws.json']
-        except:
-            acceptedLaws = {}
-        try:
-            rejectedLaws = dataByFileName['rejectedLaws.json']
-        except:
-            rejectedLaws = {}
-    else:
-        users = {}
-        try:
-            with open('data/users.json') as usersFile:
-                users = json.load(usersFile)
-        except:
-            raise Exception('no users found, use createUser.py')
-
-        proposedLaws = {}
-        try:
-            with open('data/proposedLaws.json') as proposedLawsFile:
-                proposedLaws = json.load(proposedLawsFile)
-        except:
-            pass
-
-        acceptedLaws = {}
-        try:
-            with open('data/acceptedLaws.json') as acceptedLawsFile:
-                acceptedLaws = json.load(acceptedLawsFile)
-        except:
-            pass
-
-        rejectedLaws = {}
-        try:
-            with open('data/rejectedLaws.json') as rejectedLawsFile:
-                rejectedLaws = json.load(rejectedLawsFile)
-        except:
-            pass
     lawIds = [lawId for lawId in proposedLaws.keys()]
     for lawId in lawIds:
         if proposedLaws[lawId]['expedite'] and (int(time.time()) > proposedLaws[lawId]['expediteDate']):
@@ -939,6 +868,91 @@ def checkExpedites(payload):
                     proposedLaws.pop(lawId)
                 if (rejectedLaws.get(lawId) != None and not rejectedLaws[lawId]):
                     rejectedLaws.pop(lawId)
+
+    data = {'users': users, 'proposedLaws': proposedLaws,
+            'acceptedLaws': acceptedLaws, 'rejectedLaws': rejectedLaws}
+
+    return data
+
+
+def checkExpeditesApi(payload):
+    try:
+        with open('settings.json', 'r') as settingsFile:
+            settings = json.load(settingsFile)
+            USE_S3_BUCKET = settings['USE_S3_BUCKET']
+            MINIMUM_LAW_DURATION = int(
+                settings['MINIMUM_LAW_DURATION_DAYS']*DAY_IN_SECONDS)
+            ACTIVE_USER_TIMEOUT = int(
+                settings['ACTIVE_USER_TIMEOUT_DAYS']*DAY_IN_SECONDS)
+            MINIMUM_EXPEDITE_DURATION = int(
+                settings['MINIMUM_EXPEDITE_DURATION_HOURS']*HOUR_IN_SECONDS)
+    except:
+        USE_S3_BUCKET = False
+        MINIMUM_LAW_DURATION = 2419200  # 28 days  in seconds
+        ACTIVE_USER_TIMEOUT = 604800  # 7  days  in seconds
+        MINIMUM_EXPEDITE_DURATION = 86400  # 24 hours in seconds
+
+    if not USE_S3_BUCKET:
+        if not os.path.exists('data'):
+            os.makedirs('data')
+    if USE_S3_BUCKET:
+        inputFileNames = ['users.json', 'proposedLaws.json',
+                          'acceptedLaws.json', 'rejectedLaws.json']
+        dataByFileName = readFromS3(inputFileNames)
+        try:
+            users = dataByFileName['users.json']
+        except:
+            users = {}
+        try:
+            proposedLaws = dataByFileName['proposedLaws.json']
+        except:
+            proposedLaws = {}
+        try:
+            acceptedLaws = dataByFileName['acceptedLaws.json']
+        except:
+            acceptedLaws = {}
+        try:
+            rejectedLaws = dataByFileName['rejectedLaws.json']
+        except:
+            rejectedLaws = {}
+    else:
+        users = {}
+        try:
+            with open('data/users.json') as usersFile:
+                users = json.load(usersFile)
+        except:
+            raise Exception('no users found, use createUser.py')
+
+        proposedLaws = {}
+        try:
+            with open('data/proposedLaws.json') as proposedLawsFile:
+                proposedLaws = json.load(proposedLawsFile)
+        except:
+            pass
+
+        acceptedLaws = {}
+        try:
+            with open('data/acceptedLaws.json') as acceptedLawsFile:
+                acceptedLaws = json.load(acceptedLawsFile)
+        except:
+            pass
+
+        rejectedLaws = {}
+        try:
+            with open('data/rejectedLaws.json') as rejectedLawsFile:
+                rejectedLaws = json.load(rejectedLawsFile)
+        except:
+            pass
+
+    data = {'users': users, 'proposedLaws': proposedLaws,
+            'acceptedLaws': acceptedLaws, 'rejectedLaws': rejectedLaws}
+
+    data = checkExpedites(data)
+
+    users = data['users']
+    proposedLaws = data['proposedLaws']
+    acceptedLaws = data['acceptedLaws']
+    rejectedLaws = data['rejectedLaws']
 
     if USE_S3_BUCKET:
         jsonDataByFileName = {
@@ -1046,138 +1060,96 @@ def vote(payload):
         except:
             pass
 
+    data = {'users': users, 'proposedLaws': proposedLaws,
+            'acceptedLaws': acceptedLaws, 'rejectedLaws': rejectedLaws}
+
+    data = checkExpedites(data)
+
+    users = data['users']
+    proposedLaws = data['proposedLaws']
+    acceptedLaws = data['acceptedLaws']
+    rejectedLaws = data['rejectedLaws']
+
     if proposedLaws.get(lawId) == None:
         raise Exception('no law with id : '+lawId)
 
-    if proposedLaws[lawId]['expedite'] and (int(time.time()) > proposedLaws[lawId]['expediteDate']):
-        karmaByVersion = {}
-        yesByVersion = {}
-        for versionNumber in proposedLaws[lawId]['versions'].keys():
-            karmaByVersion[versionNumber] = proposedLaws[lawId]['versions'][versionNumber]['yes'] - \
-                proposedLaws[lawId]['versions'][versionNumber]['no']
-        maxKarma = max(karmaByVersion.values())
-        maxKarmaVersions = [
-            versionNumber for versionNumber in karmaByVersion if karmaByVersion[versionNumber] == maxKarma]
-        karmaByVersion = {versionNumber: karmaByVersion[versionNumber]
-                          for versionNumber in maxKarmaVersions if versionNumber in karmaByVersion}
-        if len(maxKarmaVersions) == 1:
-            acceptedLawVersionNumber = maxKarmaVersions[0]
-        else:
-            for versionNumber in maxKarmaVersions:
-                yesByVersion[versionNumber] = proposedLaws[lawId]['versions'][versionNumber]['yes']
-            maxYes = max(yesByVersion.values())
-            maxYesVersions = [
-                versionNumber for versionNumber in yesByVersion if yesByVersion[versionNumber] == maxYes]
-            # This is arbitrary but it would be very rare that maxYesVersions has more than 1 version in it.
-            acceptedLawVersionNumber = maxYesVersions[0]
-        versionsToRemove = []
-        removeLaw = False
-        for versionNumber in proposedLaws[lawId]['versions'].keys():
-            if versionNumber == acceptedLawVersionNumber:
-                if acceptedLaws.get(lawId) != None:
-                    acceptedLaws.pop(lawId)
-                proposedLaws[lawId]['versions'][versionNumber]['acceptedTime'] = proposedLaws[lawId]['expediteDate']
-                acceptedLaws[lawId] = {'title': proposedLaws[lawId]['title'], 'category': proposedLaws[lawId]['category'], 'expedite': proposedLaws[lawId]
-                                       ['expedite'], 'expediteDate': proposedLaws[lawId]['expediteDate'], 'versions': {versionNumber: proposedLaws[lawId]['versions'][versionNumber]}}
-                if rejectedLaws.get(lawId) == None:
-                    rejectedLaws[lawId] = proposedLaws[lawId]
-                    rejectedLaws[lawId]['versions'].pop(versionNumber)
-                else:
-                    rejectedLaws[lawId].update(proposedLaws[lawId])
-                    rejectedLaws[lawId]['versions'].pop(versionNumber)
-                removeLaw = True
-                break
-            else:
-                proposedLaws[lawId]['versions'][versionNumber]['rejectedTime'] = int(
-                    time.time())
-                if rejectedLaws.get(lawId) == None:
-                    rejectedLaws[lawId] = {'title': proposedLaws[lawId]['title'], 'category': proposedLaws[lawId]['category'], 'expedite': proposedLaws[lawId]
-                                           ['expedite'], 'expediteDate': proposedLaws[lawId]['expediteDate'], 'versions': {versionNumber: proposedLaws[lawId]['versions'][versionNumber]}}
-                else:
-                    rejectedLaws[lawId]['versions'].update(
-                        {versionNumber: proposedLaws[lawId]['versions'][versionNumber]})
-                versionsToRemove.append(versionNumber)
-                if acceptedLaws.get(lawId) != None:
-                    if acceptedLaws[lawId]['versions'].get(versionNumber) != None:
-                        acceptedLaws.pop(lawId)
-    else:
-        if amend:
-            for existingLawId in acceptedLaws.keys():
-                for versionId in acceptedLaws[existingLawId]['versions'].keys():
-                    if acceptedLaws[existingLawId]['versions'][versionId]['content'] == amendedLaw:
-                        raise Exception(
-                            'the proposed law already exists as an accepted law')
+    if amend:
+        for existingLawId in acceptedLaws.keys():
+            for versionId in acceptedLaws[existingLawId]['versions'].keys():
+                if acceptedLaws[existingLawId]['versions'][versionId]['content'] == amendedLaw:
+                    raise Exception(
+                        'the proposed law already exists as an accepted law')
 
-            for existingLawId in proposedLaws.keys():
-                for versionId in proposedLaws[existingLawId]['versions'].keys():
-                    if proposedLaws[existingLawId]['versions'][versionId]['content'] == amendedLaw:
-                        raise Exception(
-                            'the proposed law already exists as a proposed law')
+        for existingLawId in proposedLaws.keys():
+            for versionId in proposedLaws[existingLawId]['versions'].keys():
+                if proposedLaws[existingLawId]['versions'][versionId]['content'] == amendedLaw:
+                    raise Exception(
+                        'the proposed law already exists as a proposed law')
 
-            for existingLawId in rejectedLaws.keys():
-                for versionId in rejectedLaws[existingLawId]['versions'].keys():
-                    if rejectedLaws[existingLawId]['versions'][versionId]['content'] == amendedLaw:
-                        if rejectedLaws[existingLawId]['versions'][versionId]['rejectedTime']+MINIMUM_LAW_DURATION > int(time.time()):
-                            raise Exception('the proposed law was rejected less than '+str(
-                                int(MINIMUM_LAW_DURATION/DAY_IN_SECONDS))+' days ago')
-            versionNumbers = list(proposedLaws[lawId]['versions'].keys())
-            if rejectedLaws.get(lawId) != None:
-                versionNumbers += list(rejectedLaws[lawId]['versions'].keys())
+        for existingLawId in rejectedLaws.keys():
+            for versionId in rejectedLaws[existingLawId]['versions'].keys():
+                if rejectedLaws[existingLawId]['versions'][versionId]['content'] == amendedLaw:
+                    if rejectedLaws[existingLawId]['versions'][versionId]['rejectedTime']+MINIMUM_LAW_DURATION > int(time.time()):
+                        raise Exception('the proposed law was rejected less than '+str(
+                            int(MINIMUM_LAW_DURATION/DAY_IN_SECONDS))+' days ago')
+        versionNumbers = list(proposedLaws[lawId]['versions'].keys())
+        if rejectedLaws.get(lawId) != None:
+            versionNumbers += list(rejectedLaws[lawId]['versions'].keys())
+        if acceptedLaws.get(lawId) != None:
+            versionNumbers += list(acceptedLaws[lawId]['versions'].keys())
+        versionNumber = max(int(l) for l in versionNumbers) + 1
+
+        proposedLaws[lawId]['versions'][versionNumber] = {
+            'content': amendedLaw,
+            'yes': 1,
+            'no': 0
+        }
+        users[username]['proposedLaws'].append(
+            lawId+':'+str(versionNumber))
+
+    for versionNumber in votes.keys():
+        if votes[versionNumber] == 'yes':
+            proposedLaws[lawId]['versions'][versionNumber]['yes'] += 1
+            users[username]['votedLaws'][lawId +
+                                         ':'+str(versionNumber)] = True
+        elif votes[versionNumber] == 'no':
+            proposedLaws[lawId]['versions'][versionNumber]['no'] += 1
+            users[username]['votedLaws'][lawId +
+                                         ':'+str(versionNumber)] = False
+    numberOfActiveUsers = countActiveUsers(users)
+    majority = int(numberOfActiveUsers/2 + 1)
+    half = numberOfActiveUsers/2
+    versionsToRemove = []
+    removeLaw = False
+    for versionNumber in proposedLaws[lawId]['versions'].keys():
+        if proposedLaws[lawId]['versions'][versionNumber]['yes'] >= majority:
             if acceptedLaws.get(lawId) != None:
-                versionNumbers += list(acceptedLaws[lawId]['versions'].keys())
-            versionNumber = max(int(l) for l in versionNumbers) + 1
-
-            proposedLaws[lawId]['versions'][versionNumber] = {
-                'content': amendedLaw,
-                'yes': 1,
-                'no': 0
-            }
-            users[username]['proposedLaws'].append(
-                lawId+':'+str(versionNumber))
-
-        for versionNumber in votes.keys():
-            if votes[versionNumber] == 'yes':
-                proposedLaws[lawId]['versions'][versionNumber]['yes'] += 1
-                users[username]['votedLaws'][lawId +
-                                             ':'+str(versionNumber)] = True
-            elif votes[versionNumber] == 'no':
-                proposedLaws[lawId]['versions'][versionNumber]['no'] += 1
-                users[username]['votedLaws'][lawId +
-                                             ':'+str(versionNumber)] = False
-        numberOfActiveUsers = countActiveUsers(users)
-        majority = int(numberOfActiveUsers/2 + 1)
-        half = numberOfActiveUsers/2
-        versionsToRemove = []
-        removeLaw = False
-        for versionNumber in proposedLaws[lawId]['versions'].keys():
-            if proposedLaws[lawId]['versions'][versionNumber]['yes'] >= majority:
-                if acceptedLaws.get(lawId) != None:
-                    acceptedLaws.pop(lawId)
-                proposedLaws[lawId]['versions'][versionNumber]['acceptedTime'] = int(
-                    time.time())
-                acceptedLaws[lawId] = {'title': proposedLaws[lawId]['title'], 'category': proposedLaws[lawId]['category'], 'expedite': proposedLaws[lawId]
+                acceptedLaws.pop(lawId)
+            proposedLaws[lawId]['versions'][versionNumber]['acceptedTime'] = int(
+                time.time())
+            acceptedLaws[lawId] = {'title': proposedLaws[lawId]['title'], 'category': proposedLaws[lawId]['category'], 'expedite': proposedLaws[lawId]
+                                   ['expedite'], 'expediteDate': proposedLaws[lawId]['expediteDate'], 'versions': {versionNumber: proposedLaws[lawId]['versions'][versionNumber]}}
+            if rejectedLaws.get(lawId) == None:
+                rejectedLaws[lawId] = proposedLaws[lawId].copy()
+                rejectedLaws[lawId]['versions'].pop(versionNumber)
+            else:
+                rejectedLaws[lawId].update(proposedLaws[lawId])
+                rejectedLaws[lawId]['versions'].pop(versionNumber)
+            removeLaw = True
+            break
+        elif proposedLaws[lawId]['versions'][versionNumber]['no'] >= half:
+            proposedLaws[lawId]['versions'][versionNumber]['rejectedTime'] = int(
+                time.time())
+            if rejectedLaws.get(lawId) == None:
+                rejectedLaws[lawId] = {'title': proposedLaws[lawId]['title'], 'category': proposedLaws[lawId]['category'], 'expedite': proposedLaws[lawId]
                                        ['expedite'], 'expediteDate': proposedLaws[lawId]['expediteDate'], 'versions': {versionNumber: proposedLaws[lawId]['versions'][versionNumber]}}
-                if rejectedLaws.get(lawId) == None:
-                    rejectedLaws[lawId] = proposedLaws[lawId].copy()
-                    rejectedLaws[lawId]['versions'].pop(versionNumber)
-                else:
-                    rejectedLaws[lawId].update(proposedLaws[lawId])
-                    rejectedLaws[lawId]['versions'].pop(versionNumber)
-                removeLaw = True
-                break
-            elif proposedLaws[lawId]['versions'][versionNumber]['no'] >= half:
-                proposedLaws[lawId]['versions'][versionNumber]['rejectedTime'] = int(
-                    time.time())
-                if rejectedLaws.get(lawId) == None:
-                    rejectedLaws[lawId] = {'title': proposedLaws[lawId]['title'], 'category': proposedLaws[lawId]['category'], 'expedite': proposedLaws[lawId]
-                                           ['expedite'], 'expediteDate': proposedLaws[lawId]['expediteDate'], 'versions': {versionNumber: proposedLaws[lawId]['versions'][versionNumber]}}
-                else:
-                    rejectedLaws[lawId]['versions'].update(
-                        {versionNumber: proposedLaws[lawId]['versions'][versionNumber]})
-                versionsToRemove.append(versionNumber)
-                if acceptedLaws.get(lawId) != None:
-                    if acceptedLaws[lawId]['versions'].get(versionNumber) != None:
-                        acceptedLaws.pop(lawId)
+            else:
+                rejectedLaws[lawId]['versions'].update(
+                    {versionNumber: proposedLaws[lawId]['versions'][versionNumber]})
+            versionsToRemove.append(versionNumber)
+            if acceptedLaws.get(lawId) != None:
+                if acceptedLaws[lawId]['versions'].get(versionNumber) != None:
+                    acceptedLaws.pop(lawId)
     if proposedLaws.get(lawId) != None:
         for versionNumber in versionsToRemove:
             proposedLaws[lawId]['versions'].pop(versionNumber)
@@ -1185,6 +1157,8 @@ def vote(payload):
             proposedLaws.pop(lawId)
         if (rejectedLaws.get(lawId) != None and not rejectedLaws[lawId]['versions']):
             rejectedLaws.pop(lawId)
+
+    users[username]['latestActivity'] = int(time.time())
 
     if USE_S3_BUCKET:
         jsonDataByFileName = {
