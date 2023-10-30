@@ -1070,6 +1070,8 @@ def vote(payload):
     acceptedLaws = data['acceptedLaws']
     rejectedLaws = data['rejectedLaws']
 
+    users[username]['latestActivity'] = int(time.time())
+
     if proposedLaws.get(lawId) == None:
         raise Exception('no law with id : '+lawId)
 
@@ -1157,8 +1159,6 @@ def vote(payload):
             proposedLaws.pop(lawId)
         if (rejectedLaws.get(lawId) != None and not rejectedLaws[lawId]['versions']):
             rejectedLaws.pop(lawId)
-
-    users[username]['latestActivity'] = int(time.time())
 
     if USE_S3_BUCKET:
         jsonDataByFileName = {
