@@ -47,12 +47,61 @@ def createUser(payload):
         except:
             pass
     if users.get(username) is not None:
-        raise Exception('username '+username+' is already taken')
+        return ({'error': 'username '+username+' is already taken'})
     users[username] = {
         'proposedLaws': [],
         'votedLaws': {},
-        'latestActivity': int(time.time())
+        'latestActivity': 0
     }
+    if USE_S3_BUCKET:
+        jsonDataByFileName = {'users.json': json.dumps(users)}
+        writeToS3(jsonDataByFileName)
+    else:
+        with open('data/users.json', 'w') as usersFile:
+            json.dump(users, usersFile)
+
+    return ({})
+
+
+def updateActivity(payload):
+    username = payload['username']
+
+    try:
+        with open('settings.json', 'r') as settingsFile:
+            settings = json.load(settingsFile)
+            USE_S3_BUCKET = settings['USE_S3_BUCKET']
+            MINIMUM_LAW_DURATION = int(
+                settings['MINIMUM_LAW_DURATION_DAYS']*DAY_IN_SECONDS)
+            ACTIVE_USER_TIMEOUT = int(
+                settings['ACTIVE_USER_TIMEOUT_DAYS']*DAY_IN_SECONDS)
+            MINIMUM_EXPEDITE_DURATION = int(
+                settings['MINIMUM_EXPEDITE_DURATION_HOURS']*HOUR_IN_SECONDS)
+    except:
+        USE_S3_BUCKET = False
+        MINIMUM_LAW_DURATION = 2419200  # 28 days  in seconds
+        ACTIVE_USER_TIMEOUT = 604800  # 7  days  in seconds
+        MINIMUM_EXPEDITE_DURATION = 86400  # 24 hours in seconds
+
+    if not USE_S3_BUCKET:
+        if not os.path.exists('data'):
+            os.makedirs('data')
+
+    if USE_S3_BUCKET:
+        inputFileNames = ['users.json']
+        try:
+            users = readFromS3(inputFileNames)['users.json']
+        except:
+            users = {}
+    else:
+        users = {}
+        try:
+            with open('data/users.json') as usersFile:
+                users = json.load(usersFile)
+        except:
+            pass
+
+    users[username]['latestActivity'] = int(time.time())
+
     if USE_S3_BUCKET:
         jsonDataByFileName = {'users.json': json.dumps(users)}
         writeToS3(jsonDataByFileName)
@@ -1070,6 +1119,8 @@ def vote(payload):
     acceptedLaws = data['acceptedLaws']
     rejectedLaws = data['rejectedLaws']
 
+    users[username]['latestActivity'] = int(time.time())
+
     if proposedLaws.get(lawId) == None:
         raise Exception('no law with id : '+lawId)
 
@@ -1157,8 +1208,6 @@ def vote(payload):
             proposedLaws.pop(lawId)
         if (rejectedLaws.get(lawId) != None and not rejectedLaws[lawId]['versions']):
             rejectedLaws.pop(lawId)
-
-    users[username]['latestActivity'] = int(time.time())
 
     if USE_S3_BUCKET:
         jsonDataByFileName = {
