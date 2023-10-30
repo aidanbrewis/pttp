@@ -21,6 +21,7 @@ def lambda_handler(event, context):
         elif event['triggerSource'] == 'PostConfirmation_ConfirmSignUp':
             username = cognitoRequest['userAttributes']['email']
             event['response'] = pttp.updateActivity({'username': username})
+            return event
 
     operation = event['operation']
 
