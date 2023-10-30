@@ -47,7 +47,7 @@ def createUser(payload):
         except:
             pass
     if users.get(username) is not None:
-        raise Exception('username '+username+' is already taken')
+        return ({'error': 'username '+username+' is already taken'})
     users[username] = {
         'proposedLaws': [],
         'votedLaws': {},
