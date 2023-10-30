@@ -14,11 +14,11 @@ def lambda_handler(event, context):
     cognitoRequest = event.get('request')
 
     if cognitoRequest:
-        if cognitoRequest['triggerSource'] == 'PreSignUp_SignUp':
+        if event['triggerSource'] == 'PreSignUp_SignUp':
             username = cognitoRequest['userAttributes']['email']
             event['response'] = pttp.createUser({'username': username})
             return event
-        elif cognitoRequest['triggerSource'] == 'PostConfirmation_ConfirmSignUp':
+        elif event['triggerSource'] == 'PostConfirmation_ConfirmSignUp':
             username = cognitoRequest['userAttributes']['email']
             event['response'] = pttp.updateActivity({'username': username})
 
