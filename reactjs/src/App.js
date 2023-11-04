@@ -1,6 +1,7 @@
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import "./App.css";
 import HomeScreen from "./screens/HomeScreen/HomeScreen";
 import { Amplify } from "aws-amplify";
 import { awsExports } from "./aws-exports";
@@ -45,7 +46,7 @@ function App() {
     <ThemeProvider theme={theme}>
       <Authenticator>
         {({ signOut, user }) => (
-          <div className="App">
+          <div className="roboto">
             <Router>
               <Routes>
                 <Route path="/" element={<HomeScreen />} />
