@@ -14,14 +14,14 @@ const LawWithAction = ({
 
   if (hasVotingButtons) {
     return (
-      <div style={styles.lawWithAction}>
+      <div>
         <div style={styles.lawVersion}>{version.content}</div>
         <div style={styles.votingButtonsContainer}>
           <Button
             variant={voteResult === "yes" ? "contained" : "text"}
             color={voteResult === "yes" ? "yes" : "inherit"}
             onClick={() => handleOptionClick("yes")}
-            style={{ marginRight: 10 }}
+            style={{ marginRight: 5 }}
           >
             Yes
           </Button>
@@ -37,13 +37,13 @@ const LawWithAction = ({
     );
   } else if (hasUserVoteResults) {
     return (
-      <div style={styles.lawWithAction}>
+      <div>
         <div style={styles.lawVersion}>{version.content}</div>
         <div style={styles.votingButtonsContainer}>
           <Button
             variant={voteResult === "yes" ? "contained" : "text"}
             color={voteResult === "yes" ? "yes" : "inherit"}
-            style={{ marginRight: 10 }}
+            style={{ marginRight: 5 }}
           >
             Yes
           </Button>
@@ -58,13 +58,13 @@ const LawWithAction = ({
     );
   } else {
     return (
-      <div style={styles.lawWithAction}>
+      <div>
         <div style={styles.lawVersion}>{version.content}</div>
         <div style={styles.votingButtonsContainer}>
           <Button
             variant={"contained"}
             color={"yes"}
-            style={{ marginRight: 10 }}
+            style={{ marginRight: 5 }}
           >
             {version.yes}
           </Button>
