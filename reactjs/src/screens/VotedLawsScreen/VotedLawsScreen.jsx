@@ -28,7 +28,7 @@ const VotedLawsScreen = () => {
         const jwtToken = session.getIdToken().getJwtToken();
         setJwtToken(jwtToken);
         const userInfo = await Auth.currentUserInfo();
-        const username = userInfo.attributes.email;
+        const username = userInfo.username;
         setUsername(username);
         result = await getVotedProposedLaws(username, jwtToken);
         setError("");

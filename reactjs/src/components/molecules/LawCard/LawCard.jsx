@@ -11,7 +11,7 @@ import {
 import Collapse from "@material-ui/core/Collapse";
 import unixToDate from "../../../unixToDate";
 import styles from "./LawCard.styles";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import LawWithAction from "../../atoms/LawWithAction/LawWithAction";
 import ExpandButton from "../../atoms/ExpandButton/ExpandButton";
 import submitVotes from "../../../api/submitVotes";
@@ -43,6 +43,7 @@ const LawCard = ({
   const [proposeLawLoading, setProposeLawLoading] = useState(false);
   const [sendVotesLoading, setSendVotesLoading] = useState(false);
   const [callAmendLawLoading, setCallAmendLawLoading] = useState(false);
+  const [shouldAutoVote, setShouldAutoVote] = useState(hasUserVoteResults);
   const [error, setError] = useState("");
 
   let navigate = useNavigate();
@@ -75,7 +76,8 @@ const LawCard = ({
           [key]: "no",
         }))
       );
-    } else if (hasUserVoteResults) {
+    } else if (shouldAutoVote) {
+      setShouldAutoVote(false);
       Object.keys(law.versions).map((key) =>
         setVoteResults((prevResults) => ({
           ...prevResults,
