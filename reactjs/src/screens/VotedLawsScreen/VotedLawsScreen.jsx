@@ -15,6 +15,11 @@ const VotedLawsScreen = () => {
   const [error, setError] = useState("");
 
   useEffect(() => {
+    const hasLoadedBefore = localStorage.getItem("hasLoadedBefore");
+    if (!hasLoadedBefore) {
+      localStorage.setItem("hasLoadedBefore", "true");
+      window.location.reload();
+    }
     fetchData();
   }, []);
 

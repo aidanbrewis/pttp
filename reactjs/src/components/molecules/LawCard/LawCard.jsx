@@ -312,7 +312,9 @@ const LawCard = ({
                 <Button
                   color="inherit"
                   disabled={
-                    sendVotesLoading || Object.keys(voteResults).length === 0
+                    sendVotesLoading ||
+                    Object.keys(voteResults).length !==
+                      Object.keys(law.versions).length
                   }
                   onClick={sendVotes}
                 >

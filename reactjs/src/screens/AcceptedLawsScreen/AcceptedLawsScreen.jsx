@@ -15,6 +15,11 @@ const AcceptedLawsScreen = () => {
   const [error, setError] = useState("");
 
   useEffect(() => {
+    const hasLoadedBefore = localStorage.getItem("hasLoadedBefore");
+    if (!hasLoadedBefore) {
+      window.location.reload();
+      localStorage.setItem("hasLoadedBefore", "true");
+    }
     fetchData();
   }, []);
 

@@ -16,6 +16,11 @@ const LawScreen = ({ amend }) => {
   const lawId = useLocation().pathname.split("/")[1];
 
   useEffect(() => {
+    const hasLoadedBefore = localStorage.getItem("hasLoadedBefore");
+    if (!hasLoadedBefore) {
+      window.location.reload();
+      localStorage.setItem("hasLoadedBefore", "true");
+    }
     fetchData();
   }, []);
 
