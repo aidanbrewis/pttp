@@ -136,7 +136,7 @@ const AcceptedLawsScreen = () => {
           <div
             style={{
               color: "white",
-              fontSize: 20,
+              fontSize: 23,
               display: "flex",
               justifyContent: "center",
             }}
@@ -148,7 +148,7 @@ const AcceptedLawsScreen = () => {
           <div
             style={{
               color: "white",
-              fontSize: 20,
+              fontSize: 23,
               display: "flex",
               justifyContent: "center",
             }}
