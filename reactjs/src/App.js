@@ -4,7 +4,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import "./App.css";
 import HomeScreen from "./screens/HomeScreen/HomeScreen";
 import { Amplify } from "aws-amplify";
-import { awsExports } from "./aws-exports";
+import awsExports from "./awsExports.json";
 import { Authenticator } from "@aws-amplify/ui-react";
 import "@aws-amplify/ui-react/styles.css";
 import ProposeLawScreen from "./screens/ProposeLawScreen/ProposeLawScreen";
@@ -14,8 +14,12 @@ import VotedLawsScreen from "./screens/VotedLawsScreen/VotedLawsScreen";
 import LawScreen from "./screens/LawScreen/LawScreen";
 import { Button, Link } from "@material-ui/core";
 import styles from "./screens/HomeScreen/HomeScreen.styles";
+import settings from "./settings.json";
+import languages from "./labels.json";
 
 function App() {
+  const labels = languages[settings.language];
+
   Amplify.configure({
     Auth: {
       region: awsExports.REGION,
@@ -64,7 +68,7 @@ function App() {
             <div style={styles.tabs}>
               <div style={{ marginRight: "auto" }}>
                 <Button color="inherit" variant="contained" onClick={signOut}>
-                  Sign out
+                  {labels.signOut}
                 </Button>
               </div>
               <div style={{ marginLeft: "auto" }}>
@@ -74,7 +78,7 @@ function App() {
                     href="https://github.com/aidanbrewis/pttp"
                     rel="noreferrer"
                   >
-                    Source code
+                    {labels.sourceCode}
                   </Link>
                 </Button>
               </div>

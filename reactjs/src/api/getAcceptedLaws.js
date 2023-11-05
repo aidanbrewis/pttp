@@ -1,4 +1,4 @@
-import { awsExports } from "../aws-exports";
+import awsExports from "../awsExports.json";
 
 const getAcceptedLaws = (jwtToken) => {
   async function ApiCall() {

@@ -5,8 +5,12 @@ import LawCards from "../../components/organisms/LawCards/LawCards";
 import { Button, CircularProgress } from "@material-ui/core";
 import styles from "./VotedLawsScreen.styles";
 import { useNavigate } from "react-router-dom";
+import settings from "../../settings.json";
+import languages from "../../labels.json";
 
 const VotedLawsScreen = () => {
+  const labels = languages[settings.language];
+
   const [laws, setLaws] = useState([]);
   const [jwtToken, setJwtToken] = useState("");
   const [username, setUsername] = useState("");
@@ -91,7 +95,7 @@ const VotedLawsScreen = () => {
           variant="contained"
           onClick={homeScreenNavigate}
         >
-          Vote
+          {labels.voteTab}
         </Button>
         <Button
           style={{ marginLeft: 0 }}
@@ -99,10 +103,10 @@ const VotedLawsScreen = () => {
           variant="contained"
           onClick={proposeLawNavigate}
         >
-          Propose New Law
+          {labels.proposeLawTab}
         </Button>
         <Button style={{ marginLeft: 0 }} color="primary" variant="contained">
-          Voted Laws
+          {labels.votedLawsTab}
         </Button>
         <Button
           style={{ marginLeft: 0 }}
@@ -110,7 +114,7 @@ const VotedLawsScreen = () => {
           variant="contained"
           onClick={acceptedLawsNavigate}
         >
-          Accepted Laws
+          {labels.acceptedLawsTab}
         </Button>
         <Button
           style={{ marginRight: "auto" }}
@@ -118,7 +122,7 @@ const VotedLawsScreen = () => {
           variant="contained"
           onClick={rejectedLawsNavigate}
         >
-          Rejected Laws
+          {labels.rejectedLawsTab}
         </Button>
       </div>
       <div
@@ -146,7 +150,7 @@ const VotedLawsScreen = () => {
               justifyContent: "center",
             }}
           >
-            All voted laws have been accepted or rejected.
+            {labels.noVotedLaws}
           </div>
         )}
         {error && (

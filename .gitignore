@@ -1,6 +1,8 @@
 *.json
+!/Python/labels.json
 !/reactjs/package.json
 !/reactjs/package-lock.json
+!/reactjs/src/labels.json
 /reactjs/src/aws-exports.js
 *.csv
 *.pem

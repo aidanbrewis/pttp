@@ -1,4 +1,4 @@
-import { awsExports } from "../aws-exports";
+import awsExports from "../awsExports.json";
 
 const amendLaw = (username, jwtToken, lawId, votes, amendedLaw) => {
   async function ApiCall() {

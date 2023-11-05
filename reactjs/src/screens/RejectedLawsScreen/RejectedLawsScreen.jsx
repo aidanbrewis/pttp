@@ -5,8 +5,12 @@ import LawCards from "../../components/organisms/LawCards/LawCards";
 import { Button, CircularProgress } from "@material-ui/core";
 import styles from "./RejectedLawsScreen.styles";
 import { useNavigate } from "react-router-dom";
+import settings from "../../settings.json";
+import languages from "../../labels.json";
 
 const RejectedLawsScreen = () => {
+  const labels = languages[settings.language];
+
   const [laws, setLaws] = useState([]);
   const [jwtToken, setJwtToken] = useState("");
   const [username, setUsername] = useState("");
@@ -91,7 +95,7 @@ const RejectedLawsScreen = () => {
           variant="contained"
           onClick={homeScreenNavigate}
         >
-          Vote
+          {labels.voteTab}
         </Button>
         <Button
           style={{ marginLeft: 0 }}
@@ -99,7 +103,7 @@ const RejectedLawsScreen = () => {
           variant="contained"
           onClick={proposeLawNavigate}
         >
-          Propose New Law
+          {labels.proposeLawTab}
         </Button>
         <Button
           style={{ marginLeft: 0 }}
@@ -107,7 +111,7 @@ const RejectedLawsScreen = () => {
           variant="contained"
           onClick={votedLawsNavigate}
         >
-          Voted Laws
+          {labels.votedLawsTab}
         </Button>
         <Button
           style={{ marginLeft: 0 }}
@@ -115,14 +119,14 @@ const RejectedLawsScreen = () => {
           variant="contained"
           onClick={acceptedLawsNavigate}
         >
-          Accepted Laws
+          {labels.acceptedLawsTab}
         </Button>
         <Button
           style={{ marginRight: "auto" }}
           color="primary"
           variant="contained"
         >
-          Rejected Laws
+          {labels.rejectedLawsTab}
         </Button>
       </div>
       <div
@@ -150,7 +154,7 @@ const RejectedLawsScreen = () => {
               justifyContent: "center",
             }}
           >
-            No laws have been rejected.
+            {labels.noRejectedLaws}
           </div>
         )}
         {error && (

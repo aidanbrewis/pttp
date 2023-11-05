@@ -1,5 +1,7 @@
 import styles from "./LawWithAction.styles";
 import { Button } from "@mui/material";
+import settings from "../../../settings.json";
+import languages from "../../../labels.json";
 
 const LawWithAction = ({
   version,
@@ -8,6 +10,8 @@ const LawWithAction = ({
   hasVotingButtons,
   hasUserVoteResults,
 }) => {
+  const labels = languages[settings.language];
+
   const handleOptionClick = (option) => {
     onOptionClick(option);
   };
@@ -23,14 +27,14 @@ const LawWithAction = ({
             onClick={() => handleOptionClick("yes")}
             style={{ marginRight: 5 }}
           >
-            Yes
+            {labels.yes}
           </Button>
           <Button
             variant={voteResult === "no" ? "contained" : "text"}
             color={voteResult === "no" ? "no" : "inherit"}
             onClick={() => handleOptionClick("no")}
           >
-            No
+            {labels.no}
           </Button>
         </div>
       </div>
@@ -45,13 +49,13 @@ const LawWithAction = ({
             color={voteResult === "yes" ? "yes" : "inherit"}
             style={{ marginRight: 5 }}
           >
-            Yes
+            {labels.yes}
           </Button>
           <Button
             variant={voteResult === "no" ? "contained" : "text"}
             color={voteResult === "no" ? "no" : "inherit"}
           >
-            No
+            {labels.no}
           </Button>
         </div>
       </div>
