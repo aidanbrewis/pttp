@@ -250,7 +250,7 @@ const LawCard = ({
     <Card style={isExpedite ? styles.expediteCard : styles.notExpediteCard}>
       {error && (
         <Alert severity="error" onClose={handleCloseError}>
-          {error}
+          {error === "Failed to fetch" ? labels.processingVotesError : error}
         </Alert>
       )}
       <div style={styles.collapsedContentContainer} onClick={toggleExpanded}>

@@ -18,6 +18,7 @@
     "noAcceptedLaws": "No laws have been accepted.",
     "noRejectedLaws": "No laws have been rejected.",
     "signOut": "SIGN OUT",
-    "sourceCode": "SOURCE CODE"
+    "sourceCode": "SOURCE CODE",
+    "processingVotesError": "Votes are being processed, please try again."
   }
 }
