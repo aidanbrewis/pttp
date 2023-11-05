@@ -10,5 +10,17 @@
     "unknownProposedLaw": "Proposed law not recognised.",
     "cantAbrogateExpediteLaws": "Expedite laws can not be abrogated.",
     "cantAbrogateRecentAcceptedLaw": "Can not abrogate a law that was accepted less than {} days ago."
+  },
+  "french": {
+    "expediteDateToEarly": "La date de la loi expéditive doit être dans au moins {} heures.",
+    "noUsers": "Aucun untilisateur n'a été créé.",
+    "unknownUsername": "Nom d'utilisateur non reconnu.",
+    "lawExistsAccepted": "Cette proposition a déjà été adoptée.",
+    "lawExistsProposed": "Cette loi est déjà en train d'être votée.",
+    "lawRecentlyRejected": "Cette loi a été rejetée il y a moins de {} jours.",
+    "unknownAcceptedLaw": "Loi adoptée non reconnue.",
+    "unknownProposedLaw": "Loi rejetée non reconnue.",
+    "cantAbrogateExpediteLaws": "Les lois expéditives ne peuvent pas être abrogées.",
+    "cantAbrogateRecentAcceptedLaw": "Les lois ayant été adoptées il y a moins de {} jours ne peuvent pas être abrogées."
   }
 }
