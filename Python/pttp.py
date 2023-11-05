@@ -133,17 +133,25 @@ def proposeLaw(payload):
                 settings['ACTIVE_USER_TIMEOUT_DAYS']*DAY_IN_SECONDS)
             MINIMUM_EXPEDITE_DURATION = int(
                 settings['MINIMUM_EXPEDITE_DURATION_HOURS']*HOUR_IN_SECONDS)
+            LANGUAGE = settings['LANGUAGE']
     except:
         USE_S3_BUCKET = False
         MINIMUM_LAW_DURATION = 2419200  # 28 days  in seconds
         ACTIVE_USER_TIMEOUT = 604800  # 7  days  in seconds
         MINIMUM_EXPEDITE_DURATION = 86400  # 24 hours in seconds
+        LANGUAGE = 'english'
+
+    try:
+        with open('labels.json', 'r') as labelsFile:
+            languages = json.load(labelsFile)
+            labels = languages[LANGUAGE]
+    except:
+        labels = {}
 
     if expedite:
         if expediteDate < int(time.time()) + MINIMUM_EXPEDITE_DURATION:
-            raise Exception('The expedite date must be at least '+str(
-                int(MINIMUM_EXPEDITE_DURATION/HOUR_IN_SECONDS))+' hours later than now.')
-
+            raise Exception(labels['expediteDateToEarly'].format(
+                str(int(MINIMUM_EXPEDITE_DURATION/HOUR_IN_SECONDS))))
     newLawId = generateNewId()
 
     if not USE_S3_BUCKET:
@@ -178,11 +186,10 @@ def proposeLaw(payload):
             with open('data/users.json') as usersFile:
                 users = json.load(usersFile)
         except:
-            raise Exception('no users found, use createUser.py')
+            raise Exception(labels['noUsers'])
 
         if users.get(username) == None:
-            raise Exception('no user with username : ' +
-                            username+'\nplease use createUser.py')
+            raise Exception(labels['unknownUsername'])
 
         proposedLaws = {}
         try:
@@ -218,21 +225,19 @@ def proposeLaw(payload):
     for existingLawId in acceptedLaws.keys():
         for versionId in acceptedLaws[existingLawId]['versions'].keys():
             if acceptedLaws[existingLawId]['versions'][versionId]['content'] == proposedLaw:
-                raise Exception(
-                    'the proposed law already exists as an accepted law')
+                raise Exception(labels['lawExistsAccepted'])
 
     for existingLawId in proposedLaws.keys():
         for versionId in proposedLaws[existingLawId]['versions'].keys():
             if proposedLaws[existingLawId]['versions'][versionId]['content'] == proposedLaw:
-                raise Exception(
-                    'the proposed law already exists as a proposed law')
+                raise Exception(labels['lawExistsProposed'])
 
     for existingLawId in rejectedLaws.keys():
         for versionId in rejectedLaws[existingLawId]['versions'].keys():
             if rejectedLaws[existingLawId]['versions'][versionId]['content'] == proposedLaw:
                 if rejectedLaws[existingLawId]['versions'][versionId]['rejectedTime']+MINIMUM_LAW_DURATION > int(time.time()):
-                    raise Exception('the proposed law was rejected less than ' +
-                                    str(int(MINIMUM_LAW_DURATION/DAY_IN_SECONDS))+' days ago')
+                    raise Exception(labels['lawRecentlyRejected'].format(
+                        str(int(MINIMUM_LAW_DURATION/DAY_IN_SECONDS))))
 
     users[username]['proposedLaws'].append(newLawId+':1')
 
@@ -312,11 +317,10 @@ def proposeAbrogationLaw(payload):
             with open('data/users.json') as usersFile:
                 users = json.load(usersFile)
         except:
-            raise Exception('no users found, use createUser.py')
+            raise Exception(labels['noUsers'])
 
         if users.get(username) == None:
-            raise Exception('no user with username : ' +
-                            username+'\nplease use createUser.py')
+            raise Exception(labels['unknownUsername'])
 
         proposedLaws = {}
         try:
@@ -350,18 +354,18 @@ def proposeAbrogationLaw(payload):
     rejectedLaws = data['rejectedLaws']
 
     if acceptedLaws.get(lawId) == None:
-        raise Exception('no accepted law with id : '+lawId)
+        raise Exception(labels['unknownAcceptedLaw'])
 
     if acceptedLaws[lawId]['expedite']:
-        raise Exception('expedite laws can not be abrogated')
+        raise Exception(labels['cantAbrogateExpediteLaws'])
 
     if proposedLaws.get(lawId) != None:
-        raise Exception('law with id '+lawId+' is already being voted on')
+        raise Exception(labels['lawExistsProposed'])
 
     for versionNumber in acceptedLaws[lawId]['versions'].keys():
         if acceptedLaws[lawId]['versions'][versionNumber]['acceptedTime']+MINIMUM_LAW_DURATION > int(time.time()):
-            raise Exception('cannot abrogate a law that was accepted less than ' +
-                            str(int(MINIMUM_LAW_DURATION/DAY_IN_SECONDS))+' days ago.')
+            raise Exception(labels['cantAbrogateRecentAcceptedLaw'].format(
+                str(int(MINIMUM_LAW_DURATION/DAY_IN_SECONDS))))
         proposedLaws[lawId] = {'title': acceptedLaws[lawId]['title'], 'category': acceptedLaws[lawId]['category'], 'expedite': acceptedLaws[lawId]['expedite'],
                                'expediteDate': acceptedLaws[lawId]['expediteDate'], 'versions': {versionNumber: {'content': acceptedLaws[lawId]['versions'][versionNumber]['content'], 'yes': 0, 'no': 1}}}
 
@@ -378,20 +382,20 @@ def proposeAbrogationLaw(payload):
             for versionId in acceptedLaws[existingLawId]['versions'].keys():
                 if acceptedLaws[existingLawId]['versions'][versionId]['content'] == replacementLaw:
                     raise Exception(
-                        'the proposed law already exists as an accepted law')
+                        labels['lawexistsaccepted'])
 
         for existingLawId in proposedLaws.keys():
             for versionId in proposedLaws[existingLawId]['versions'].keys():
                 if proposedLaws[existingLawId]['versions'][versionId]['content'] == replacementLaw:
                     raise Exception(
-                        'the proposed law already exists as a proposed law')
+                        labels['lawexistsproposed'])
 
         for existingLawId in rejectedLaws.keys():
             for versionId in rejectedLaws[existingLawId]['versions'].keys():
                 if rejectedLaws[existingLawId]['versions'][versionId]['content'] == replacementLaw:
                     if rejectedLaws[existingLawId]['versions'][versionId]['rejectedTime']+MINIMUM_LAW_DURATION > int(time.time()):
-                        raise Exception('the proposed law was rejected less than ' +
-                                        str(int(MINIMUM_LAW_DURATION/DAY_IN_SECONDS))+' days ago')
+                        raise Exception(labels['lawRecentlyRejected'].format(
+                            str(int(MINIMUM_LAW_DURATION/DAY_IN_SECONDS))))
 
         versionNumbers = list(proposedLaws[lawId]['versions'].keys())
         if rejectedLaws.get(lawId) != None:
@@ -481,11 +485,10 @@ def getLawsToVote(payload):
             with open('data/users.json') as usersFile:
                 users = json.load(usersFile)
         except:
-            raise Exception('no users found, use createUser.py')
+            raise Exception(labels['noUsers'])
 
         if users.get(username) == None:
-            raise Exception('no user with username : ' +
-                            username+'\nplease use createUser.py')
+            raise Exception(labels['unknownUsername'])
 
         proposedLaws = {}
         try:
@@ -555,11 +558,10 @@ def getVotedProposedLaws(payload):
             with open('data/users.json') as usersFile:
                 users = json.load(usersFile)
         except:
-            raise Exception('no users found, use createUser.py')
+            raise Exception(labels['noUsers'])
 
         if users.get(username) == None:
-            raise Exception('no user with username : ' +
-                            username+'\nplease use createUser.py')
+            raise Exception(labels['unknownUsername'])
 
         proposedLaws = {}
         try:
@@ -660,11 +662,10 @@ def getVotedLaws(payload):
             with open('data/users.json') as usersFile:
                 users = json.load(usersFile)
         except:
-            raise Exception('no users found, use createUser.py')
+            raise Exception(labels['noUsers'])
 
         if users.get(username) == None:
-            raise Exception('no user with username : ' +
-                            username+'\nplease use createUser.py')
+            raise Exception(labels['unknownUsername'])
 
         proposedLaws = {}
         try:
@@ -970,7 +971,7 @@ def checkExpeditesApi(payload):
             with open('data/users.json') as usersFile:
                 users = json.load(usersFile)
         except:
-            raise Exception('no users found, use createUser.py')
+            raise Exception(labels['noUsers'])
 
         proposedLaws = {}
         try:
@@ -1082,11 +1083,10 @@ def vote(payload):
             with open('data/users.json') as usersFile:
                 users = json.load(usersFile)
         except:
-            raise Exception('no users found, use createUser.py')
+            raise Exception(labels['noUsers'])
 
         if users.get(username) == None:
-            raise Exception('no user with username : ' +
-                            username+'\nplease use createUser.py')
+            raise Exception(labels['unknownUsername'])
 
         proposedLaws = {}
         try:
@@ -1122,27 +1122,27 @@ def vote(payload):
     users[username]['latestActivity'] = int(time.time())
 
     if proposedLaws.get(lawId) == None:
-        raise Exception('no law with id : '+lawId)
+        raise Exception(labels['unknownProposedLaw'])
 
     if amend:
         for existingLawId in acceptedLaws.keys():
             for versionId in acceptedLaws[existingLawId]['versions'].keys():
                 if acceptedLaws[existingLawId]['versions'][versionId]['content'] == amendedLaw:
                     raise Exception(
-                        'the proposed law already exists as an accepted law')
+                        labels['lawexistsaccepted'])
 
         for existingLawId in proposedLaws.keys():
             for versionId in proposedLaws[existingLawId]['versions'].keys():
                 if proposedLaws[existingLawId]['versions'][versionId]['content'] == amendedLaw:
                     raise Exception(
-                        'the proposed law already exists as a proposed law')
+                        labels['lawexistsproposed'])
 
         for existingLawId in rejectedLaws.keys():
             for versionId in rejectedLaws[existingLawId]['versions'].keys():
                 if rejectedLaws[existingLawId]['versions'][versionId]['content'] == amendedLaw:
                     if rejectedLaws[existingLawId]['versions'][versionId]['rejectedTime']+MINIMUM_LAW_DURATION > int(time.time()):
-                        raise Exception('the proposed law was rejected less than '+str(
-                            int(MINIMUM_LAW_DURATION/DAY_IN_SECONDS))+' days ago')
+                        raise Exception(labels['lawRecentlyRejected'].format(
+                            str(int(MINIMUM_LAW_DURATION/DAY_IN_SECONDS))))
         versionNumbers = list(proposedLaws[lawId]['versions'].keys())
         if rejectedLaws.get(lawId) != None:
             versionNumbers += list(rejectedLaws[lawId]['versions'].keys())
