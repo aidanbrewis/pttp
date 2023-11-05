@@ -1,0 +1,14 @@
+{
+  "english": {
+    "expediteDateToEarly": "The expedite date must be at least {} hours later than now.",
+    "noUsers": "No users found.",
+    "unknownUsername": "Username not recognised.",
+    "lawExistsAccepted": "This law has already been accepted.",
+    "lawExistsProposed": "This law is already being voted on.",
+    "lawRecentlyRejected": "The proposed law was rejected less than {} days ago.",
+    "unknownAcceptedLaw": "Accepted law not recognised.",
+    "unknownProposedLaw": "Proposed law not recognised.",
+    "cantAbrogateExpediteLaws": "Expedite laws can not be abrogated.",
+    "cantAbrogateRecentAcceptedLaw": "Can not abrogate a law that was accepted less than {} days ago."
+  }
+}
