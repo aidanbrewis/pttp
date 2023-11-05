@@ -1244,32 +1244,8 @@ def countActiveUsers(users):
 
 def generateNewId():
     import uuid
-    proposedLaws = {}
-    try:
-        with open('data/proposedLaws.json') as proposedLawsFile:
-            proposedLaws = json.load(proposedLawsFile)
-    except:
-        pass
-    acceptedLaws = {}
-    try:
-        with open('data/acceptedLaws.json') as acceptedLawsFile:
-            acceptedLaws = json.load(acceptedLawsFile)
-    except:
-        pass
-    rejectedLaws = {}
-    try:
-        with open('data/rejectedLaws.json') as rejectedLawsFile:
-            rejectedLaws = json.load(rejectedLawsFile)
-    except:
-        pass
-    usedIds = list(proposedLaws.keys()) + \
-        list(acceptedLaws.keys()) + list(rejectedLaws.keys())
 
-    newId = str(uuid.uuid4())
-    while newId in usedIds:
-        newId = str(uuid.uuid4())
-
-    return newId
+    return str(uuid.uuid4())
 
 
 def readFromS3(filenames):
