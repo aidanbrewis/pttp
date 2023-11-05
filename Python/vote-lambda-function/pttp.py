@@ -282,11 +282,20 @@ def proposeAbrogationLaw(payload):
                 settings['ACTIVE_USER_TIMEOUT_DAYS']*DAY_IN_SECONDS)
             MINIMUM_EXPEDITE_DURATION = int(
                 settings['MINIMUM_EXPEDITE_DURATION_HOURS']*HOUR_IN_SECONDS)
+            LANGUAGE = settings['LANGUAGE']
     except:
         USE_S3_BUCKET = False
         MINIMUM_LAW_DURATION = 2419200  # 28 days  in seconds
         ACTIVE_USER_TIMEOUT = 604800  # 7  days  in seconds
         MINIMUM_EXPEDITE_DURATION = 86400  # 24 hours in seconds
+        LANGUAGE = 'english'
+
+    try:
+        with open('labels.json', 'r') as labelsFile:
+            languages = json.load(labelsFile)
+            labels = languages[LANGUAGE]
+    except:
+        labels = {}
 
     if not USE_S3_BUCKET:
         if not os.path.exists('data'):
@@ -459,11 +468,20 @@ def getLawsToVote(payload):
                 settings['ACTIVE_USER_TIMEOUT_DAYS']*DAY_IN_SECONDS)
             MINIMUM_EXPEDITE_DURATION = int(
                 settings['MINIMUM_EXPEDITE_DURATION_HOURS']*HOUR_IN_SECONDS)
+            LANGUAGE = settings['LANGUAGE']
     except:
         USE_S3_BUCKET = False
         MINIMUM_LAW_DURATION = 2419200  # 28 days  in seconds
         ACTIVE_USER_TIMEOUT = 604800  # 7  days  in seconds
         MINIMUM_EXPEDITE_DURATION = 86400  # 24 hours in seconds
+        LANGUAGE = 'english'
+
+    try:
+        with open('labels.json', 'r') as labelsFile:
+            languages = json.load(labelsFile)
+            labels = languages[LANGUAGE]
+    except:
+        labels = {}
 
     if not USE_S3_BUCKET:
         if not os.path.exists('data'):
@@ -523,11 +541,20 @@ def getVotedProposedLaws(payload):
                 settings['ACTIVE_USER_TIMEOUT_DAYS']*DAY_IN_SECONDS)
             MINIMUM_EXPEDITE_DURATION = int(
                 settings['MINIMUM_EXPEDITE_DURATION_HOURS']*HOUR_IN_SECONDS)
+            LANGUAGE = settings['LANGUAGE']
     except:
         USE_S3_BUCKET = False
         MINIMUM_LAW_DURATION = 2419200  # 28 days  in seconds
         ACTIVE_USER_TIMEOUT = 604800  # 7  days  in seconds
         MINIMUM_EXPEDITE_DURATION = 86400  # 24 hours in seconds
+        LANGUAGE = 'english'
+
+    try:
+        with open('labels.json', 'r') as labelsFile:
+            languages = json.load(labelsFile)
+            labels = languages[LANGUAGE]
+    except:
+        labels = {}
 
     if not USE_S3_BUCKET:
         if not os.path.exists('data'):
@@ -627,11 +654,20 @@ def getVotedLaws(payload):
                 settings['ACTIVE_USER_TIMEOUT_DAYS']*DAY_IN_SECONDS)
             MINIMUM_EXPEDITE_DURATION = int(
                 settings['MINIMUM_EXPEDITE_DURATION_HOURS']*HOUR_IN_SECONDS)
+            LANGUAGE = settings['LANGUAGE']
     except:
         USE_S3_BUCKET = False
         MINIMUM_LAW_DURATION = 2419200  # 28 days  in seconds
         ACTIVE_USER_TIMEOUT = 604800  # 7  days  in seconds
         MINIMUM_EXPEDITE_DURATION = 86400  # 24 hours in seconds
+        LANGUAGE = 'english'
+
+    try:
+        with open('labels.json', 'r') as labelsFile:
+            languages = json.load(labelsFile)
+            labels = languages[LANGUAGE]
+    except:
+        labels = {}
 
     if not USE_S3_BUCKET:
         if not os.path.exists('data'):
@@ -971,7 +1007,7 @@ def checkExpeditesApi(payload):
             with open('data/users.json') as usersFile:
                 users = json.load(usersFile)
         except:
-            raise Exception(labels['noUsers'])
+            pass
 
         proposedLaws = {}
         try:
@@ -1048,11 +1084,20 @@ def vote(payload):
                 settings['ACTIVE_USER_TIMEOUT_DAYS']*DAY_IN_SECONDS)
             MINIMUM_EXPEDITE_DURATION = int(
                 settings['MINIMUM_EXPEDITE_DURATION_HOURS']*HOUR_IN_SECONDS)
+            LANGUAGE = settings['LANGUAGE']
     except:
         USE_S3_BUCKET = False
         MINIMUM_LAW_DURATION = 2419200  # 28 days  in seconds
         ACTIVE_USER_TIMEOUT = 604800  # 7  days  in seconds
         MINIMUM_EXPEDITE_DURATION = 86400  # 24 hours in seconds
+        LANGUAGE = 'english'
+
+    try:
+        with open('labels.json', 'r') as labelsFile:
+            languages = json.load(labelsFile)
+            labels = languages[LANGUAGE]
+    except:
+        labels = {}
 
     if not USE_S3_BUCKET:
         if not os.path.exists('data'):
