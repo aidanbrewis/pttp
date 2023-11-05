@@ -932,11 +932,12 @@ def checkExpedites(data):
                     else:
                         rejectedLaws[lawId].update(proposedLaws[lawId])
                         rejectedLaws[lawId]['versions'].pop(versionNumber)
+                    for rejectedVersionNumber in rejectedLaws[lawId]['versions']:
+                        rejectedLaws[lawId][rejectedVersionNumber]['rejectedTime'] = proposedLaws[lawId]['expediteDate']
                     removeLaw = True
                     break
                 else:
-                    proposedLaws[lawId]['versions'][versionNumber]['rejectedTime'] = int(
-                        time.time())
+                    proposedLaws[lawId]['versions'][versionNumber]['rejectedTime'] = proposedLaws[lawId]['expediteDate']
                     if rejectedLaws.get(lawId) == None:
                         rejectedLaws[lawId] = {'title': proposedLaws[lawId]['title'], 'category': proposedLaws[lawId]['category'], 'expedite': proposedLaws[lawId]
                                                ['expedite'], 'expediteDate': proposedLaws[lawId]['expediteDate'], 'versions': {versionNumber: proposedLaws[lawId]['versions'][versionNumber]}}
@@ -1231,6 +1232,9 @@ def vote(payload):
             else:
                 rejectedLaws[lawId].update(proposedLaws[lawId])
                 rejectedLaws[lawId]['versions'].pop(versionNumber)
+            for rejectedVersionNumber in rejectedLaws[lawId]['versions']:
+                rejectedLaws[lawId][rejectedVersionNumber]['rejectedTime'] = int(
+                    time.time())
             removeLaw = True
             break
         elif proposedLaws[lawId]['versions'][versionNumber]['no'] >= half:
