@@ -4,7 +4,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import "./App.css";
 import HomeScreen from "./screens/HomeScreen/HomeScreen";
 import { Amplify } from "aws-amplify";
-import { awsExports } from "./aws-exports";
+import awsExports from "./awsExports.json";
 import { Authenticator } from "@aws-amplify/ui-react";
 import "@aws-amplify/ui-react/styles.css";
 import ProposeLawScreen from "./screens/ProposeLawScreen/ProposeLawScreen";
