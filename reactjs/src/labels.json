@@ -20,5 +20,27 @@
     "signOut": "SIGN OUT",
     "sourceCode": "SOURCE CODE",
     "processingVotesError": "Votes are being processed, please try again."
+  },
+  "french": {
+    "voteTab": "VOTER",
+    "proposeLawTab": "PROPOSER UNE LOI",
+    "votedLawsTab": "LOIS VOTÉES",
+    "acceptedLawsTab": "LOIS ADOPTÉES",
+    "rejectedLawsTab": "LOIS REJETÉES",
+    "yes": "OUI",
+    "no": "NON",
+    "confirmVotes": "CONFIRMER LES VOTES",
+    "amend": "AMENDER",
+    "confirmAmendment": "CONFIRMER L'AMENDEMENT",
+    "title": "Titre",
+    "content": "Loi",
+    "proposeLaw": "PROPOSER LA LOI",
+    "noLawsToVote": "Aucune loi à voter.",
+    "noVotedLaws": "Toutes les lois votées ont étés soit adoptées soit rejetées.",
+    "noAcceptedLaws": "Aucune loi n'a été adoptée.",
+    "noRejectedLaws": "Aucune loi n'a été rejetée.",
+    "signOut": "DÉCONNEXION",
+    "sourceCode": "CODE SOURCE",
+    "processingVotesError": "Des votes sont en cours de traitement, veuillez réessayer."
   }
 }
