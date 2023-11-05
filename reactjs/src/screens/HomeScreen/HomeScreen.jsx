@@ -5,8 +5,12 @@ import LawCards from "../../components/organisms/LawCards/LawCards";
 import { Button, CircularProgress } from "@material-ui/core";
 import styles from "./HomeScreen.styles";
 import { useNavigate } from "react-router-dom";
+import settings from "../../settings.json";
+import languages from "../../labels.json";
 
 const HomeScreen = () => {
+  const labels = languages[settings.language];
+
   const [laws, setLaws] = useState([]);
   const [jwtToken, setJwtToken] = useState("");
   const [username, setUsername] = useState("");
@@ -86,7 +90,7 @@ const HomeScreen = () => {
     <>
       <div style={styles.tabs}>
         <Button style={{ marginLeft: 0 }} color="primary" variant="contained">
-          Vote
+          {labels.voteTab}
         </Button>
         <Button
           style={{ marginLeft: 0 }}
@@ -94,7 +98,7 @@ const HomeScreen = () => {
           variant="contained"
           onClick={proposeLawNavigate}
         >
-          Propose New Law
+          {labels.proposeLawTab}
         </Button>
         <Button
           style={{ marginLeft: 0 }}
@@ -102,7 +106,7 @@ const HomeScreen = () => {
           variant="contained"
           onClick={votedLawsNavigate}
         >
-          Voted Laws
+          {labels.votedLawsTab}
         </Button>
         <Button
           style={{ marginLeft: 0 }}
@@ -110,7 +114,7 @@ const HomeScreen = () => {
           variant="contained"
           onClick={acceptedLawsNavigate}
         >
-          Accepted Laws
+          {labels.acceptedLawsTab}
         </Button>
         <Button
           style={{ marginRight: "auto" }}
@@ -118,7 +122,7 @@ const HomeScreen = () => {
           variant="contained"
           onClick={rejectedLawsNavigate}
         >
-          Rejected Laws
+          {labels.rejectedLawsTab}
         </Button>
       </div>
       <div
@@ -146,7 +150,7 @@ const HomeScreen = () => {
               justifyContent: "center",
             }}
           >
-            No laws to vote on.
+            {labels.noLawsToVote}
           </div>
         )}
         {error && (

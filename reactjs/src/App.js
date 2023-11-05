@@ -14,8 +14,12 @@ import VotedLawsScreen from "./screens/VotedLawsScreen/VotedLawsScreen";
 import LawScreen from "./screens/LawScreen/LawScreen";
 import { Button, Link } from "@material-ui/core";
 import styles from "./screens/HomeScreen/HomeScreen.styles";
+import settings from "./settings.json";
+import languages from "./labels.json";
 
 function App() {
+  const labels = languages[settings.language];
+
   Amplify.configure({
     Auth: {
       region: awsExports.REGION,
@@ -64,7 +68,7 @@ function App() {
             <div style={styles.tabs}>
               <div style={{ marginRight: "auto" }}>
                 <Button color="inherit" variant="contained" onClick={signOut}>
-                  Sign out
+                  {labels.signOut}
                 </Button>
               </div>
               <div style={{ marginLeft: "auto" }}>
@@ -74,7 +78,7 @@ function App() {
                     href="https://github.com/aidanbrewis/pttp"
                     rel="noreferrer"
                   >
-                    Source code
+                    {labels.sourceCode}
                   </Link>
                 </Button>
               </div>

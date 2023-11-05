@@ -1,0 +1,23 @@
+{
+  "english": {
+    "voteTab": "VOTE",
+    "proposeLawTab": "PROPOSE NEW LAW",
+    "votedLawsTab": "VOTED LAWS",
+    "acceptedLawsTab": "ACCEPTED LAWS",
+    "rejectedLawsTab": "REJECTED LAWS",
+    "yes": "YES",
+    "no": "NO",
+    "confirmVotes": "CONFIRM VOTES",
+    "amend": "AMEND",
+    "confirmAmendment": "CONFIRM AMENDMENT",
+    "title": "Title",
+    "content": "Law",
+    "proposeLaw": "PROPOSE LAW",
+    "noLawsToVote": "No laws to vote on.",
+    "noVotedLaws": "All voted laws have been accepted or rejected.",
+    "noAcceptedLaws": "No laws have been accepted.",
+    "noRejectedLaws": "No laws have been rejected.",
+    "signOut": "SIGN OUT",
+    "sourceCode": "SOURCE CODE"
+  }
+}

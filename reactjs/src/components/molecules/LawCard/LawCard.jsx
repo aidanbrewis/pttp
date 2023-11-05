@@ -18,6 +18,8 @@ import submitVotes from "../../../api/submitVotes";
 import proposeLaw from "../../../api/proposeLaw";
 import amendLaw from "../../../api/amendLaw";
 import OpenInNewIcon from "@mui/icons-material/OpenInNew";
+import settings from "../../../settings.json";
+import languages from "../../../labels.json";
 
 const LawCard = ({
   law,
@@ -33,6 +35,8 @@ const LawCard = ({
   amend,
   hasUserVoteResults,
 }) => {
+  const labels = languages[settings.language];
+
   const hasTitle = !hasTitleField;
 
   const [expanded, setExpanded] = useState(lockExpanded);
@@ -254,7 +258,7 @@ const LawCard = ({
         {hasTitleField && (
           <TextField
             id="law-title"
-            label="Title"
+            label={labels.title}
             value={lawTitle}
             onChange={handleChange}
             margin="normal"
@@ -289,7 +293,7 @@ const LawCard = ({
           {(hasContentField || isAmend) && (
             <TextField
               id="law-content"
-              label="Law"
+              label={labels.content}
               value={lawContent}
               onChange={handleChange}
               margin="normal"
@@ -305,7 +309,7 @@ const LawCard = ({
                 variant={isAmend ? "contained" : "text"}
                 onClick={handleAmend}
               >
-                Amend
+                {labels.amend}
               </Button>
 
               {!isAmend && (
@@ -321,7 +325,7 @@ const LawCard = ({
                   {sendVotesLoading && (
                     <CircularProgress size="1rem" color="primary" />
                   )}
-                  Confirm Votes
+                  {labels.confirmVotes}
                 </Button>
               )}
 
@@ -334,7 +338,7 @@ const LawCard = ({
                   {callAmendLawLoading && (
                     <CircularProgress size="1rem" color="primary" />
                   )}
-                  Confirm Amendment
+                  {labels.confirmAmendment}
                 </Button>
               )}
             </div>
@@ -355,7 +359,7 @@ const LawCard = ({
                 {proposeLawLoading && (
                   <CircularProgress size="1rem" color="primary" />
                 )}
-                Propose Law
+                {labels.proposeLaw}
               </Button>
             </div>
           )}

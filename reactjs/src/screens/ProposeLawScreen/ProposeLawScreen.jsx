@@ -4,8 +4,12 @@ import { Button } from "@material-ui/core";
 import styles from "./ProposeLawScreen.styles";
 import { useNavigate } from "react-router-dom";
 import { Auth } from "aws-amplify";
+import settings from "../../settings.json";
+import languages from "../../labels.json";
 
 const ProposeLawScreen = () => {
+  const labels = languages[settings.language];
+
   const [jwtToken, setJwtToken] = useState("");
   const [username, setUsername] = useState("");
 
@@ -58,10 +62,10 @@ const ProposeLawScreen = () => {
           variant="contained"
           onClick={homeScreenNavigate}
         >
-          Vote
+          {labels.voteTab}
         </Button>
         <Button style={{ marginLeft: 0 }} color="primary" variant="contained">
-          Propose New Law
+          {labels.proposeLawTab}
         </Button>
         <Button
           style={{ marginLeft: 0 }}
@@ -69,7 +73,7 @@ const ProposeLawScreen = () => {
           variant="contained"
           onClick={votedLawsNavigate}
         >
-          Voted Laws
+          {labels.votedLawsTab}
         </Button>
         <Button
           style={{ marginLeft: 0 }}
@@ -77,7 +81,7 @@ const ProposeLawScreen = () => {
           variant="contained"
           onClick={acceptedLawsNavigate}
         >
-          Accepted Laws
+          {labels.acceptedLawsTab}
         </Button>
         <Button
           style={{ marginRight: "auto" }}
@@ -85,7 +89,7 @@ const ProposeLawScreen = () => {
           variant="contained"
           onClick={rejectedLawsNavigate}
         >
-          Rejected Laws
+          {labels.rejectedLawsTab}
         </Button>
       </div>
       <div

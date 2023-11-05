@@ -5,8 +5,12 @@ import { Button, CircularProgress } from "@material-ui/core";
 import styles from "./LawScreen.styles";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Auth } from "aws-amplify";
+import settings from "../../settings.json";
+import languages from "../../labels.json";
 
 const LawScreen = ({ amend }) => {
+  const labels = languages[settings.language];
+
   const [laws, setLaws] = useState({});
   const [jwtToken, setJwtToken] = useState("");
   const [username, setUsername] = useState("");
@@ -105,7 +109,7 @@ const LawScreen = ({ amend }) => {
           variant="contained"
           onClick={homeScreenNavigate}
         >
-          Vote
+          {labels.voteTab}
         </Button>
         <Button
           style={{ marginLeft: 0 }}
@@ -113,7 +117,7 @@ const LawScreen = ({ amend }) => {
           variant="contained"
           onClick={proposeLawNavigate}
         >
-          Propose New Law
+          {labels.proposeLawTab}
         </Button>
         <Button
           style={{ marginLeft: 0 }}
@@ -121,7 +125,7 @@ const LawScreen = ({ amend }) => {
           variant="contained"
           onClick={votedLawsNavigate}
         >
-          Voted Laws
+          {labels.votedLawsTab}
         </Button>
         <Button
           style={{ marginLeft: 0 }}
@@ -129,7 +133,7 @@ const LawScreen = ({ amend }) => {
           variant="contained"
           onClick={acceptedLawsNavigate}
         >
-          Accepted Laws
+          {labels.acceptedLawsTab}
         </Button>
         <Button
           style={{ marginRight: "auto" }}
@@ -137,7 +141,7 @@ const LawScreen = ({ amend }) => {
           variant="contained"
           onClick={rejectedLawsNavigate}
         >
-          Rejected Laws
+          {labels.rejectedLawsTab}
         </Button>
       </div>
       <div
