@@ -15,7 +15,7 @@
     "expediteDateToEarly": "La date de la loi expéditive doit être dans au moins {} heures.",
     "noUsers": "Aucun untilisateur n'a été créé.",
     "unknownUsername": "Nom d'utilisateur non reconnu.",
-    "lawExistsAccepted": "Cette proposition a déjà été adoptée.",
+    "lawExistsAccepted": "Cette loi a déjà été adoptée.",
     "lawExistsProposed": "Cette loi est déjà en train d'être votée.",
     "lawRecentlyRejected": "Cette loi a été rejetée il y a moins de {} jours.",
     "unknownAcceptedLaw": "Loi adoptée non reconnue.",
