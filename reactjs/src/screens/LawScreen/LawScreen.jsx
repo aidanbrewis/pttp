@@ -32,7 +32,7 @@ const LawScreen = ({ amend }) => {
     let result;
     let lambdaError;
     let hasLambdaError = false;
-    for (let i = 0; i < 10; i++) {
+    for (let i = 0; i < 500; i++) {
       try {
         const session = await Auth.currentSession();
         const jwtToken = session.getIdToken().getJwtToken();

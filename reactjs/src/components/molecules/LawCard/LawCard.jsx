@@ -145,7 +145,7 @@ const LawCard = ({
     setError("");
     let result;
     let lambdaError;
-    for (let i = 0; i < 10; i++) {
+    for (let i = 0; i < 500; i++) {
       try {
         result = await submitVotes(username, jwtToken, lawId, voteResults);
         break;
@@ -177,7 +177,7 @@ const LawCard = ({
     setError("");
     let result;
     let lambdaError;
-    for (let i = 0; i < 10; i++) {
+    for (let i = 0; i < 500; i++) {
       try {
         result = await amendLaw(
           username,
@@ -211,7 +211,7 @@ const LawCard = ({
     setError("");
     let result;
     let lambdaError;
-    for (let i = 0; i < 10; i++) {
+    for (let i = 0; i < 500; i++) {
       try {
         result = await proposeLaw(
           username,
