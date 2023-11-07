@@ -136,7 +136,7 @@ const LawScreen = ({ amend }) => {
           {labels.acceptedLawsTab}
         </Button>
         <Button
-          style={{ marginLeft: "auto", borderRadius: 0 }}
+          style={{ marginRight: "auto", borderRadius: 0 }}
           color="inherit"
           variant="contained"
           onClick={rejectedLawsNavigate}

@@ -122,7 +122,7 @@ const RejectedLawsScreen = () => {
           {labels.acceptedLawsTab}
         </Button>
         <Button
-          style={{ marginLeft: "auto", borderRadius: 0 }}
+          style={{ marginRight: "auto", borderRadius: 0 }}
           color="primary"
           variant="contained"
         >
