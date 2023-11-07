@@ -90,7 +90,7 @@ const RejectedLawsScreen = () => {
     <>
       <div style={styles.tabs}>
         <Button
-          style={{ marginLeft: 0 }}
+          style={{ marginLeft: 0, borderRadius: 0 }}
           color="inherit"
           variant="contained"
           onClick={homeScreenNavigate}
@@ -98,7 +98,7 @@ const RejectedLawsScreen = () => {
           {labels.voteTab}
         </Button>
         <Button
-          style={{ marginLeft: 0 }}
+          style={{ marginLeft: 0, borderRadius: 0 }}
           color="inherit"
           variant="contained"
           onClick={proposeLawNavigate}
@@ -106,7 +106,7 @@ const RejectedLawsScreen = () => {
           {labels.proposeLawTab}
         </Button>
         <Button
-          style={{ marginLeft: 0 }}
+          style={{ marginLeft: 0, borderRadius: 0 }}
           color="inherit"
           variant="contained"
           onClick={votedLawsNavigate}
@@ -114,7 +114,7 @@ const RejectedLawsScreen = () => {
           {labels.votedLawsTab}
         </Button>
         <Button
-          style={{ marginLeft: 0 }}
+          style={{ marginLeft: 0, borderRadius: 0 }}
           color="inherit"
           variant="contained"
           onClick={acceptedLawsNavigate}
@@ -122,7 +122,7 @@ const RejectedLawsScreen = () => {
           {labels.acceptedLawsTab}
         </Button>
         <Button
-          style={{ marginRight: "auto" }}
+          style={{ marginLeft: "auto", borderRadius: 0 }}
           color="primary"
           variant="contained"
         >

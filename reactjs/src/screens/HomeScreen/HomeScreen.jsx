@@ -89,11 +89,15 @@ const HomeScreen = () => {
   return (
     <>
       <div style={styles.tabs}>
-        <Button style={{ marginLeft: 0 }} color="primary" variant="contained">
+        <Button
+          style={{ marginLeft: 0, borderRadius: 0 }}
+          color="primary"
+          variant="contained"
+        >
           {labels.voteTab}
         </Button>
         <Button
-          style={{ marginLeft: 0 }}
+          style={{ marginLeft: 0, borderRadius: 0 }}
           color="inherit"
           variant="contained"
           onClick={proposeLawNavigate}
@@ -101,7 +105,7 @@ const HomeScreen = () => {
           {labels.proposeLawTab}
         </Button>
         <Button
-          style={{ marginLeft: 0 }}
+          style={{ marginLeft: 0, borderRadius: 0 }}
           color="inherit"
           variant="contained"
           onClick={votedLawsNavigate}
@@ -109,7 +113,7 @@ const HomeScreen = () => {
           {labels.votedLawsTab}
         </Button>
         <Button
-          style={{ marginLeft: 0 }}
+          style={{ marginLeft: 0, borderRadius: 0 }}
           color="inherit"
           variant="contained"
           onClick={acceptedLawsNavigate}
@@ -117,7 +121,7 @@ const HomeScreen = () => {
           {labels.acceptedLawsTab}
         </Button>
         <Button
-          style={{ marginRight: "auto" }}
+          style={{ marginLeft: "auto", borderRadius: 0 }}
           color="inherit"
           variant="contained"
           onClick={rejectedLawsNavigate}
