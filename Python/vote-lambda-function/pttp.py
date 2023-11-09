@@ -12,22 +12,50 @@ MINIMUM_EXPEDITE_DURATION = 86400  # 24 hours in seconds
 
 def createUser(payload):
     username = payload['username']
+    email = payload['email']
 
     try:
         with open('settings.json', 'r') as settingsFile:
             settings = json.load(settingsFile)
             USE_S3_BUCKET = settings['USE_S3_BUCKET']
+            VALIDATE_EMAIL = settings['VALIDATE_EMAIL']
             MINIMUM_LAW_DURATION = int(
                 settings['MINIMUM_LAW_DURATION_DAYS']*DAY_IN_SECONDS)
             ACTIVE_USER_TIMEOUT = int(
                 settings['ACTIVE_USER_TIMEOUT_DAYS']*DAY_IN_SECONDS)
             MINIMUM_EXPEDITE_DURATION = int(
                 settings['MINIMUM_EXPEDITE_DURATION_HOURS']*HOUR_IN_SECONDS)
+            LANGUAGE = settings['LANGUAGE']
     except:
         USE_S3_BUCKET = False
+        VALIDATE_EMAIL = False
         MINIMUM_LAW_DURATION = 2419200  # 28 days  in seconds
         ACTIVE_USER_TIMEOUT = 604800  # 7  days  in seconds
         MINIMUM_EXPEDITE_DURATION = 86400  # 24 hours in seconds
+        LANGUAGE = 'english'
+
+    try:
+        with open('labels.json', 'r') as labelsFile:
+            languages = json.load(labelsFile)
+            labels = languages[LANGUAGE]
+    except:
+        labels = {}
+
+    if VALIDATE_EMAIL:
+        try:
+            domain = email.split('@')[1]
+        except:
+            raise Exception(labels['invalidEmail'])
+        try:
+            with open('allowedEmail.json', 'r') as allowedEmailFile:
+                allowedEmail = json.load(allowedEmailFile)
+            allowedDomains = allowedEmail['domains']
+            allowedEmails = allowedEmail['emails']
+        except:
+            allowedDomains = []
+            allowedEmails = []
+        if email not in allowedEmails and domain not in allowedDomains:
+            raise Exception(labels['invalidEmail'])
 
     if not USE_S3_BUCKET:
         if not os.path.exists('data'):

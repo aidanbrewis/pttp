@@ -16,7 +16,9 @@ def lambda_handler(event, context):
     if cognitoRequest:
         username = event['userName']
         if event['triggerSource'] == 'PreSignUp_SignUp':
-            event['response'] = pttp.createUser({'username': username})
+            email = cognitoRequest['userAttributes']['email']
+            event['response'] = pttp.createUser(
+                {'username': username, 'email': email})
             return event
         elif event['triggerSource'] == 'PostConfirmation_ConfirmSignUp':
             event['response'] = pttp.updateActivity({'username': username})
