@@ -412,7 +412,7 @@ def proposeAbrogationLaw(payload):
             if lawId+':'+versionNumber in users[userkey]['proposedLaws']:
                 users[userkey]['proposedLaws'].remove(lawId+':'+versionNumber)
 
-        users[username]['proposedLaws'].append(lawId+':'+str(versionNumber))
+        users[username]['votedLaws'][lawId+':'+str(versionNumber)] = False
 
     if replace:
         for existingLawId in acceptedLaws.keys():
