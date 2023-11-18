@@ -1241,7 +1241,7 @@ def vote(payload):
             proposedLaws[lawId]['versions'][versionNumber]['no'] += 1
             users[username]['votedLaws'][lawId +
                                          ':'+str(versionNumber)] = False
-    numberOfActiveUsers = countActiveUsers(users)
+    numberOfActiveUsers = countActiveUsers(users, lawId)
     majority = int(numberOfActiveUsers/2 + 1)
     half = numberOfActiveUsers/2
     versionsToRemove = []
@@ -1310,12 +1310,22 @@ def vote(payload):
     return ({})
 
 
-def countActiveUsers(users):
+def countActiveUsers(users, lawId):
     minimumLatestActivity = int(time.time()) - ACTIVE_USER_TIMEOUT
     numberOfActiveUsers = 0
     for username in users.keys():
         if (users[username]['latestActivity'] >= minimumLatestActivity):
             numberOfActiveUsers += 1
+        else:
+            for proposedLaw in users[username]['proposedLaws']:
+                if proposedLaw.split(':')[0] == lawId:
+                    numberOfActiveUsers += 1
+                    break
+            for votedLaw in users[username]['votedLaws'].keys():
+                if votedLaw.split(':')[0] == lawId:
+                    numberOfActiveUsers += 1
+                    break
+                    
     return numberOfActiveUsers
 
 
